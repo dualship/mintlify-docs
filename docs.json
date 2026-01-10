@@ -24,7 +24,7 @@
         "groups": [
           {
             "group": "Getting Started",
-            "pages": ["introduction", "quickstart", "flow-structure", "pricing"]
+            "pages": ["introduction", "quickstart", "flow-structure", "pricing", "project-settings"]
           },
           {
             "group": "Nodes",

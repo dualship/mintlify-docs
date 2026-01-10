@@ -137,6 +137,17 @@
           "ai"
         ],
         "summary": "Chat with conversation memory",
+        "parameters": [
+          {
+            "description": "Workspace ID",
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -217,8 +228,8 @@
         "parameters": [
           {
             "description": "Workspace ID",
-            "name": "workspace_id",
-            "in": "query",
+            "name": "X-Workspace-Id",
+            "in": "header",
             "required": true,
             "schema": {
               "type": "string"
@@ -301,6 +312,15 @@
         ],
         "summary": "Clear conversation history",
         "parameters": [
+          {
+            "description": "Workspace ID",
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "description": "Conversation ID",
             "name": "conversation_id",
@@ -437,6 +457,17 @@
           "ai"
         ],
         "summary": "List AI providers",
+        "parameters": [
+          {
+            "description": "Workspace ID",
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "List of AI providers",
@@ -1248,6 +1279,15 @@
         "summary": "List documents",
         "parameters": [
           {
+            "description": "Workspace ID",
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "description": "Limit",
             "name": "limit",
             "in": "query",
@@ -1328,6 +1368,17 @@
           "documents"
         ],
         "summary": "Upload document",
+        "parameters": [
+          {
+            "description": "Workspace ID",
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "multipart/form-data": {
@@ -1416,6 +1467,15 @@
         "summary": "Get document",
         "parameters": [
           {
+            "description": "Workspace ID",
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "description": "Document ID",
             "name": "id",
             "in": "path",
@@ -1501,6 +1561,15 @@
         "summary": "Delete document",
         "parameters": [
           {
+            "description": "Workspace ID",
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "description": "Document ID",
             "name": "id",
             "in": "path",
@@ -1580,6 +1649,15 @@
         ],
         "summary": "Get document content",
         "parameters": [
+          {
+            "description": "Workspace ID",
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "description": "Document ID",
             "name": "id",
@@ -1725,6 +1803,15 @@
         "summary": "List all flows",
         "parameters": [
           {
+            "description": "Workspace ID",
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "description": "Project ID (uses default if not specified)",
             "name": "project_id",
             "in": "query",
@@ -1805,6 +1892,15 @@
         "summary": "Create a new flow",
         "parameters": [
           {
+            "description": "Workspace ID",
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "description": "Project ID (uses default if not specified)",
             "name": "project_id",
             "in": "query",
@@ -1882,6 +1978,15 @@
         "summary": "Get a flow",
         "parameters": [
           {
+            "description": "Workspace ID",
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "description": "Flow ID",
             "name": "id",
             "in": "path",
@@ -1956,6 +2061,15 @@
         ],
         "summary": "Update a flow",
         "parameters": [
+          {
+            "description": "Workspace ID",
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "description": "Flow ID",
             "name": "id",
@@ -2043,6 +2157,15 @@
         "summary": "Delete a flow",
         "parameters": [
           {
+            "description": "Workspace ID",
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "description": "Flow ID",
             "name": "id",
             "in": "path",
@@ -2112,6 +2235,15 @@
         ],
         "summary": "Deploy a flow",
         "parameters": [
+          {
+            "description": "Workspace ID",
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "description": "Flow ID",
             "name": "id",
@@ -2189,6 +2321,15 @@
         ],
         "summary": "Execute a flow",
         "parameters": [
+          {
+            "description": "Workspace ID",
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "description": "Flow ID",
             "name": "id",
@@ -2316,6 +2457,17 @@
           "projects"
         ],
         "summary": "List projects",
+        "parameters": [
+          {
+            "description": "Workspace ID",
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "List of projects",
@@ -2360,6 +2512,17 @@
           "projects"
         ],
         "summary": "Create project",
+        "parameters": [
+          {
+            "description": "Workspace ID",
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -2428,6 +2591,15 @@
         ],
         "summary": "Get project",
         "parameters": [
+          {
+            "description": "Workspace ID",
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "description": "Project ID",
             "name": "id",
@@ -2503,6 +2675,15 @@
         ],
         "summary": "Update project",
         "parameters": [
+          {
+            "description": "Workspace ID",
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "description": "Project ID",
             "name": "id",
@@ -2590,6 +2771,15 @@
         "summary": "Delete project",
         "parameters": [
           {
+            "description": "Workspace ID",
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "description": "Project ID",
             "name": "id",
             "in": "path",
@@ -2612,6 +2802,187 @@
           },
           "400": {
             "description": "Invalid project ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Project not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{id}/settings": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Get settings for a project including logging, rate limiting, CORS, and log filters",
+        "tags": [
+          "projects"
+        ],
+        "summary": "Get project settings",
+        "parameters": [
+          {
+            "description": "Workspace ID",
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Project ID",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Project settings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_api_rules.ProjectSettingsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid project ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Project not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Update settings for a project (partial updates supported)",
+        "tags": [
+          "projects"
+        ],
+        "summary": "Update project settings",
+        "parameters": [
+          {
+            "description": "Workspace ID",
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Project ID",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_api_rules.UpdateProjectSettingsRequest"
+              }
+            }
+          },
+          "description": "Settings to update",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Updated project settings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_api_rules.ProjectSettingsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
             "content": {
               "application/json": {
                 "schema": {
@@ -4804,6 +5175,41 @@
           }
         }
       },
+      "github_com_dualship_dualship-be_internal_api_rules.CORSSettingsResponse": {
+        "type": "object",
+        "properties": {
+          "allow_credentials": {
+            "type": "boolean",
+            "example": true
+          },
+          "allowed_headers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "allowed_methods": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "allowed_origins": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "enabled": {
+            "type": "boolean",
+            "example": true
+          },
+          "max_age": {
+            "type": "integer",
+            "example": 86400
+          }
+        }
+      },
       "github_com_dualship_dualship-be_internal_api_rules.ConversationChatRequest": {
         "type": "object",
         "required": [
@@ -5012,6 +5418,60 @@
           }
         }
       },
+      "github_com_dualship_dualship-be_internal_api_rules.LogFilterSettingsResponse": {
+        "type": "object",
+        "properties": {
+          "masked_keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_api_rules.LoggingSettingsResponse": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_api_rules.ProjectSettingsResponse": {
+        "type": "object",
+        "properties": {
+          "cors": {
+            "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_api_rules.CORSSettingsResponse"
+          },
+          "log_filters": {
+            "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_api_rules.LogFilterSettingsResponse"
+          },
+          "logging": {
+            "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_api_rules.LoggingSettingsResponse"
+          },
+          "rate_limit": {
+            "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_api_rules.RateLimitSettingsResponse"
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_api_rules.RateLimitSettingsResponse": {
+        "type": "object",
+        "properties": {
+          "burst_size": {
+            "type": "integer",
+            "example": 100
+          },
+          "enabled": {
+            "type": "boolean",
+            "example": true
+          },
+          "requests_per_min": {
+            "type": "integer",
+            "example": 1000
+          }
+        }
+      },
       "github_com_dualship_dualship-be_internal_api_rules.UpdateAIProviderRequest": {
         "type": "object",
         "properties": {
@@ -5053,6 +5513,59 @@
           }
         }
       },
+      "github_com_dualship_dualship-be_internal_api_rules.UpdateCORSSettings": {
+        "type": "object",
+        "properties": {
+          "allow_credentials": {
+            "type": "boolean"
+          },
+          "allowed_headers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "allowed_methods": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "allowed_origins": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "max_age": {
+            "type": "integer",
+            "maximum": 604800,
+            "minimum": 0
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_api_rules.UpdateLogFilterSettings": {
+        "type": "object",
+        "properties": {
+          "masked_keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_api_rules.UpdateLoggingSettings": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          }
+        }
+      },
       "github_com_dualship_dualship-be_internal_api_rules.UpdateMemberRoleRequest": {
         "type": "object",
         "required": [
@@ -5088,6 +5601,41 @@
               "archived",
               "suspended"
             ]
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_api_rules.UpdateProjectSettingsRequest": {
+        "type": "object",
+        "properties": {
+          "cors": {
+            "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_api_rules.UpdateCORSSettings"
+          },
+          "log_filters": {
+            "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_api_rules.UpdateLogFilterSettings"
+          },
+          "logging": {
+            "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_api_rules.UpdateLoggingSettings"
+          },
+          "rate_limit": {
+            "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_api_rules.UpdateRateLimitSettings"
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_api_rules.UpdateRateLimitSettings": {
+        "type": "object",
+        "properties": {
+          "burst_size": {
+            "type": "integer",
+            "maximum": 10000,
+            "minimum": 1
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "requests_per_min": {
+            "type": "integer",
+            "maximum": 100000,
+            "minimum": 1
           }
         }
       },
@@ -5181,19 +5729,19 @@
       "github_com_dualship_dualship-be_internal_billing.PlanLimits": {
         "type": "object",
         "properties": {
+          "additional_seat_price": {
+            "type": "integer"
+          },
           "executions_per_month": {
             "type": "integer"
           },
           "flows": {
             "type": "integer"
           },
+          "included_seats": {
+            "type": "integer"
+          },
           "log_retention_days": {
-            "type": "integer"
-          },
-          "secrets": {
-            "type": "integer"
-          },
-          "team_members": {
             "type": "integer"
           },
           "workspaces": {
@@ -6487,19 +7035,22 @@
       "internal_api_handler.WorkspacePlanLimits": {
         "type": "object",
         "properties": {
+          "additional_seat_price": {
+            "type": "integer"
+          },
           "executions_per_month": {
             "type": "integer"
           },
           "flows": {
             "type": "integer"
           },
+          "included_seats": {
+            "type": "integer"
+          },
           "log_retention_days": {
             "type": "integer"
           },
           "nodes_per_flow": {
-            "type": "integer"
-          },
-          "team_members": {
             "type": "integer"
           },
           "workspaces": {

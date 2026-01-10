@@ -1,0 +1,245 @@
+---
+title: Project Settings
+description: Configure logging, rate limiting, CORS, and log filtering for your project
+---
+
+Each project can be configured with settings that control logging behavior, rate limiting, CORS headers, and sensitive data masking.
+
+## API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/projects/{id}/settings` | Get project settings |
+| PUT | `/api/v1/projects/{id}/settings` | Update project settings (partial updates supported) |
+
+## Settings Structure
+
+```json
+{
+  "logging": {
+    "enabled": true
+  },
+  "rate_limit": {
+    "enabled": false,
+    "requests_per_min": 1000,
+    "burst_size": 100
+  },
+  "cors": {
+    "enabled": false,
+    "allowed_origins": ["*"],
+    "allowed_methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    "allowed_headers": ["Origin", "Content-Type", "Accept", "Authorization"],
+    "allow_credentials": false,
+    "max_age": 86400
+  },
+  "log_filters": {
+    "masked_keywords": []
+  }
+}
+```
+
+## Logging
+
+Control whether runtime logs are captured for flow executions.
+
+| Setting | Type | Default | Description |
+|---------|------|---------|-------------|
+| `logging.enabled` | boolean | `true` | Enable/disable runtime logging for all flows |
+
+When disabled, no execution logs are written to the logging system. This can be useful for high-volume projects where logging overhead is a concern.
+
+Individual nodes can also control their own logging with the `log` field, but this project-level setting takes precedence when set to `false`.
+
+## Rate Limiting
+
+Protect your APIs from abuse by limiting request rates.
+
+| Setting | Type | Default | Description |
+|---------|------|---------|-------------|
+| `rate_limit.enabled` | boolean | `false` | Enable/disable rate limiting |
+| `rate_limit.requests_per_min` | number | `1000` | Maximum requests per minute per IP |
+| `rate_limit.burst_size` | number | `100` | Additional burst capacity above the limit |
+
+### How Rate Limiting Works
+
+Rate limits are applied per project + IP address combination. When a client exceeds the limit, subsequent requests receive a `429 Too Many Requests` response until the rate limit window resets.
+
+### Rate Limit Response
+
+When the rate limit is exceeded:
+
+```
+HTTP 429 Too Many Requests
+
+Headers:
+  X-RateLimit-Limit: 1000
+  X-RateLimit-Remaining: 0
+  X-RateLimit-Reset: 1704067200
+  Retry-After: 45
+
+Body:
+{"error": "rate limit exceeded", "retry_after": 45}
+```
+
+| Header | Description |
+|--------|-------------|
+| `X-RateLimit-Limit` | The rate limit ceiling |
+| `X-RateLimit-Remaining` | Remaining requests in current window |
+| `X-RateLimit-Reset` | Unix timestamp when the limit resets |
+| `Retry-After` | Seconds until requests are allowed again |
+
+## CORS
+
+Configure Cross-Origin Resource Sharing headers for browser-based API access.
+
+| Setting | Type | Default | Description |
+|---------|------|---------|-------------|
+| `cors.enabled` | boolean | `false` | Enable/disable CORS headers |
+| `cors.allowed_origins` | string[] | `["*"]` | Allowed origins (supports wildcards) |
+| `cors.allowed_methods` | string[] | Standard methods | Allowed HTTP methods |
+| `cors.allowed_headers` | string[] | Standard headers | Allowed request headers |
+| `cors.allow_credentials` | boolean | `false` | Allow credentials in requests |
+| `cors.max_age` | number | `86400` | Preflight cache duration (seconds) |
+
+### Wildcard Origins
+
+You can use wildcards in `allowed_origins`:
+
+```json
+{
+  "cors": {
+    "enabled": true,
+    "allowed_origins": [
+      "https://example.com",
+      "https://*.example.com",
+      "http://localhost:*"
+    ]
+  }
+}
+```
+
+### Default Headers
+
+When CORS is enabled, these are the default allowed values:
+
+**Methods:** `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `OPTIONS`
+
+**Headers:** `Origin`, `Content-Type`, `Accept`, `Authorization`
+
+## Log Filters
+
+Mask sensitive data in logs to protect user privacy and comply with security requirements.
+
+| Setting | Type | Default | Description |
+|---------|------|---------|-------------|
+| `log_filters.masked_keywords` | string[] | `[]` | Field names to mask in logs |
+
+### How Masking Works
+
+Any field matching a keyword in `masked_keywords` will have its value replaced with `[MASKED]` in logs. Masking is:
+
+- **Case-insensitive**: `password` matches `Password`, `PASSWORD`, etc.
+- **Recursive**: Works on nested objects and arrays
+- **Non-destructive**: Only affects logged data, not actual execution
+
+### Example
+
+Configuration:
+```json
+{
+  "log_filters": {
+    "masked_keywords": ["password", "api_key", "secret", "token"]
+  }
+}
+```
+
+Original request data:
+```json
+{
+  "username": "john",
+  "password": "secret123",
+  "api_key": "sk_live_xxx",
+  "profile": {
+    "secret": "hidden_value"
+  }
+}
+```
+
+Logged data:
+```json
+{
+  "username": "john",
+  "password": "[MASKED]",
+  "api_key": "[MASKED]",
+  "profile": {
+    "secret": "[MASKED]"
+  }
+}
+```
+
+### Common Keywords to Mask
+
+Consider masking these common sensitive fields:
+
+- `password`, `passwd`, `pwd`
+- `api_key`, `apikey`, `api_secret`
+- `token`, `access_token`, `refresh_token`
+- `secret`, `secret_key`
+- `authorization`, `auth`
+- `credit_card`, `card_number`, `cvv`
+- `ssn`, `social_security`
+
+## Caching
+
+Project settings are cached in Redis with a 5-minute TTL. When you update settings via the API, the cache is automatically invalidated and new settings take effect immediately.
+
+## Examples
+
+### Enable Rate Limiting
+
+```json
+{
+  "rate_limit": {
+    "enabled": true,
+    "requests_per_min": 100,
+    "burst_size": 20
+  }
+}
+```
+
+### Configure CORS for a Frontend App
+
+```json
+{
+  "cors": {
+    "enabled": true,
+    "allowed_origins": ["https://app.example.com"],
+    "allow_credentials": true
+  }
+}
+```
+
+### Mask Sensitive Fields in Logs
+
+```json
+{
+  "log_filters": {
+    "masked_keywords": ["password", "token", "api_key", "secret"]
+  }
+}
+```
+
+### Disable Logging for High-Volume Project
+
+```json
+{
+  "logging": {
+    "enabled": false
+  }
+}
+```
+
+## Related
+
+- [Nodes Overview](/nodes/overview) - Node-level logging control
+- [Pricing](/pricing) - Log retention by plan
