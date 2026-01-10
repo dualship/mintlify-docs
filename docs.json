@@ -24,7 +24,7 @@
         "groups": [
           {
             "group": "Getting Started",
-            "pages": ["introduction", "quickstart", "flow-structure"]
+            "pages": ["introduction", "quickstart", "flow-structure", "pricing"]
           },
           {
             "group": "Nodes",
@@ -62,9 +62,6 @@
   },
   "search": {
     "prompt": "Looking for something ?"
-  },
-  "interaction": {
-    "copyPage": true
   },
   "footerSocials": {
     "github": "https://github.com/dualship"

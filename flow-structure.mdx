@@ -37,11 +37,7 @@ The most common trigger type. Creates a REST endpoint.
     "type": "http",
     "config": {
       "method": "POST",
-      "path": "/payments",
-      "middleware": {
-        "before": ["auth_middleware"],
-        "after": ["log_middleware"]
-      }
+      "path": "/payments"
     }
   }
 }
@@ -51,8 +47,6 @@ The most common trigger type. Creates a REST endpoint.
 |-------|------|----------|-------------|
 | `method` | string | Yes | HTTP method: GET, POST, PUT, DELETE, PATCH |
 | `path` | string | Yes | URL path for the endpoint |
-| `middleware.before` | string[] | No | Node IDs to run before main flow |
-| `middleware.after` | string[] | No | Node IDs to run after main flow |
 
 ### Cron Trigger
 
@@ -74,22 +68,6 @@ Schedule flows to run at specific times.
 |-------|------|----------|-------------|
 | `schedule` | string | Yes | Cron expression |
 | `timezone` | string | No | IANA timezone (default: UTC) |
-
-### Webhook Trigger
-
-Receive callbacks from external services.
-
-```json
-{
-  "trigger": {
-    "type": "webhook",
-    "config": {
-      "secret": "{{env.WEBHOOK_SECRET}}",
-      "signature_header": "X-Signature"
-    }
-  }
-}
-```
 
 ## Node Structure
 
@@ -191,39 +169,6 @@ Access outputs using template expressions:
 {{fetch_user.output.body.name}}
 {{transform.output.total}}
 ```
-
-## Middleware
-
-Middleware runs before and/or after the main flow. Common uses:
-- Authentication
-- Rate limiting
-- Logging
-- Request/response transformation
-
-```json
-{
-  "trigger": {
-    "type": "http",
-    "config": {
-      "method": "POST",
-      "path": "/payments",
-      "middleware": {
-        "before": ["verify_auth", "check_rate_limit"],
-        "after": ["log_request"]
-      }
-    }
-  }
-}
-```
-
-**Execution order:**
-```
-Request -> Before Middleware -> Main Flow -> After Middleware -> Response
-```
-
-Middleware nodes can:
-- Add data to context (e.g., `{{verify_auth.output.user_id}}`)
-- Abort the flow early with an error response
 
 ## Flow States
 
