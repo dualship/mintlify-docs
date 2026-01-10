@@ -69,6 +69,9 @@
       }
     ]
   },
+  "sso": {
+    "enabled": true
+  },
   "footerSocials": {
     "github": "https://github.com/dualship"
   },
