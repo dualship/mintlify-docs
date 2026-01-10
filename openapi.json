@@ -96,7 +96,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -106,7 +106,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
@@ -116,7 +116,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -126,7 +126,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
                 }
               }
             }
@@ -163,8 +163,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true
+                  "$ref": "#/components/schemas/internal_api_handler.ConversationChatResponse"
                 }
               }
             }
@@ -174,7 +173,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -184,7 +183,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
@@ -194,7 +193,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -204,7 +203,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
                 }
               }
             }
@@ -250,8 +249,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true
+                  "$ref": "#/components/schemas/internal_api_handler.ConversationHistoryResponse"
                 }
               }
             }
@@ -261,7 +259,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -271,7 +269,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
@@ -281,7 +279,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -291,7 +289,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
                 }
               }
             }
@@ -331,7 +329,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -341,7 +339,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
@@ -351,7 +349,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -361,7 +359,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
                 }
               }
             }
@@ -398,8 +396,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true
+                  "$ref": "#/components/schemas/internal_api_handler.PromptFlowResponse"
                 }
               }
             }
@@ -409,7 +406,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -419,7 +416,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
@@ -429,7 +426,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
                 }
               }
             }
@@ -471,7 +468,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -481,7 +478,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
@@ -491,7 +488,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -501,7 +498,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
                 }
               }
             }
@@ -546,7 +543,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -556,7 +553,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
@@ -566,7 +563,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -576,7 +573,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
                 }
               }
             }
@@ -623,7 +620,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -633,7 +630,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
@@ -643,7 +640,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
                 }
               }
             }
@@ -653,7 +650,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -663,7 +660,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
                 }
               }
             }
@@ -719,7 +716,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -729,7 +726,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
@@ -739,7 +736,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
                 }
               }
             }
@@ -749,7 +746,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -759,7 +756,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
                 }
               }
             }
@@ -797,7 +794,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -807,7 +804,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
@@ -817,7 +814,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
                 }
               }
             }
@@ -827,7 +824,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -837,7 +834,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
                 }
               }
             }
@@ -874,10 +871,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "boolean"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.ValidResponse"
                 }
               }
             }
@@ -887,7 +881,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -897,7 +891,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
@@ -907,7 +901,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
                 }
               }
             }
@@ -917,7 +911,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
                 }
               }
             }
@@ -955,8 +949,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true
+                  "$ref": "#/components/schemas/internal_api_handler.SuggestionsResponse"
                 }
               }
             }
@@ -966,7 +959,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -976,7 +969,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
@@ -986,7 +979,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
                 }
               }
             }
@@ -1029,14 +1022,11 @@
             }
           },
           "400": {
-            "description": "Bad Request",
+            "description": "Invalid workspace ID",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -1046,36 +1036,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
           },
           "403": {
-            "description": "Forbidden",
+            "description": "Not a member of this workspace",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.ForbiddenError"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal Server Error",
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -1118,14 +1099,11 @@
             }
           },
           "400": {
-            "description": "Bad Request",
+            "description": "Invalid request",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -1135,36 +1113,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
           },
           "403": {
-            "description": "Forbidden",
+            "description": "Insufficient permissions",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.ForbiddenError"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal Server Error",
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -1181,28 +1150,21 @@
         "summary": "List available plans",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "List of available plans",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "array",
-                    "items": {}
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.PlanListResponse"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal Server Error",
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -1245,14 +1207,11 @@
             }
           },
           "400": {
-            "description": "Bad Request",
+            "description": "Invalid request",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -1262,36 +1221,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
           },
           "403": {
-            "description": "Forbidden",
+            "description": "Insufficient permissions",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.ForbiddenError"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal Server Error",
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -1351,7 +1301,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -1361,7 +1311,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
@@ -1371,7 +1321,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -1381,7 +1331,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
                 }
               }
             }
@@ -1435,7 +1385,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -1445,7 +1395,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
@@ -1455,7 +1405,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -1465,7 +1415,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
                 }
               }
             }
@@ -1512,7 +1462,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -1522,7 +1472,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
@@ -1532,7 +1482,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
                 }
               }
             }
@@ -1542,7 +1492,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -1552,7 +1502,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
                 }
               }
             }
@@ -1590,7 +1540,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -1600,7 +1550,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
@@ -1610,7 +1560,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
                 }
               }
             }
@@ -1620,7 +1570,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -1630,7 +1580,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
                 }
               }
             }
@@ -1680,7 +1630,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -1690,7 +1640,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
@@ -1700,7 +1650,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
                 }
               }
             }
@@ -1710,7 +1660,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
                 }
               }
             }
@@ -1720,6 +1670,11 @@
     },
     "/api/v1/executor/node": {
       "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "description": "Execute a node with the provided context (for testing)",
         "tags": [
           "executor"
@@ -1738,11 +1693,41 @@
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Node executed successfully",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/internal_api_handler.ExecuteNodeResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request or node configuration",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Node execution failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -1810,7 +1795,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -1820,7 +1805,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
@@ -1830,7 +1815,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -1885,7 +1870,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -1895,7 +1880,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
@@ -1905,7 +1890,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -1952,7 +1937,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -1962,7 +1947,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
@@ -1972,7 +1957,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
                 }
               }
             }
@@ -1982,7 +1967,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -2038,7 +2023,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -2048,7 +2033,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
@@ -2058,7 +2043,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
                 }
               }
             }
@@ -2068,7 +2053,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -2106,7 +2091,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -2116,7 +2101,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
@@ -2126,7 +2111,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
                 }
               }
             }
@@ -2136,7 +2121,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -2183,7 +2168,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -2193,7 +2178,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
@@ -2203,7 +2188,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
                 }
               }
             }
@@ -2213,7 +2198,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -2272,7 +2257,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -2282,7 +2267,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
@@ -2292,7 +2277,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
                 }
               }
             }
@@ -2302,7 +2287,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/internal_api_handler.ErrorResponse"
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -2363,7 +2348,7 @@
         "summary": "List projects",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "List of projects",
             "content": {
               "application/json": {
                 "schema": {
@@ -2383,23 +2368,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal Server Error",
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -2430,7 +2409,7 @@
         },
         "responses": {
           "201": {
-            "description": "Created",
+            "description": "Project created",
             "content": {
               "application/json": {
                 "schema": {
@@ -2440,14 +2419,11 @@
             }
           },
           "400": {
-            "description": "Bad Request",
+            "description": "Invalid request",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -2457,23 +2433,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal Server Error",
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -2506,7 +2476,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Project details",
             "content": {
               "application/json": {
                 "schema": {
@@ -2516,14 +2486,11 @@
             }
           },
           "400": {
-            "description": "Bad Request",
+            "description": "Invalid project ID",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -2533,36 +2500,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
           },
           "404": {
-            "description": "Not Found",
+            "description": "Project not found",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal Server Error",
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -2604,7 +2562,7 @@
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Project updated",
             "content": {
               "application/json": {
                 "schema": {
@@ -2614,14 +2572,11 @@
             }
           },
           "400": {
-            "description": "Bad Request",
+            "description": "Invalid request",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -2631,36 +2586,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
           },
           "404": {
-            "description": "Not Found",
+            "description": "Project not found",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal Server Error",
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -2691,27 +2637,21 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Project deleted",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "boolean"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.DeletedResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "Bad Request",
+            "description": "Invalid project ID",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -2721,36 +2661,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
           },
           "404": {
-            "description": "Not Found",
+            "description": "Project not found",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal Server Error",
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -2772,7 +2703,7 @@
         "summary": "List roles",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "List of roles",
             "content": {
               "application/json": {
                 "schema": {
@@ -2792,23 +2723,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal Server Error",
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -2830,7 +2755,7 @@
         "summary": "List workspaces",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "List of workspaces",
             "content": {
               "application/json": {
                 "schema": {
@@ -2850,23 +2775,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal Server Error",
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -2897,7 +2816,7 @@
         },
         "responses": {
           "201": {
-            "description": "Created",
+            "description": "Workspace created",
             "content": {
               "application/json": {
                 "schema": {
@@ -2907,14 +2826,11 @@
             }
           },
           "400": {
-            "description": "Bad Request",
+            "description": "Invalid request",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -2924,23 +2840,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal Server Error",
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -2973,7 +2883,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Workspace details",
             "content": {
               "application/json": {
                 "schema": {
@@ -2983,14 +2893,11 @@
             }
           },
           "400": {
-            "description": "Bad Request",
+            "description": "Invalid workspace ID",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -3000,49 +2907,37 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
           },
           "403": {
-            "description": "Forbidden",
+            "description": "Not a member of this workspace",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.ForbiddenError"
                 }
               }
             }
           },
           "404": {
-            "description": "Not Found",
+            "description": "Workspace not found",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal Server Error",
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -3084,7 +2979,7 @@
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Workspace updated",
             "content": {
               "application/json": {
                 "schema": {
@@ -3094,14 +2989,11 @@
             }
           },
           "400": {
-            "description": "Bad Request",
+            "description": "Invalid request",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -3111,49 +3003,37 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
           },
           "403": {
-            "description": "Forbidden",
+            "description": "Insufficient permissions",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.ForbiddenError"
                 }
               }
             }
           },
           "404": {
-            "description": "Not Found",
+            "description": "Workspace not found",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal Server Error",
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -3184,27 +3064,21 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Workspace deleted",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "boolean"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.DeletedResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "Bad Request",
+            "description": "Invalid workspace ID",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -3214,49 +3088,37 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
           },
           "403": {
-            "description": "Forbidden",
+            "description": "Only owner can delete workspace",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.ForbiddenError"
                 }
               }
             }
           },
           "404": {
-            "description": "Not Found",
+            "description": "Workspace not found",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal Server Error",
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -3289,7 +3151,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "List of invitations",
             "content": {
               "application/json": {
                 "schema": {
@@ -3305,14 +3167,11 @@
             }
           },
           "400": {
-            "description": "Bad Request",
+            "description": "Invalid workspace ID",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -3322,36 +3181,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
           },
           "403": {
-            "description": "Forbidden",
+            "description": "Insufficient permissions",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.ForbiddenError"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal Server Error",
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -3393,7 +3243,7 @@
         },
         "responses": {
           "201": {
-            "description": "Created",
+            "description": "Invitation created",
             "content": {
               "application/json": {
                 "schema": {
@@ -3403,14 +3253,11 @@
             }
           },
           "400": {
-            "description": "Bad Request",
+            "description": "Invalid request",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -3420,49 +3267,37 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
           },
           "403": {
-            "description": "Forbidden",
+            "description": "Insufficient permissions",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.ForbiddenError"
                 }
               }
             }
           },
           "409": {
-            "description": "Conflict",
+            "description": "Invitation already exists",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.ConflictError"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal Server Error",
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -3504,27 +3339,21 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Invitation revoked",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "boolean"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.DeletedResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "Bad Request",
+            "description": "Invalid ID",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -3534,49 +3363,37 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
           },
           "403": {
-            "description": "Forbidden",
+            "description": "Insufficient permissions",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.ForbiddenError"
                 }
               }
             }
           },
           "404": {
-            "description": "Not Found",
+            "description": "Invitation not found",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal Server Error",
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -3629,7 +3446,7 @@
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Logo uploaded",
             "content": {
               "application/json": {
                 "schema": {
@@ -3639,14 +3456,11 @@
             }
           },
           "400": {
-            "description": "Bad Request",
+            "description": "Invalid request or file",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -3656,36 +3470,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
           },
           "403": {
-            "description": "Forbidden",
+            "description": "Insufficient permissions",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.ForbiddenError"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal Server Error",
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -3716,7 +3521,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Logo deleted",
             "content": {
               "application/json": {
                 "schema": {
@@ -3726,14 +3531,11 @@
             }
           },
           "400": {
-            "description": "Bad Request",
+            "description": "Invalid workspace ID",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -3743,49 +3545,37 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
           },
           "403": {
-            "description": "Forbidden",
+            "description": "Insufficient permissions",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.ForbiddenError"
                 }
               }
             }
           },
           "404": {
-            "description": "Not Found",
+            "description": "Workspace not found",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal Server Error",
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -3818,7 +3608,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "List of members",
             "content": {
               "application/json": {
                 "schema": {
@@ -3834,14 +3624,11 @@
             }
           },
           "400": {
-            "description": "Bad Request",
+            "description": "Invalid workspace ID",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -3851,36 +3638,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
           },
           "403": {
-            "description": "Forbidden",
+            "description": "Not a member of this workspace",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.ForbiddenError"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal Server Error",
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -3922,27 +3700,21 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Member removed",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "boolean"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.DeletedResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "Bad Request",
+            "description": "Invalid ID",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -3952,49 +3724,37 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
           },
           "403": {
-            "description": "Forbidden",
+            "description": "Insufficient permissions",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.ForbiddenError"
                 }
               }
             }
           },
           "404": {
-            "description": "Not Found",
+            "description": "Member not found",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal Server Error",
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -4047,7 +3807,7 @@
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Role updated",
             "content": {
               "application/json": {
                 "schema": {
@@ -4057,14 +3817,11 @@
             }
           },
           "400": {
-            "description": "Bad Request",
+            "description": "Invalid request",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -4074,49 +3831,37 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
           },
           "403": {
-            "description": "Forbidden",
+            "description": "Only owner can change roles",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.ForbiddenError"
                 }
               }
             }
           },
           "404": {
-            "description": "Not Found",
+            "description": "Member not found",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal Server Error",
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -4126,7 +3871,7 @@
     },
     "/gateway/{project_id}/{path}": {
       "post": {
-        "description": "Execute flows based on project subdomain and path",
+        "description": "Execute flows based on project subdomain and path. Response structure depends on flow configuration.",
         "tags": [
           "gateway"
         ],
@@ -4153,12 +3898,42 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Flow execution result - structure varies based on flow",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid project ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Route not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Flow execution failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -4175,27 +3950,21 @@
         "summary": "Health check",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Service is healthy",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.HealthResponse"
                 }
               }
             }
           },
           "503": {
-            "description": "Service Unavailable",
+            "description": "Service unavailable",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.HealthErrorResponse"
                 }
               }
             }
@@ -4223,7 +3992,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Invitation info",
             "content": {
               "application/json": {
                 "schema": {
@@ -4233,53 +4002,41 @@
             }
           },
           "400": {
-            "description": "Bad Request",
+            "description": "Token required",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
           },
           "404": {
-            "description": "Not Found",
+            "description": "Invitation not found",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
                 }
               }
             }
           },
           "410": {
-            "description": "Gone",
+            "description": "Invitation already accepted",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.GoneError"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal Server Error",
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -4312,25 +4069,21 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Invitation accepted",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true
+                  "$ref": "#/components/schemas/internal_api_handler.AcceptInvitationResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "Bad Request",
+            "description": "Token required",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
@@ -4340,62 +4093,47 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
           },
           "404": {
-            "description": "Not Found",
+            "description": "Invitation not found",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
                 }
               }
             }
           },
           "409": {
-            "description": "Conflict",
+            "description": "Already a member",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.ConflictError"
                 }
               }
             }
           },
           "410": {
-            "description": "Gone",
+            "description": "Invitation expired",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.GoneError"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal Server Error",
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -4417,15 +4155,31 @@
         "summary": "Get endpoint status",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Endpoint statuses",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "additionalProperties": true
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.EndpointStatusListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -4447,15 +4201,31 @@
         "summary": "Get incidents",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "List of incidents",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "additionalProperties": true
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.IncidentListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -4477,12 +4247,31 @@
         "summary": "Get API metrics",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "API metrics",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true
+                  "$ref": "#/components/schemas/internal_api_handler.MetricsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -4504,15 +4293,31 @@
         "summary": "List available plugins",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "List of plugins",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "additionalProperties": true
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.PluginListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -4545,12 +4350,51 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Plugin details",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true
+                  "$ref": "#/components/schemas/internal_api_handler.PluginDetailResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid plugin ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Plugin not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -4585,8 +4429,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "additionalProperties": true
+                "$ref": "#/components/schemas/internal_api_handler.PluginConfigRequest"
               }
             }
           },
@@ -4595,12 +4438,51 @@
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Plugin configured successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true
+                  "$ref": "#/components/schemas/internal_api_handler.PluginConfigureResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid configuration",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Plugin not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -4610,7 +4492,7 @@
     },
     "/run/{project_id}/{slug}": {
       "post": {
-        "description": "Execute flows by project ID and flow slug",
+        "description": "Execute flows by project ID and flow slug. Response structure depends on flow configuration.",
         "tags": [
           "gateway"
         ],
@@ -4637,12 +4519,42 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Flow execution result - structure varies based on flow",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid project ID or missing slug",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Flow not found or not active",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Flow execution failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -4699,53 +4611,41 @@
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Webhook received",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "boolean"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.WebhookResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "Bad Request",
+            "description": "Invalid request",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Invalid signature",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal Server Error",
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -4773,53 +4673,41 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Webhook received",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "boolean"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.WebhookResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "Bad Request",
+            "description": "Invalid request",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
                 }
               }
             }
           },
           "401": {
-            "description": "Unauthorized",
+            "description": "Invalid signature",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal Server Error",
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -5474,6 +5362,34 @@
           "DocumentParseStatusFailed"
         ]
       },
+      "internal_api_handler.AcceptInvitationResponse": {
+        "description": "Invitation acceptance response",
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "example": "member"
+          },
+          "workspace_id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          }
+        }
+      },
+      "internal_api_handler.BadRequestError": {
+        "description": "Bad request error",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "BAD_REQUEST"
+          },
+          "error": {
+            "type": "string",
+            "example": "invalid request parameters"
+          }
+        }
+      },
       "internal_api_handler.ClerkWebhookEvent": {
         "type": "object",
         "properties": {
@@ -5485,6 +5401,62 @@
           },
           "type": {
             "type": "string"
+          }
+        }
+      },
+      "internal_api_handler.ConflictError": {
+        "description": "Conflict error",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "CONFLICT"
+          },
+          "error": {
+            "type": "string",
+            "example": "resource already exists"
+          }
+        }
+      },
+      "internal_api_handler.ConversationChatResponse": {
+        "description": "Conversation chat response",
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "example": "Here is my response..."
+          },
+          "conversation_id": {
+            "type": "string",
+            "example": "conv_abc123"
+          },
+          "input_tokens": {
+            "type": "integer",
+            "example": 150
+          },
+          "model": {
+            "type": "string",
+            "example": "gpt-4"
+          },
+          "output_tokens": {
+            "type": "integer",
+            "example": 200
+          }
+        }
+      },
+      "internal_api_handler.ConversationHistoryResponse": {
+        "description": "Conversation history response",
+        "type": "object",
+        "properties": {
+          "conversation_id": {
+            "type": "string",
+            "example": "conv_abc123"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_api_handler.HistoryMessage"
+            }
           }
         }
       },
@@ -5542,6 +5514,16 @@
           }
         }
       },
+      "internal_api_handler.DeletedResponse": {
+        "description": "Deletion confirmation response",
+        "type": "object",
+        "properties": {
+          "deleted": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
       "internal_api_handler.DeployFlowResponse": {
         "type": "object",
         "properties": {
@@ -5571,17 +5553,41 @@
           }
         }
       },
-      "internal_api_handler.ErrorResponse": {
-        "description": "API error response",
+      "internal_api_handler.EndpointStatus": {
+        "description": "Endpoint status information",
         "type": "object",
         "properties": {
-          "code": {
+          "method": {
             "type": "string",
-            "example": "NOT_FOUND"
+            "example": "GET"
           },
-          "error": {
+          "path": {
             "type": "string",
-            "example": "resource not found"
+            "example": "/api/v1/flows"
+          },
+          "response_time": {
+            "type": "integer",
+            "example": 120
+          },
+          "status": {
+            "type": "string",
+            "example": "operational"
+          },
+          "uptime": {
+            "type": "number",
+            "example": 99.9
+          }
+        }
+      },
+      "internal_api_handler.EndpointStatusListResponse": {
+        "description": "List of endpoint statuses",
+        "type": "object",
+        "properties": {
+          "endpoints": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_api_handler.EndpointStatus"
+            }
           }
         }
       },
@@ -5608,15 +5614,18 @@
         "type": "object",
         "properties": {
           "aborted": {
-            "type": "boolean"
+            "type": "boolean",
+            "example": false
           },
           "output": {},
           "response": {},
           "status": {
-            "type": "integer"
+            "type": "integer",
+            "example": 200
           },
           "success": {
-            "type": "boolean"
+            "type": "boolean",
+            "example": true
           }
         }
       },
@@ -5682,6 +5691,136 @@
           "updated_at": {
             "type": "string",
             "example": "2024-01-15T10:30:00Z"
+          }
+        }
+      },
+      "internal_api_handler.ForbiddenError": {
+        "description": "Forbidden error",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "FORBIDDEN"
+          },
+          "error": {
+            "type": "string",
+            "example": "insufficient permissions"
+          }
+        }
+      },
+      "internal_api_handler.GoneError": {
+        "description": "Gone error (expired resource)",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "GONE"
+          },
+          "error": {
+            "type": "string",
+            "example": "resource has expired"
+          }
+        }
+      },
+      "internal_api_handler.HealthErrorResponse": {
+        "description": "Unhealthy status response",
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "database connection failed"
+          },
+          "status": {
+            "type": "string",
+            "example": "unhealthy"
+          }
+        }
+      },
+      "internal_api_handler.HealthResponse": {
+        "description": "Health check response",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "healthy"
+          }
+        }
+      },
+      "internal_api_handler.HistoryMessage": {
+        "description": "History message",
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "example": "Hello, how can you help me?"
+          },
+          "role": {
+            "type": "string",
+            "example": "user"
+          },
+          "timestamp": {
+            "type": "string",
+            "example": "2024-01-15T10:00:00Z"
+          }
+        }
+      },
+      "internal_api_handler.Incident": {
+        "description": "Incident information",
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "example": "Increased latency on flow endpoints"
+          },
+          "id": {
+            "type": "string",
+            "example": "inc_123"
+          },
+          "resolved_at": {
+            "type": "string",
+            "example": "2024-01-15T10:30:00Z"
+          },
+          "severity": {
+            "type": "string",
+            "example": "minor"
+          },
+          "started_at": {
+            "type": "string",
+            "example": "2024-01-15T10:00:00Z"
+          },
+          "status": {
+            "type": "string",
+            "example": "resolved"
+          },
+          "title": {
+            "type": "string",
+            "example": "API Latency Spike"
+          }
+        }
+      },
+      "internal_api_handler.IncidentListResponse": {
+        "description": "List of incidents",
+        "type": "object",
+        "properties": {
+          "incidents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_api_handler.Incident"
+            }
+          }
+        }
+      },
+      "internal_api_handler.InternalServerError": {
+        "description": "Internal server error",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "INTERNAL_ERROR"
+          },
+          "error": {
+            "type": "string",
+            "example": "internal server error"
           }
         }
       },
@@ -5757,6 +5896,179 @@
           }
         }
       },
+      "internal_api_handler.MetricsResponse": {
+        "description": "API metrics response",
+        "type": "object",
+        "properties": {
+          "active_incidents": {
+            "type": "integer",
+            "example": 5
+          },
+          "avg_response_time": {
+            "type": "integer",
+            "example": 330
+          },
+          "overall_uptime": {
+            "type": "number",
+            "example": 99.73
+          },
+          "total_requests": {
+            "type": "integer",
+            "example": 2400000
+          }
+        }
+      },
+      "internal_api_handler.NotFoundError": {
+        "description": "Not found error",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "NOT_FOUND"
+          },
+          "error": {
+            "type": "string",
+            "example": "resource not found"
+          }
+        }
+      },
+      "internal_api_handler.PlanListResponse": {
+        "description": "List of available billing plans",
+        "type": "object",
+        "properties": {
+          "plans": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_api_handler.PlanSummary"
+            }
+          }
+        }
+      },
+      "internal_api_handler.PlanSummary": {
+        "description": "Billing plan summary",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "plan_starter"
+          },
+          "interval": {
+            "type": "string",
+            "example": "month"
+          },
+          "name": {
+            "type": "string",
+            "example": "Starter"
+          },
+          "price": {
+            "type": "integer",
+            "example": 29
+          }
+        }
+      },
+      "internal_api_handler.PluginConfigRequest": {
+        "type": "object",
+        "properties": {
+          "api_key": {
+            "type": "string",
+            "example": "sk_test_123"
+          },
+          "settings": {
+            "type": "object",
+            "additionalProperties": {}
+          }
+        }
+      },
+      "internal_api_handler.PluginConfigureResponse": {
+        "description": "Plugin configuration response",
+        "type": "object",
+        "properties": {
+          "configured": {
+            "type": "boolean",
+            "example": true
+          },
+          "id": {
+            "type": "string",
+            "example": "stripe-payment"
+          }
+        }
+      },
+      "internal_api_handler.PluginDetailResponse": {
+        "description": "Detailed plugin information",
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "example": "payment"
+          },
+          "config": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "description": {
+            "type": "string",
+            "example": "Process payments via Stripe"
+          },
+          "enabled": {
+            "type": "boolean",
+            "example": true
+          },
+          "id": {
+            "type": "string",
+            "example": "stripe-payment"
+          },
+          "name": {
+            "type": "string",
+            "example": "Stripe Payment"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          }
+        }
+      },
+      "internal_api_handler.PluginInfo": {
+        "description": "Plugin information",
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "example": "payment"
+          },
+          "description": {
+            "type": "string",
+            "example": "Process payments via Stripe"
+          },
+          "enabled": {
+            "type": "boolean",
+            "example": true
+          },
+          "id": {
+            "type": "string",
+            "example": "stripe-payment"
+          },
+          "name": {
+            "type": "string",
+            "example": "Stripe Payment"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          }
+        }
+      },
+      "internal_api_handler.PluginListResponse": {
+        "description": "List of available plugins",
+        "type": "object",
+        "properties": {
+          "plugins": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_api_handler.PluginInfo"
+            }
+          }
+        }
+      },
       "internal_api_handler.ProjectResponse": {
         "type": "object",
         "properties": {
@@ -5786,6 +6098,16 @@
           }
         }
       },
+      "internal_api_handler.PromptFlowResponse": {
+        "description": "AI-generated flow response",
+        "type": "object",
+        "properties": {
+          "flow": {
+            "type": "object",
+            "additionalProperties": {}
+          }
+        }
+      },
       "internal_api_handler.RoleInfo": {
         "type": "object",
         "properties": {
@@ -5794,6 +6116,44 @@
           },
           "name": {
             "type": "string"
+          }
+        }
+      },
+      "internal_api_handler.ServiceUnavailableError": {
+        "description": "Service unavailable error",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "SERVICE_UNAVAILABLE"
+          },
+          "error": {
+            "type": "string",
+            "example": "service unavailable"
+          }
+        }
+      },
+      "internal_api_handler.SuggestionsResponse": {
+        "description": "AI suggestions response",
+        "type": "object",
+        "properties": {
+          "suggestions": {
+            "type": "array",
+            "items": {}
+          }
+        }
+      },
+      "internal_api_handler.UnauthorizedError": {
+        "description": "Unauthorized error",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "UNAUTHORIZED"
+          },
+          "error": {
+            "type": "string",
+            "example": "unauthorized"
           }
         }
       },
@@ -5922,6 +6282,30 @@
           },
           "slug": {
             "type": "string"
+          }
+        }
+      },
+      "internal_api_handler.ValidResponse": {
+        "description": "Validation result response",
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": ""
+          },
+          "valid": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "internal_api_handler.WebhookResponse": {
+        "description": "Webhook processing response",
+        "type": "object",
+        "properties": {
+          "received": {
+            "type": "boolean",
+            "example": true
           }
         }
       },
