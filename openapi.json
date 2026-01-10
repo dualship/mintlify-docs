@@ -1,0 +1,6546 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "Dualship backend API for workflow automation and API management.",
+    "title": "Dualship API",
+    "termsOfService": "https://dualship.run/terms",
+    "contact": {
+      "name": "Dualship Support",
+      "url": "https://dualship.run/support",
+      "email": "support@dualship.run"
+    },
+    "version": "1.0"
+  },
+  "paths": {
+    "/admin/billing/sync-plans": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Creates or updates Stripe products and prices for all active subscription plans. Idempotent - safe to run multiple times.",
+        "tags": [
+          "admin"
+        ],
+        "summary": "Sync subscription plans to Stripe",
+        "responses": {
+          "200": {
+            "description": "Sync results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.SyncPlanListResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ai/complete": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Generate AI completion using configured providers",
+        "tags": [
+          "ai"
+        ],
+        "summary": "AI Completion",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_api_rules.AICompletionRequest"
+              }
+            }
+          },
+          "description": "Completion request",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Completion response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_ai_providers.CompletionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request or no providers configured",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Completion failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "AI service not configured or all providers failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ai/conversations/chat": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Send a message in a conversation with memory persistence",
+        "tags": [
+          "ai"
+        ],
+        "summary": "Chat with conversation memory",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_api_rules.ConversationChatRequest"
+              }
+            }
+          },
+          "description": "Chat request",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Chat response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ConversationChatResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request or no providers configured",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Chat failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "AI service not configured or all providers failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ai/conversations/history": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Get the message history for a conversation",
+        "tags": [
+          "ai"
+        ],
+        "summary": "Get conversation history",
+        "parameters": [
+          {
+            "description": "Workspace ID",
+            "name": "workspace_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Conversation ID",
+            "name": "conversation_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Conversation history",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ConversationHistoryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to get history",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "AI service not configured",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ai/conversations/{conversation_id}": {
+      "delete": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Delete all messages in a conversation",
+        "tags": [
+          "ai"
+        ],
+        "summary": "Clear conversation history",
+        "parameters": [
+          {
+            "description": "Conversation ID",
+            "name": "conversation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Conversation cleared successfully"
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to clear conversation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "AI service not configured",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ai/prompt": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Use AI to generate a flow from natural language",
+        "tags": [
+          "ai"
+        ],
+        "summary": "Generate flow from prompt",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_api_rules.AIPromptRequest"
+              }
+            }
+          },
+          "description": "Prompt request",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Generated flow",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.PromptFlowResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "AI service not configured",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ai/providers": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Get all AI providers for a workspace",
+        "tags": [
+          "ai"
+        ],
+        "summary": "List AI providers",
+        "responses": {
+          "200": {
+            "description": "List of AI providers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.AIProviderListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "AI service not configured",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Add a new AI provider configuration",
+        "tags": [
+          "ai"
+        ],
+        "summary": "Create AI provider",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_api_rules.CreateAIProviderRequest"
+              }
+            }
+          },
+          "description": "Provider details",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Provider created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_ai.ProviderInfo"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "AI service not configured",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ai/providers/{id}": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Get details of a specific AI provider",
+        "tags": [
+          "ai"
+        ],
+        "summary": "Get AI provider",
+        "parameters": [
+          {
+            "description": "Provider ID",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Provider details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_ai.ProviderInfo"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid provider ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Provider not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "AI service not configured",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Update an existing AI provider configuration",
+        "tags": [
+          "ai"
+        ],
+        "summary": "Update AI provider",
+        "parameters": [
+          {
+            "description": "Provider ID",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_api_rules.UpdateAIProviderRequest"
+              }
+            }
+          },
+          "description": "Provider details",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Provider updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_ai.ProviderInfo"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Provider not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "AI service not configured",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Remove an AI provider configuration",
+        "tags": [
+          "ai"
+        ],
+        "summary": "Delete AI provider",
+        "parameters": [
+          {
+            "description": "Provider ID",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Provider deleted successfully"
+          },
+          "400": {
+            "description": "Invalid provider ID",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Provider not found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "AI service not configured",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ai/providers/{id}/validate": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Test the API key for a provider",
+        "tags": [
+          "ai"
+        ],
+        "summary": "Validate AI provider",
+        "parameters": [
+          {
+            "description": "Provider ID",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Validation result",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ValidResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid provider ID",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Provider not found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "AI service not configured",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ai/suggest": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Get AI-powered node suggestions for a flow",
+        "tags": [
+          "ai"
+        ],
+        "summary": "Get AI suggestions",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          },
+          "description": "Context for suggestions",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Node suggestions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.SuggestionsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "AI service not configured",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/billing": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Get current plan, usage, and subscription details for a workspace",
+        "tags": [
+          "billing"
+        ],
+        "summary": "Get billing information",
+        "parameters": [
+          {
+            "description": "Workspace ID",
+            "name": "workspace_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_billing.BillingInfo"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid workspace ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not a member of this workspace",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ForbiddenError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/billing/checkout": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Create a Stripe checkout session for subscription upgrade",
+        "tags": [
+          "billing"
+        ],
+        "summary": "Create checkout session",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_api_rules.CreateCheckoutRequest"
+              }
+            }
+          },
+          "description": "Checkout request",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_billing.CheckoutResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ForbiddenError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/billing/plans": {
+      "get": {
+        "description": "Get all available subscription plans",
+        "tags": [
+          "billing"
+        ],
+        "summary": "List available plans",
+        "responses": {
+          "200": {
+            "description": "List of available plans",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.PlanListResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/billing/portal": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Create a Stripe customer portal session for subscription management",
+        "tags": [
+          "billing"
+        ],
+        "summary": "Create customer portal session",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_api_rules.CreatePortalRequest"
+              }
+            }
+          },
+          "description": "Portal request",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_billing.PortalResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ForbiddenError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/documents": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Get all documents for the workspace",
+        "tags": [
+          "documents"
+        ],
+        "summary": "List documents",
+        "parameters": [
+          {
+            "description": "Limit",
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Offset",
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of documents",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.DocumentListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Document service not configured",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Upload a document for AI chat context",
+        "tags": [
+          "documents"
+        ],
+        "summary": "Upload document",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "description": "Document file",
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Document uploaded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_storage_postgres.Document"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request or unsupported file type",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Document service not configured",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/documents/{id}": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Get document details by ID",
+        "tags": [
+          "documents"
+        ],
+        "summary": "Get document",
+        "parameters": [
+          {
+            "description": "Document ID",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Document details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_storage_postgres.Document"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid document ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Document not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Document service not configured",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Delete a document",
+        "tags": [
+          "documents"
+        ],
+        "summary": "Delete document",
+        "parameters": [
+          {
+            "description": "Document ID",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Document deleted successfully"
+          },
+          "400": {
+            "description": "Invalid document ID",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Document not found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Document service not configured",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/documents/{id}/content": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Get parsed content of a document",
+        "tags": [
+          "documents"
+        ],
+        "summary": "Get document content",
+        "parameters": [
+          {
+            "description": "Document ID",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Document content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.DocumentContentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid document ID or parsing error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Document not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Document service not configured",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ServiceUnavailableError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/executor/node": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Execute a node with the provided context (for testing)",
+        "tags": [
+          "executor"
+        ],
+        "summary": "Execute a single node",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/internal_api_handler.ExecuteNodeRequest"
+              }
+            }
+          },
+          "description": "Node execution request",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Node executed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ExecuteNodeResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request or node configuration",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Node execution failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/flows": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Get a list of all flows for the project",
+        "tags": [
+          "flows"
+        ],
+        "summary": "List all flows",
+        "parameters": [
+          {
+            "description": "Project ID (uses default if not specified)",
+            "name": "project_id",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Limit",
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Offset",
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of flows",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.FlowListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request or project not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Create a new API flow",
+        "tags": [
+          "flows"
+        ],
+        "summary": "Create a new flow",
+        "parameters": [
+          {
+            "description": "Project ID (uses default if not specified)",
+            "name": "project_id",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/internal_api_handler.CreateFlowRequest"
+              }
+            }
+          },
+          "description": "Flow configuration",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Flow created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.FlowResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request or validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/flows/{id}": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Get a specific flow by ID",
+        "tags": [
+          "flows"
+        ],
+        "summary": "Get a flow",
+        "parameters": [
+          {
+            "description": "Flow ID",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Flow details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.FlowResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid flow ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Flow not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Update an existing flow",
+        "tags": [
+          "flows"
+        ],
+        "summary": "Update a flow",
+        "parameters": [
+          {
+            "description": "Flow ID",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/internal_api_handler.UpdateFlowRequest"
+              }
+            }
+          },
+          "description": "Flow configuration",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Flow updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.FlowResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request or validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Flow not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Delete a flow by ID",
+        "tags": [
+          "flows"
+        ],
+        "summary": "Delete a flow",
+        "parameters": [
+          {
+            "description": "Flow ID",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Flow deleted successfully"
+          },
+          "400": {
+            "description": "Invalid flow ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Flow not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/flows/{id}/deploy": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Deploy a flow to make it live",
+        "tags": [
+          "flows"
+        ],
+        "summary": "Deploy a flow",
+        "parameters": [
+          {
+            "description": "Flow ID",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Flow deployed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.DeployFlowResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid flow ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Flow not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/flows/{id}/execute": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Execute a flow directly (for testing)",
+        "tags": [
+          "flows"
+        ],
+        "summary": "Execute a flow",
+        "parameters": [
+          {
+            "description": "Flow ID",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          },
+          "description": "Request body"
+        },
+        "responses": {
+          "200": {
+            "description": "Flow execution result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid flow ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Flow not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/me": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Get the authenticated user's profile information including workspaces and their plans",
+        "tags": [
+          "user"
+        ],
+        "summary": "Get current user",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UserResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Get all projects for the current organization",
+        "tags": [
+          "projects"
+        ],
+        "summary": "List projects",
+        "responses": {
+          "200": {
+            "description": "List of projects",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ProjectListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Create a new project in the current organization",
+        "tags": [
+          "projects"
+        ],
+        "summary": "Create project",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_api_rules.CreateProjectRequest"
+              }
+            }
+          },
+          "description": "Project details",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Project created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ProjectResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{id}": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Get a project by ID",
+        "tags": [
+          "projects"
+        ],
+        "summary": "Get project",
+        "parameters": [
+          {
+            "description": "Project ID",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Project details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ProjectResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid project ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Project not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Update a project by ID",
+        "tags": [
+          "projects"
+        ],
+        "summary": "Update project",
+        "parameters": [
+          {
+            "description": "Project ID",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_api_rules.UpdateProjectRequest"
+              }
+            }
+          },
+          "description": "Project details",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Project updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ProjectResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Project not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Delete a project by ID",
+        "tags": [
+          "projects"
+        ],
+        "summary": "Delete project",
+        "parameters": [
+          {
+            "description": "Project ID",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Project deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.DeletedResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid project ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Project not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/roles": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Get all available roles for workspace membership",
+        "tags": [
+          "workspace-members"
+        ],
+        "summary": "List roles",
+        "responses": {
+          "200": {
+            "description": "List of roles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.RoleListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workspaces": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Get all workspaces the authenticated user is a member of",
+        "tags": [
+          "workspaces"
+        ],
+        "summary": "List workspaces",
+        "responses": {
+          "200": {
+            "description": "List of workspaces",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.WorkspaceListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Create a new workspace and add the authenticated user as owner",
+        "tags": [
+          "workspaces"
+        ],
+        "summary": "Create workspace",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_api_rules.CreateWorkspaceRequest"
+              }
+            }
+          },
+          "description": "Workspace details",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Workspace created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.WorkspaceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workspaces/{id}": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Get a workspace by ID (requires membership)",
+        "tags": [
+          "workspaces"
+        ],
+        "summary": "Get workspace",
+        "parameters": [
+          {
+            "description": "Workspace ID",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Workspace details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.WorkspaceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid workspace ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not a member of this workspace",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ForbiddenError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Workspace not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Update a workspace (requires owner or admin role)",
+        "tags": [
+          "workspaces"
+        ],
+        "summary": "Update workspace",
+        "parameters": [
+          {
+            "description": "Workspace ID",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_api_rules.UpdateWorkspaceRequest"
+              }
+            }
+          },
+          "description": "Workspace details",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Workspace updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.WorkspaceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ForbiddenError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Workspace not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Delete a workspace (requires owner role)",
+        "tags": [
+          "workspaces"
+        ],
+        "summary": "Delete workspace",
+        "parameters": [
+          {
+            "description": "Workspace ID",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Workspace deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.DeletedResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid workspace ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Only owner can delete workspace",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ForbiddenError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Workspace not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workspaces/{id}/invitations": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Get all pending invitations for a workspace (requires owner or admin role)",
+        "tags": [
+          "workspace-invitations"
+        ],
+        "summary": "List invitations",
+        "parameters": [
+          {
+            "description": "Workspace ID",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of invitations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InvitationListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid workspace ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ForbiddenError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Create an invitation to join a workspace (requires owner or admin role)",
+        "tags": [
+          "workspace-invitations"
+        ],
+        "summary": "Create invitation",
+        "parameters": [
+          {
+            "description": "Workspace ID",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_api_rules.CreateInvitationRequest"
+              }
+            }
+          },
+          "description": "Invitation details",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Invitation created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InvitationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ForbiddenError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Invitation already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ConflictError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workspaces/{id}/invitations/{inviteId}": {
+      "delete": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Revoke a pending invitation (requires owner or admin role)",
+        "tags": [
+          "workspace-invitations"
+        ],
+        "summary": "Revoke invitation",
+        "parameters": [
+          {
+            "description": "Workspace ID",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Invitation ID",
+            "name": "inviteId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invitation revoked",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.DeletedResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ForbiddenError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invitation not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workspaces/{id}/logo": {
+      "put": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Upload a logo image for a workspace (requires owner or admin role)",
+        "tags": [
+          "workspaces"
+        ],
+        "summary": "Upload workspace logo",
+        "parameters": [
+          {
+            "description": "Workspace ID",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "logo": {
+                    "description": "Logo image file (max 5MB, jpeg/png/gif/webp)",
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "logo"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Logo uploaded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.WorkspaceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request or file",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ForbiddenError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Remove the logo from a workspace (requires owner or admin role)",
+        "tags": [
+          "workspaces"
+        ],
+        "summary": "Delete workspace logo",
+        "parameters": [
+          {
+            "description": "Workspace ID",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Logo deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.WorkspaceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid workspace ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ForbiddenError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Workspace not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workspaces/{id}/members": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Get all members of a workspace (requires membership)",
+        "tags": [
+          "workspace-members"
+        ],
+        "summary": "List workspace members",
+        "parameters": [
+          {
+            "description": "Workspace ID",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of members",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.MemberListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid workspace ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not a member of this workspace",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ForbiddenError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workspaces/{id}/members/{userId}": {
+      "delete": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Remove a member from a workspace (requires owner or admin role)",
+        "tags": [
+          "workspace-members"
+        ],
+        "summary": "Remove workspace member",
+        "parameters": [
+          {
+            "description": "Workspace ID",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "User ID to remove",
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Member removed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.DeletedResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ForbiddenError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Member not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workspaces/{id}/members/{userId}/role": {
+      "put": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Change a member's role in a workspace (requires owner role)",
+        "tags": [
+          "workspace-members"
+        ],
+        "summary": "Update member role",
+        "parameters": [
+          {
+            "description": "Workspace ID",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "User ID",
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_api_rules.UpdateMemberRoleRequest"
+              }
+            }
+          },
+          "description": "New role",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Role updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.MemberResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Only owner can change roles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ForbiddenError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Member not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/gateway/{project_id}/{path}": {
+      "post": {
+        "description": "Execute flows based on project subdomain and path. Response structure depends on flow configuration.",
+        "tags": [
+          "gateway"
+        ],
+        "summary": "Gateway endpoint for flow execution",
+        "parameters": [
+          {
+            "description": "Project ID",
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Flow path",
+            "name": "path",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Flow execution result - structure varies based on flow",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid project ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Route not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Flow execution failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "description": "Check if the service and its dependencies are healthy",
+        "tags": [
+          "health"
+        ],
+        "summary": "Health check",
+        "responses": {
+          "200": {
+            "description": "Service is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.HealthResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.HealthErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/invitations/{token}": {
+      "get": {
+        "description": "Get public information about an invitation by token (no auth required)",
+        "tags": [
+          "invitations"
+        ],
+        "summary": "Get invitation info",
+        "parameters": [
+          {
+            "description": "Invitation token",
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invitation info",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InvitationInfoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Token required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invitation not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Invitation already accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.GoneError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/invitations/{token}/accept": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Accept an invitation and join a workspace",
+        "tags": [
+          "invitations"
+        ],
+        "summary": "Accept invitation",
+        "parameters": [
+          {
+            "description": "Invitation token",
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invitation accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.AcceptInvitationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Token required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invitation not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Already a member",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.ConflictError"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Invitation expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.GoneError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/monitoring/endpoints": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Get status and metrics for each endpoint",
+        "tags": [
+          "monitoring"
+        ],
+        "summary": "Get endpoint status",
+        "responses": {
+          "200": {
+            "description": "Endpoint statuses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.EndpointStatusListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/monitoring/incidents": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Get list of active and past incidents",
+        "tags": [
+          "monitoring"
+        ],
+        "summary": "Get incidents",
+        "responses": {
+          "200": {
+            "description": "List of incidents",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.IncidentListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/monitoring/metrics": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Get overall metrics (uptime, response times, request count)",
+        "tags": [
+          "monitoring"
+        ],
+        "summary": "Get API metrics",
+        "responses": {
+          "200": {
+            "description": "API metrics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.MetricsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/plugins": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Get a list of all available plugins",
+        "tags": [
+          "plugins"
+        ],
+        "summary": "List available plugins",
+        "responses": {
+          "200": {
+            "description": "List of plugins",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.PluginListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/plugins/{id}": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Get details of a specific plugin",
+        "tags": [
+          "plugins"
+        ],
+        "summary": "Get plugin details",
+        "parameters": [
+          {
+            "description": "Plugin ID",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Plugin details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.PluginDetailResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid plugin ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Plugin not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/plugins/{id}/configure": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "description": "Configure a plugin with credentials/settings",
+        "tags": [
+          "plugins"
+        ],
+        "summary": "Configure a plugin",
+        "parameters": [
+          {
+            "description": "Plugin ID",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/internal_api_handler.PluginConfigRequest"
+              }
+            }
+          },
+          "description": "Plugin configuration",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Plugin configured successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.PluginConfigureResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid configuration",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Plugin not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/run/{project_id}/{slug}": {
+      "post": {
+        "description": "Execute flows by project ID and flow slug. Response structure depends on flow configuration.",
+        "tags": [
+          "gateway"
+        ],
+        "summary": "Gateway endpoint for flow execution by slug",
+        "parameters": [
+          {
+            "description": "Project ID",
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Flow Slug",
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Flow execution result - structure varies based on flow",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid project ID or missing slug",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Flow not found or not active",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.NotFoundError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Flow execution failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/webhooks/clerk": {
+      "post": {
+        "description": "Handle webhook events from Clerk (user.created, user.updated, user.deleted)",
+        "tags": [
+          "webhooks"
+        ],
+        "summary": "Clerk webhook handler",
+        "parameters": [
+          {
+            "description": "Svix webhook ID",
+            "name": "svix-id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Svix webhook timestamp",
+            "name": "svix-timestamp",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Svix webhook signature",
+            "name": "svix-signature",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/internal_api_handler.ClerkWebhookEvent"
+              }
+            }
+          },
+          "description": "Webhook event payload",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook received",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.WebhookResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid signature",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/webhooks/stripe": {
+      "post": {
+        "description": "Handle webhook events from Stripe (via Hookdeck)",
+        "tags": [
+          "webhooks"
+        ],
+        "summary": "Stripe webhook handler",
+        "parameters": [
+          {
+            "description": "Hookdeck webhook signature",
+            "name": "X-Hookdeck-Signature",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Webhook received",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.WebhookResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid signature",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.UnauthorizedError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.dualship.run"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT Bearer token authentication"
+      }
+    },
+    "schemas": {
+      "github_com_dualship_dualship-be_internal_ai.ProviderInfo": {
+        "type": "object",
+        "properties": {
+          "base_url": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "is_default": {
+            "type": "boolean"
+          },
+          "max_retries": {
+            "type": "integer"
+          },
+          "models": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "name": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "integer"
+          },
+          "provider_type": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "timeout_seconds": {
+            "type": "integer"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_ai_providers.CompletionResponse": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "finish_reason": {
+            "type": "string"
+          },
+          "input_tokens": {
+            "type": "integer"
+          },
+          "model": {
+            "type": "string"
+          },
+          "output_tokens": {
+            "type": "integer"
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_api_rules.AICompletionRequest": {
+        "type": "object",
+        "required": [
+          "messages",
+          "workspace_id"
+        ],
+        "properties": {
+          "max_tokens": {
+            "type": "integer",
+            "maximum": 16384,
+            "minimum": 1
+          },
+          "messages": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "content",
+                "role"
+              ],
+              "properties": {
+                "content": {
+                  "type": "string"
+                },
+                "role": {
+                  "type": "string",
+                  "enum": [
+                    "system",
+                    "user",
+                    "assistant"
+                  ]
+                }
+              }
+            }
+          },
+          "model": {
+            "type": "string"
+          },
+          "stream": {
+            "type": "boolean"
+          },
+          "temperature": {
+            "type": "number",
+            "maximum": 2,
+            "minimum": 0
+          },
+          "workspace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_api_rules.AIPromptRequest": {
+        "type": "object",
+        "required": [
+          "prompt",
+          "workspace_id"
+        ],
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "maxLength": 10000,
+            "minLength": 1
+          },
+          "workspace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_api_rules.ConversationChatRequest": {
+        "type": "object",
+        "required": [
+          "conversation_id",
+          "message",
+          "workspace_id"
+        ],
+        "properties": {
+          "conversation_id": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1
+          },
+          "document_ids": {
+            "type": "array",
+            "maxItems": 10,
+            "items": {
+              "type": "string"
+            }
+          },
+          "max_history": {
+            "type": "integer",
+            "maximum": 100,
+            "minimum": 1
+          },
+          "max_tokens": {
+            "type": "integer",
+            "maximum": 16384,
+            "minimum": 1
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1
+          },
+          "model": {
+            "type": "string"
+          },
+          "system_prompt": {
+            "type": "string",
+            "maxLength": 10000
+          },
+          "temperature": {
+            "type": "number",
+            "maximum": 2,
+            "minimum": 0
+          },
+          "workspace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_api_rules.CreateAIProviderRequest": {
+        "type": "object",
+        "required": [
+          "api_key",
+          "name",
+          "provider_type",
+          "workspace_id"
+        ],
+        "properties": {
+          "api_key": {
+            "type": "string",
+            "minLength": 10
+          },
+          "base_url": {
+            "type": "string"
+          },
+          "is_default": {
+            "type": "boolean"
+          },
+          "max_retries": {
+            "type": "integer",
+            "maximum": 10,
+            "minimum": 0
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1
+          },
+          "priority": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "provider_type": {
+            "type": "string",
+            "enum": [
+              "claude",
+              "openai",
+              "gemini"
+            ]
+          },
+          "timeout_seconds": {
+            "type": "integer",
+            "maximum": 300,
+            "minimum": 1
+          },
+          "workspace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_api_rules.CreateCheckoutRequest": {
+        "type": "object",
+        "required": [
+          "interval",
+          "plan_slug",
+          "workspace_id"
+        ],
+        "properties": {
+          "interval": {
+            "type": "string",
+            "enum": [
+              "monthly",
+              "yearly"
+            ]
+          },
+          "plan_slug": {
+            "type": "string",
+            "enum": [
+              "hobby",
+              "pro"
+            ]
+          },
+          "workspace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_api_rules.CreateInvitationRequest": {
+        "type": "object",
+        "required": [
+          "role_id"
+        ],
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "expires_in_hours": {
+            "type": "integer",
+            "maximum": 720,
+            "minimum": 1
+          },
+          "role_id": {
+            "type": "string"
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_api_rules.CreatePortalRequest": {
+        "type": "object",
+        "required": [
+          "return_url",
+          "workspace_id"
+        ],
+        "properties": {
+          "return_url": {
+            "type": "string"
+          },
+          "workspace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_api_rules.CreateProjectRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "slug"
+        ],
+        "properties": {
+          "description": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 2
+          },
+          "slug": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_api_rules.CreateWorkspaceRequest": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 2
+          },
+          "slug": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_api_rules.UpdateAIProviderRequest": {
+        "type": "object",
+        "properties": {
+          "api_key": {
+            "type": "string",
+            "minLength": 10
+          },
+          "base_url": {
+            "type": "string"
+          },
+          "is_default": {
+            "type": "boolean"
+          },
+          "max_retries": {
+            "type": "integer",
+            "maximum": 10,
+            "minimum": 0
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1
+          },
+          "priority": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive"
+            ]
+          },
+          "timeout_seconds": {
+            "type": "integer",
+            "maximum": 300,
+            "minimum": 1
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_api_rules.UpdateMemberRoleRequest": {
+        "type": "object",
+        "required": [
+          "role_id"
+        ],
+        "properties": {
+          "role_id": {
+            "type": "string"
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_api_rules.UpdateProjectRequest": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 2
+          },
+          "slug": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "archived",
+              "suspended"
+            ]
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_api_rules.UpdateWorkspaceRequest": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 2
+          },
+          "slug": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 2
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_billing.BillingInfo": {
+        "type": "object",
+        "properties": {
+          "limits": {
+            "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_billing.PlanLimits"
+          },
+          "plan": {
+            "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_billing.PlanInfo"
+          },
+          "subscription": {
+            "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_billing.SubInfo"
+          },
+          "usage": {
+            "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_billing.UsageInfo"
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_billing.CheckoutResult": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_billing.PlanFeature": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_billing.PlanInfo": {
+        "type": "object",
+        "properties": {
+          "features": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_billing.PlanFeature"
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "interval": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "price": {
+            "type": "integer"
+          },
+          "slug": {
+            "type": "string"
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_billing.PlanLimits": {
+        "type": "object",
+        "properties": {
+          "executions_per_month": {
+            "type": "integer"
+          },
+          "flows": {
+            "type": "integer"
+          },
+          "log_retention_days": {
+            "type": "integer"
+          },
+          "secrets": {
+            "type": "integer"
+          },
+          "team_members": {
+            "type": "integer"
+          },
+          "workspaces": {
+            "type": "integer"
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_billing.PortalResult": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_billing.SubInfo": {
+        "type": "object",
+        "properties": {
+          "cancel_at_period_end": {
+            "type": "boolean"
+          },
+          "current_period_end": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "trial_end": {
+            "type": "string"
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_billing.UsageInfo": {
+        "type": "object",
+        "properties": {
+          "executions": {
+            "type": "integer"
+          },
+          "flows": {
+            "type": "integer"
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_storage_postgres.Document": {
+        "type": "object",
+        "properties": {
+          "createdAt": {
+            "type": "string"
+          },
+          "fileName": {
+            "type": "string"
+          },
+          "fileSizeBytes": {
+            "type": "integer"
+          },
+          "fileType": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "organizationID": {
+            "type": "string"
+          },
+          "parseError": {
+            "type": "string"
+          },
+          "parseStatus": {
+            "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_storage_postgres.DocumentParseStatus"
+          },
+          "parsedContent": {
+            "type": "string"
+          },
+          "s3Key": {
+            "type": "string"
+          },
+          "tensorlakeFileID": {
+            "type": "string"
+          },
+          "tensorlakeParseID": {
+            "type": "string"
+          },
+          "tokenCount": {
+            "type": "integer"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "uploadedBy": {
+            "type": "string"
+          }
+        }
+      },
+      "github_com_dualship_dualship-be_internal_storage_postgres.DocumentParseStatus": {
+        "type": "string",
+        "enum": [
+          "pending",
+          "parsing",
+          "completed",
+          "failed"
+        ],
+        "x-enum-varnames": [
+          "DocumentParseStatusPending",
+          "DocumentParseStatusParsing",
+          "DocumentParseStatusCompleted",
+          "DocumentParseStatusFailed"
+        ]
+      },
+      "internal_api_handler.AIProviderListResponse": {
+        "description": "List of AI providers",
+        "type": "object",
+        "properties": {
+          "providers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_api_handler.AIProviderSummary"
+            }
+          }
+        }
+      },
+      "internal_api_handler.AIProviderSummary": {
+        "description": "AI provider summary",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "is_default": {
+            "type": "boolean",
+            "example": true
+          },
+          "name": {
+            "type": "string",
+            "example": "OpenAI Production"
+          },
+          "provider_type": {
+            "type": "string",
+            "example": "openai"
+          },
+          "status": {
+            "type": "string",
+            "example": "active"
+          }
+        }
+      },
+      "internal_api_handler.AcceptInvitationResponse": {
+        "description": "Invitation acceptance response",
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "example": "member"
+          },
+          "workspace_id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          }
+        }
+      },
+      "internal_api_handler.BadRequestError": {
+        "description": "Bad request error",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "BAD_REQUEST"
+          },
+          "error": {
+            "type": "string",
+            "example": "invalid request parameters"
+          }
+        }
+      },
+      "internal_api_handler.ClerkWebhookEvent": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "internal_api_handler.ConflictError": {
+        "description": "Conflict error",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "CONFLICT"
+          },
+          "error": {
+            "type": "string",
+            "example": "resource already exists"
+          }
+        }
+      },
+      "internal_api_handler.ConversationChatResponse": {
+        "description": "Conversation chat response",
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "example": "Here is my response..."
+          },
+          "conversation_id": {
+            "type": "string",
+            "example": "conv_abc123"
+          },
+          "input_tokens": {
+            "type": "integer",
+            "example": 150
+          },
+          "model": {
+            "type": "string",
+            "example": "gpt-4"
+          },
+          "output_tokens": {
+            "type": "integer",
+            "example": 200
+          }
+        }
+      },
+      "internal_api_handler.ConversationHistoryResponse": {
+        "description": "Conversation history response",
+        "type": "object",
+        "properties": {
+          "conversation_id": {
+            "type": "string",
+            "example": "conv_abc123"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_api_handler.HistoryMessage"
+            }
+          }
+        }
+      },
+      "internal_api_handler.CreateFlowRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "slug",
+          "trigger"
+        ],
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "edges": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "metadata": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "name": {
+            "type": "string"
+          },
+          "nodes": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "slug": {
+            "type": "string"
+          },
+          "trigger": {
+            "type": "object",
+            "required": [
+              "type"
+            ],
+            "properties": {
+              "config": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "type": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "internal_api_handler.DeletedResponse": {
+        "description": "Deletion confirmation response",
+        "type": "object",
+        "properties": {
+          "deleted": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "internal_api_handler.DeployFlowResponse": {
+        "type": "object",
+        "properties": {
+          "deployed_at": {
+            "type": "string",
+            "example": "2024-01-15T10:30:00Z"
+          },
+          "deployment_id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440003"
+          },
+          "environment": {
+            "type": "string",
+            "example": "production"
+          },
+          "flow_id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "status": {
+            "type": "string",
+            "example": "deployed"
+          },
+          "version": {
+            "type": "integer",
+            "example": 1
+          }
+        }
+      },
+      "internal_api_handler.DocumentContentResponse": {
+        "description": "Document content response",
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "example": "Document text content..."
+          }
+        }
+      },
+      "internal_api_handler.DocumentListResponse": {
+        "description": "List of documents",
+        "type": "object",
+        "properties": {
+          "documents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_api_handler.DocumentSummary"
+            }
+          }
+        }
+      },
+      "internal_api_handler.DocumentSummary": {
+        "description": "Document summary",
+        "type": "object",
+        "properties": {
+          "content_type": {
+            "type": "string",
+            "example": "application/pdf"
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2024-01-15T10:00:00Z"
+          },
+          "file_name": {
+            "type": "string",
+            "example": "report.pdf"
+          },
+          "file_size": {
+            "type": "integer",
+            "example": 1024000
+          },
+          "id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "parse_status": {
+            "type": "string",
+            "example": "completed"
+          }
+        }
+      },
+      "internal_api_handler.EndpointStatus": {
+        "description": "Endpoint status information",
+        "type": "object",
+        "properties": {
+          "method": {
+            "type": "string",
+            "example": "GET"
+          },
+          "path": {
+            "type": "string",
+            "example": "/api/v1/flows"
+          },
+          "response_time": {
+            "type": "integer",
+            "example": 120
+          },
+          "status": {
+            "type": "string",
+            "example": "operational"
+          },
+          "uptime": {
+            "type": "number",
+            "example": 99.9
+          }
+        }
+      },
+      "internal_api_handler.EndpointStatusListResponse": {
+        "description": "List of endpoint statuses",
+        "type": "object",
+        "properties": {
+          "endpoints": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_api_handler.EndpointStatus"
+            }
+          }
+        }
+      },
+      "internal_api_handler.ExecuteNodeRequest": {
+        "type": "object",
+        "required": [
+          "context",
+          "node"
+        ],
+        "properties": {
+          "context": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "node": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "internal_api_handler.ExecuteNodeResponse": {
+        "type": "object",
+        "properties": {
+          "aborted": {
+            "type": "boolean",
+            "example": false
+          },
+          "output": {},
+          "response": {},
+          "status": {
+            "type": "integer",
+            "example": 200
+          },
+          "success": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "internal_api_handler.FlowListResponse": {
+        "description": "List of flows",
+        "type": "object",
+        "properties": {
+          "flows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_api_handler.FlowResponse"
+            }
+          }
+        }
+      },
+      "internal_api_handler.FlowResponse": {
+        "type": "object",
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "example": "2024-01-15T10:30:00Z"
+          },
+          "description": {
+            "type": "string",
+            "example": "Handles user registration and welcome email"
+          },
+          "edges": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "metadata": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "name": {
+            "type": "string",
+            "example": "User Registration Flow"
+          },
+          "nodes": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "project_id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440001"
+          },
+          "slug": {
+            "type": "string",
+            "example": "user-registration"
+          },
+          "status": {
+            "type": "string",
+            "example": "active"
+          },
+          "trigger_config": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "trigger_type_id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440002"
+          },
+          "updated_at": {
+            "type": "string",
+            "example": "2024-01-15T10:30:00Z"
+          }
+        }
+      },
+      "internal_api_handler.ForbiddenError": {
+        "description": "Forbidden error",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "FORBIDDEN"
+          },
+          "error": {
+            "type": "string",
+            "example": "insufficient permissions"
+          }
+        }
+      },
+      "internal_api_handler.GoneError": {
+        "description": "Gone error (expired resource)",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "GONE"
+          },
+          "error": {
+            "type": "string",
+            "example": "resource has expired"
+          }
+        }
+      },
+      "internal_api_handler.HealthErrorResponse": {
+        "description": "Unhealthy status response",
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "database connection failed"
+          },
+          "status": {
+            "type": "string",
+            "example": "unhealthy"
+          }
+        }
+      },
+      "internal_api_handler.HealthResponse": {
+        "description": "Health check response",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "healthy"
+          }
+        }
+      },
+      "internal_api_handler.HistoryMessage": {
+        "description": "History message",
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "example": "Hello, how can you help me?"
+          },
+          "role": {
+            "type": "string",
+            "example": "user"
+          },
+          "timestamp": {
+            "type": "string",
+            "example": "2024-01-15T10:00:00Z"
+          }
+        }
+      },
+      "internal_api_handler.Incident": {
+        "description": "Incident information",
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "example": "Increased latency on flow endpoints"
+          },
+          "id": {
+            "type": "string",
+            "example": "inc_123"
+          },
+          "resolved_at": {
+            "type": "string",
+            "example": "2024-01-15T10:30:00Z"
+          },
+          "severity": {
+            "type": "string",
+            "example": "minor"
+          },
+          "started_at": {
+            "type": "string",
+            "example": "2024-01-15T10:00:00Z"
+          },
+          "status": {
+            "type": "string",
+            "example": "resolved"
+          },
+          "title": {
+            "type": "string",
+            "example": "API Latency Spike"
+          }
+        }
+      },
+      "internal_api_handler.IncidentListResponse": {
+        "description": "List of incidents",
+        "type": "object",
+        "properties": {
+          "incidents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_api_handler.Incident"
+            }
+          }
+        }
+      },
+      "internal_api_handler.InternalServerError": {
+        "description": "Internal server error",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "INTERNAL_ERROR"
+          },
+          "error": {
+            "type": "string",
+            "example": "internal server error"
+          }
+        }
+      },
+      "internal_api_handler.InvitationInfoResponse": {
+        "type": "object",
+        "properties": {
+          "expired": {
+            "type": "boolean"
+          },
+          "expires_at": {
+            "type": "string"
+          },
+          "inviter_name": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "workspace_logo": {
+            "type": "string"
+          },
+          "workspace_name": {
+            "type": "string"
+          }
+        }
+      },
+      "internal_api_handler.InvitationListResponse": {
+        "description": "List of workspace invitations",
+        "type": "object",
+        "properties": {
+          "invitations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_api_handler.InvitationResponse"
+            }
+          }
+        }
+      },
+      "internal_api_handler.InvitationResponse": {
+        "type": "object",
+        "properties": {
+          "created_at": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "invite_url": {
+            "type": "string"
+          },
+          "inviter_name": {
+            "type": "string"
+          },
+          "role": {
+            "$ref": "#/components/schemas/internal_api_handler.RoleInfo"
+          },
+          "token": {
+            "type": "string"
+          },
+          "workspace_name": {
+            "type": "string"
+          }
+        }
+      },
+      "internal_api_handler.MemberListResponse": {
+        "description": "List of workspace members",
+        "type": "object",
+        "properties": {
+          "members": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_api_handler.MemberResponse"
+            }
+          }
+        }
+      },
+      "internal_api_handler.MemberResponse": {
+        "description": "Workspace member information",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "joined_at": {
+            "type": "string",
+            "example": "2024-01-15T10:30:00Z"
+          },
+          "role": {
+            "$ref": "#/components/schemas/internal_api_handler.RoleInfo"
+          },
+          "user": {
+            "$ref": "#/components/schemas/internal_api_handler.UserInfo"
+          }
+        }
+      },
+      "internal_api_handler.MetricsResponse": {
+        "description": "API metrics response",
+        "type": "object",
+        "properties": {
+          "active_incidents": {
+            "type": "integer",
+            "example": 5
+          },
+          "avg_response_time": {
+            "type": "integer",
+            "example": 330
+          },
+          "overall_uptime": {
+            "type": "number",
+            "example": 99.73
+          },
+          "total_requests": {
+            "type": "integer",
+            "example": 2400000
+          }
+        }
+      },
+      "internal_api_handler.NotFoundError": {
+        "description": "Not found error",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "NOT_FOUND"
+          },
+          "error": {
+            "type": "string",
+            "example": "resource not found"
+          }
+        }
+      },
+      "internal_api_handler.PlanListResponse": {
+        "description": "List of available billing plans",
+        "type": "object",
+        "properties": {
+          "plans": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_api_handler.PlanSummary"
+            }
+          }
+        }
+      },
+      "internal_api_handler.PlanSummary": {
+        "description": "Billing plan summary",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "plan_starter"
+          },
+          "interval": {
+            "type": "string",
+            "example": "month"
+          },
+          "name": {
+            "type": "string",
+            "example": "Starter"
+          },
+          "price": {
+            "type": "integer",
+            "example": 29
+          }
+        }
+      },
+      "internal_api_handler.PluginConfigRequest": {
+        "type": "object",
+        "properties": {
+          "api_key": {
+            "type": "string",
+            "example": "sk_test_123"
+          },
+          "settings": {
+            "type": "object",
+            "additionalProperties": {}
+          }
+        }
+      },
+      "internal_api_handler.PluginConfigureResponse": {
+        "description": "Plugin configuration response",
+        "type": "object",
+        "properties": {
+          "configured": {
+            "type": "boolean",
+            "example": true
+          },
+          "id": {
+            "type": "string",
+            "example": "stripe-payment"
+          }
+        }
+      },
+      "internal_api_handler.PluginDetailResponse": {
+        "description": "Detailed plugin information",
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "example": "payment"
+          },
+          "config": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "description": {
+            "type": "string",
+            "example": "Process payments via Stripe"
+          },
+          "enabled": {
+            "type": "boolean",
+            "example": true
+          },
+          "id": {
+            "type": "string",
+            "example": "stripe-payment"
+          },
+          "name": {
+            "type": "string",
+            "example": "Stripe Payment"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          }
+        }
+      },
+      "internal_api_handler.PluginInfo": {
+        "description": "Plugin information",
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "example": "payment"
+          },
+          "description": {
+            "type": "string",
+            "example": "Process payments via Stripe"
+          },
+          "enabled": {
+            "type": "boolean",
+            "example": true
+          },
+          "id": {
+            "type": "string",
+            "example": "stripe-payment"
+          },
+          "name": {
+            "type": "string",
+            "example": "Stripe Payment"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          }
+        }
+      },
+      "internal_api_handler.PluginListResponse": {
+        "description": "List of available plugins",
+        "type": "object",
+        "properties": {
+          "plugins": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_api_handler.PluginInfo"
+            }
+          }
+        }
+      },
+      "internal_api_handler.ProjectListResponse": {
+        "description": "List of projects",
+        "type": "object",
+        "properties": {
+          "projects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_api_handler.ProjectResponse"
+            }
+          }
+        }
+      },
+      "internal_api_handler.ProjectResponse": {
+        "description": "Project information",
+        "type": "object",
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "example": "2024-01-15T10:30:00Z"
+          },
+          "description": {
+            "type": "string",
+            "example": "API backend for mobile app"
+          },
+          "id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "name": {
+            "type": "string",
+            "example": "My API Project"
+          },
+          "organization_id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440001"
+          },
+          "slug": {
+            "type": "string",
+            "example": "my-api-project"
+          },
+          "status": {
+            "type": "string",
+            "example": "active"
+          },
+          "updated_at": {
+            "type": "string",
+            "example": "2024-01-15T10:30:00Z"
+          }
+        }
+      },
+      "internal_api_handler.PromptFlowResponse": {
+        "description": "AI-generated flow response",
+        "type": "object",
+        "properties": {
+          "flow": {
+            "type": "object",
+            "additionalProperties": {}
+          }
+        }
+      },
+      "internal_api_handler.RoleInfo": {
+        "description": "Role information",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440002"
+          },
+          "name": {
+            "type": "string",
+            "example": "admin"
+          }
+        }
+      },
+      "internal_api_handler.RoleListResponse": {
+        "description": "List of available roles",
+        "type": "object",
+        "properties": {
+          "roles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_api_handler.RoleInfo"
+            }
+          }
+        }
+      },
+      "internal_api_handler.ServiceUnavailableError": {
+        "description": "Service unavailable error",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "SERVICE_UNAVAILABLE"
+          },
+          "error": {
+            "type": "string",
+            "example": "service unavailable"
+          }
+        }
+      },
+      "internal_api_handler.SuggestionsResponse": {
+        "description": "AI suggestions response",
+        "type": "object",
+        "properties": {
+          "suggestions": {
+            "type": "array",
+            "items": {}
+          }
+        }
+      },
+      "internal_api_handler.SyncPlanListResponse": {
+        "description": "Stripe plan sync results",
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_api_handler.SyncPlanResult"
+            }
+          }
+        }
+      },
+      "internal_api_handler.SyncPlanResult": {
+        "description": "Plan sync result",
+        "type": "object",
+        "properties": {
+          "monthly_price_id": {
+            "type": "string",
+            "example": "price_monthly_abc"
+          },
+          "product_id": {
+            "type": "string",
+            "example": "prod_abc123"
+          },
+          "slug": {
+            "type": "string",
+            "example": "pro"
+          },
+          "status": {
+            "type": "string",
+            "example": "synced"
+          },
+          "yearly_price_id": {
+            "type": "string",
+            "example": "price_yearly_abc"
+          }
+        }
+      },
+      "internal_api_handler.UnauthorizedError": {
+        "description": "Unauthorized error",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "UNAUTHORIZED"
+          },
+          "error": {
+            "type": "string",
+            "example": "unauthorized"
+          }
+        }
+      },
+      "internal_api_handler.UpdateFlowRequest": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "edges": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "metadata": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "name": {
+            "type": "string"
+          },
+          "nodes": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "slug": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "trigger": {
+            "type": "object",
+            "properties": {
+              "config": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "type": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "internal_api_handler.UserInfo": {
+        "description": "User information",
+        "type": "object",
+        "properties": {
+          "avatar_url": {
+            "type": "string",
+            "example": "https://cdn.example.com/avatar.png"
+          },
+          "email": {
+            "type": "string",
+            "example": "john@example.com"
+          },
+          "first_name": {
+            "type": "string",
+            "example": "John"
+          },
+          "id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440001"
+          },
+          "last_name": {
+            "type": "string",
+            "example": "Doe"
+          }
+        }
+      },
+      "internal_api_handler.UserResponse": {
+        "type": "object",
+        "properties": {
+          "avatar_url": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "first_name": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "updated_at": {
+            "type": "string"
+          },
+          "workspaces": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_api_handler.UserWorkspace"
+            }
+          }
+        }
+      },
+      "internal_api_handler.UserWorkspace": {
+        "type": "object",
+        "properties": {
+          "created_at": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "logo_url": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "plan": {
+            "$ref": "#/components/schemas/internal_api_handler.WorkspacePlan"
+          },
+          "slug": {
+            "type": "string"
+          }
+        }
+      },
+      "internal_api_handler.ValidResponse": {
+        "description": "Validation result response",
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": ""
+          },
+          "valid": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "internal_api_handler.WebhookResponse": {
+        "description": "Webhook processing response",
+        "type": "object",
+        "properties": {
+          "received": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "internal_api_handler.WorkspaceListResponse": {
+        "description": "List of workspaces",
+        "type": "object",
+        "properties": {
+          "workspaces": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_api_handler.WorkspaceResponse"
+            }
+          }
+        }
+      },
+      "internal_api_handler.WorkspacePlan": {
+        "type": "object",
+        "properties": {
+          "limits": {
+            "$ref": "#/components/schemas/internal_api_handler.WorkspacePlanLimits"
+          },
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          }
+        }
+      },
+      "internal_api_handler.WorkspacePlanLimits": {
+        "type": "object",
+        "properties": {
+          "executions_per_month": {
+            "type": "integer"
+          },
+          "flows": {
+            "type": "integer"
+          },
+          "log_retention_days": {
+            "type": "integer"
+          },
+          "nodes_per_flow": {
+            "type": "integer"
+          },
+          "team_members": {
+            "type": "integer"
+          },
+          "workspaces": {
+            "type": "integer"
+          }
+        }
+      },
+      "internal_api_handler.WorkspaceResponse": {
+        "description": "Workspace information",
+        "type": "object",
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "example": "2024-01-15T10:30:00Z"
+          },
+          "id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "logo_url": {
+            "type": "string",
+            "example": "https://cdn.example.com/logo.png"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "name": {
+            "type": "string",
+            "example": "Acme Corp"
+          },
+          "slug": {
+            "type": "string",
+            "example": "acme-corp"
+          },
+          "updated_at": {
+            "type": "string",
+            "example": "2024-01-15T10:30:00Z"
+          }
+        }
+      }
+    }
+  }
+}

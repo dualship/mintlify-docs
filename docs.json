@@ -13,7 +13,7 @@
     "light": "#07C983",
     "dark": "#0D9373"
   },
-  "openapi": "/swagger.json",
+  "openapi": "openapi.json",
   "api": {
     "baseUrl": "https://api.dualship.run"
   },
@@ -72,6 +72,9 @@
   },
   "sso": {
     "enabled": true
+  },
+  "search": {
+    "prompt": "Looking for something ?"
   },
   "footerSocials": {
     "github": "https://github.com/dualship"
