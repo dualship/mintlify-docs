@@ -26,30 +26,21 @@
         "summary": "Sync subscription plans to Stripe",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Sync results",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/internal_api_handler.syncPlanResult"
-                    }
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.SyncPlanListResponse"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal Server Error",
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.InternalServerError"
                 }
               }
             }
@@ -452,13 +443,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_ai.ProviderInfo"
-                    }
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.AIProviderListResponse"
                 }
               }
             }
@@ -1285,13 +1270,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/github_com_dualship_dualship-be_internal_storage_postgres.Document"
-                    }
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.DocumentListResponse"
                 }
               }
             }
@@ -1617,10 +1596,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.DocumentContentResponse"
                 }
               }
             }
@@ -1779,13 +1755,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/internal_api_handler.FlowResponse"
-                    }
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.FlowListResponse"
                 }
               }
             }
@@ -2352,13 +2322,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/internal_api_handler.ProjectResponse"
-                    }
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.ProjectListResponse"
                 }
               }
             }
@@ -2707,13 +2671,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/internal_api_handler.RoleInfo"
-                    }
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.RoleListResponse"
                 }
               }
             }
@@ -2759,13 +2717,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/internal_api_handler.WorkspaceResponse"
-                    }
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.WorkspaceListResponse"
                 }
               }
             }
@@ -3155,13 +3107,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/internal_api_handler.InvitationResponse"
-                    }
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.InvitationListResponse"
                 }
               }
             }
@@ -3612,13 +3558,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/internal_api_handler.MemberResponse"
-                    }
-                  }
+                  "$ref": "#/components/schemas/internal_api_handler.MemberListResponse"
                 }
               }
             }
@@ -5362,6 +5302,44 @@
           "DocumentParseStatusFailed"
         ]
       },
+      "internal_api_handler.AIProviderListResponse": {
+        "description": "List of AI providers",
+        "type": "object",
+        "properties": {
+          "providers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_api_handler.AIProviderSummary"
+            }
+          }
+        }
+      },
+      "internal_api_handler.AIProviderSummary": {
+        "description": "AI provider summary",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "is_default": {
+            "type": "boolean",
+            "example": true
+          },
+          "name": {
+            "type": "string",
+            "example": "OpenAI Production"
+          },
+          "provider_type": {
+            "type": "string",
+            "example": "openai"
+          },
+          "status": {
+            "type": "string",
+            "example": "active"
+          }
+        }
+      },
       "internal_api_handler.AcceptInvitationResponse": {
         "description": "Invitation acceptance response",
         "type": "object",
@@ -5553,6 +5531,58 @@
           }
         }
       },
+      "internal_api_handler.DocumentContentResponse": {
+        "description": "Document content response",
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "example": "Document text content..."
+          }
+        }
+      },
+      "internal_api_handler.DocumentListResponse": {
+        "description": "List of documents",
+        "type": "object",
+        "properties": {
+          "documents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_api_handler.DocumentSummary"
+            }
+          }
+        }
+      },
+      "internal_api_handler.DocumentSummary": {
+        "description": "Document summary",
+        "type": "object",
+        "properties": {
+          "content_type": {
+            "type": "string",
+            "example": "application/pdf"
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2024-01-15T10:00:00Z"
+          },
+          "file_name": {
+            "type": "string",
+            "example": "report.pdf"
+          },
+          "file_size": {
+            "type": "integer",
+            "example": 1024000
+          },
+          "id": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "parse_status": {
+            "type": "string",
+            "example": "completed"
+          }
+        }
+      },
       "internal_api_handler.EndpointStatus": {
         "description": "Endpoint status information",
         "type": "object",
@@ -5626,6 +5656,18 @@
           "success": {
             "type": "boolean",
             "example": true
+          }
+        }
+      },
+      "internal_api_handler.FlowListResponse": {
+        "description": "List of flows",
+        "type": "object",
+        "properties": {
+          "flows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_api_handler.FlowResponse"
+            }
           }
         }
       },
@@ -5847,6 +5889,18 @@
           }
         }
       },
+      "internal_api_handler.InvitationListResponse": {
+        "description": "List of workspace invitations",
+        "type": "object",
+        "properties": {
+          "invitations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_api_handler.InvitationResponse"
+            }
+          }
+        }
+      },
       "internal_api_handler.InvitationResponse": {
         "type": "object",
         "properties": {
@@ -5879,14 +5933,29 @@
           }
         }
       },
+      "internal_api_handler.MemberListResponse": {
+        "description": "List of workspace members",
+        "type": "object",
+        "properties": {
+          "members": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_api_handler.MemberResponse"
+            }
+          }
+        }
+      },
       "internal_api_handler.MemberResponse": {
+        "description": "Workspace member information",
         "type": "object",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
           },
           "joined_at": {
-            "type": "string"
+            "type": "string",
+            "example": "2024-01-15T10:30:00Z"
           },
           "role": {
             "$ref": "#/components/schemas/internal_api_handler.RoleInfo"
@@ -6069,32 +6138,53 @@
           }
         }
       },
+      "internal_api_handler.ProjectListResponse": {
+        "description": "List of projects",
+        "type": "object",
+        "properties": {
+          "projects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_api_handler.ProjectResponse"
+            }
+          }
+        }
+      },
       "internal_api_handler.ProjectResponse": {
+        "description": "Project information",
         "type": "object",
         "properties": {
           "created_at": {
-            "type": "string"
+            "type": "string",
+            "example": "2024-01-15T10:30:00Z"
           },
           "description": {
-            "type": "string"
+            "type": "string",
+            "example": "API backend for mobile app"
           },
           "id": {
-            "type": "string"
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "example": "My API Project"
           },
           "organization_id": {
-            "type": "string"
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440001"
           },
           "slug": {
-            "type": "string"
+            "type": "string",
+            "example": "my-api-project"
           },
           "status": {
-            "type": "string"
+            "type": "string",
+            "example": "active"
           },
           "updated_at": {
-            "type": "string"
+            "type": "string",
+            "example": "2024-01-15T10:30:00Z"
           }
         }
       },
@@ -6109,13 +6199,28 @@
         }
       },
       "internal_api_handler.RoleInfo": {
+        "description": "Role information",
         "type": "object",
         "properties": {
           "id": {
-            "type": "string"
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440002"
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "example": "admin"
+          }
+        }
+      },
+      "internal_api_handler.RoleListResponse": {
+        "description": "List of available roles",
+        "type": "object",
+        "properties": {
+          "roles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_api_handler.RoleInfo"
+            }
           }
         }
       },
@@ -6140,6 +6245,44 @@
           "suggestions": {
             "type": "array",
             "items": {}
+          }
+        }
+      },
+      "internal_api_handler.SyncPlanListResponse": {
+        "description": "Stripe plan sync results",
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_api_handler.SyncPlanResult"
+            }
+          }
+        }
+      },
+      "internal_api_handler.SyncPlanResult": {
+        "description": "Plan sync result",
+        "type": "object",
+        "properties": {
+          "monthly_price_id": {
+            "type": "string",
+            "example": "price_monthly_abc"
+          },
+          "product_id": {
+            "type": "string",
+            "example": "prod_abc123"
+          },
+          "slug": {
+            "type": "string",
+            "example": "pro"
+          },
+          "status": {
+            "type": "string",
+            "example": "synced"
+          },
+          "yearly_price_id": {
+            "type": "string",
+            "example": "price_yearly_abc"
           }
         }
       },
@@ -6207,22 +6350,28 @@
         }
       },
       "internal_api_handler.UserInfo": {
+        "description": "User information",
         "type": "object",
         "properties": {
           "avatar_url": {
-            "type": "string"
+            "type": "string",
+            "example": "https://cdn.example.com/avatar.png"
           },
           "email": {
-            "type": "string"
+            "type": "string",
+            "example": "john@example.com"
           },
           "first_name": {
-            "type": "string"
+            "type": "string",
+            "example": "John"
           },
           "id": {
-            "type": "string"
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440001"
           },
           "last_name": {
-            "type": "string"
+            "type": "string",
+            "example": "Doe"
           }
         }
       },
@@ -6309,6 +6458,18 @@
           }
         }
       },
+      "internal_api_handler.WorkspaceListResponse": {
+        "description": "List of workspaces",
+        "type": "object",
+        "properties": {
+          "workspaces": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/internal_api_handler.WorkspaceResponse"
+            }
+          }
+        }
+      },
       "internal_api_handler.WorkspacePlan": {
         "type": "object",
         "properties": {
@@ -6347,49 +6508,36 @@
         }
       },
       "internal_api_handler.WorkspaceResponse": {
+        "description": "Workspace information",
         "type": "object",
         "properties": {
           "created_at": {
-            "type": "string"
+            "type": "string",
+            "example": "2024-01-15T10:30:00Z"
           },
           "id": {
-            "type": "string"
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
           },
           "logo_url": {
-            "type": "string"
+            "type": "string",
+            "example": "https://cdn.example.com/logo.png"
           },
           "metadata": {
             "type": "object",
             "additionalProperties": {}
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "example": "Acme Corp"
           },
           "slug": {
-            "type": "string"
+            "type": "string",
+            "example": "acme-corp"
           },
           "updated_at": {
-            "type": "string"
-          }
-        }
-      },
-      "internal_api_handler.syncPlanResult": {
-        "type": "object",
-        "properties": {
-          "monthly_price_id": {
-            "type": "string"
-          },
-          "product_id": {
-            "type": "string"
-          },
-          "slug": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string"
-          },
-          "yearly_price_id": {
-            "type": "string"
+            "type": "string",
+            "example": "2024-01-15T10:30:00Z"
           }
         }
       }
