@@ -60,6 +60,9 @@
       }
     ]
   },
+  "interaction": {
+    "copyPage": true
+  },
   "footerSocials": {
     "github": "https://github.com/dualship"
   }
