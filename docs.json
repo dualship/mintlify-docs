@@ -13,7 +13,7 @@
     "light": "#07C983",
     "dark": "#0D9373"
   },
-  "openapi": "/swagger.json",
+  "openapi": "openapi.json",
   "api": {
     "baseUrl": "https://api.dualship.run"
   },
@@ -56,16 +56,7 @@
       },
       {
         "tab": "API Reference",
-        "groups": [
-          {
-            "group": "Overview",
-            "pages": ["api-reference/overview"]
-          },
-          {
-            "group": "Endpoints",
-            "openapi": "/swagger.json"
-          }
-        ]
+        "openapi": "openapi.json"
       }
     ]
   },
