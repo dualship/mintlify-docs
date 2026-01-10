@@ -1,0 +1,644 @@
+---
+title: Validation Rules Reference
+description: Complete reference for request validation rules
+---
+
+The request node uses validation rules to verify incoming data. Rules are specified as pipe-separated strings.
+
+## Syntax
+
+```
+"field": "rule1|rule2|rule3"
+"field": "rule1|rule2:param|rule3:param1,param2"
+```
+
+## Presence Rules
+
+Control when fields are required.
+
+### required
+
+Field must be present and not empty.
+
+```json
+{
+  "name": "required"
+}
+```
+
+### nullable
+
+Field can be null. If present and not null, other rules apply.
+
+```json
+{
+  "middle_name": "nullable|string|max:50"
+}
+```
+
+### present
+
+Field must exist in input (can be empty/null).
+
+```json
+{
+  "acknowledged": "present|boolean"
+}
+```
+
+### sometimes
+
+Only validate if field exists.
+
+```json
+{
+  "nickname": "sometimes|string|max:30"
+}
+```
+
+## Conditional Required
+
+Make fields conditionally required.
+
+### required_if
+
+Required when another field equals a value.
+
+```json
+{
+  "company_name": "required_if:account_type,business"
+}
+```
+
+### required_unless
+
+Required unless another field equals a value.
+
+```json
+{
+  "parent_email": "required_unless:age,18"
+}
+```
+
+### required_with
+
+Required when another field is present.
+
+```json
+{
+  "shipping_address": "required_with:physical_product"
+}
+```
+
+### required_without
+
+Required when another field is absent.
+
+```json
+{
+  "email": "required_without:phone"
+}
+```
+
+### required_with_all
+
+Required when all specified fields are present.
+
+```json
+{
+  "billing_address": "required_with_all:credit_card,save_card"
+}
+```
+
+### required_without_all
+
+Required when all specified fields are absent.
+
+```json
+{
+  "guest_email": "required_without_all:user_id,session_id"
+}
+```
+
+## Type Rules
+
+Validate data types.
+
+### string
+
+Must be a string.
+
+```json
+{
+  "name": "required|string"
+}
+```
+
+### integer
+
+Must be an integer (no decimals).
+
+```json
+{
+  "quantity": "required|integer"
+}
+```
+
+### numeric
+
+Must be a number (integer or float).
+
+```json
+{
+  "price": "required|numeric"
+}
+```
+
+### boolean
+
+Must be `true` or `false`.
+
+```json
+{
+  "active": "required|boolean"
+}
+```
+
+### array
+
+Must be an array.
+
+```json
+{
+  "tags": "required|array"
+}
+```
+
+### object
+
+Must be an object.
+
+```json
+{
+  "metadata": "required|object"
+}
+```
+
+## Size Rules
+
+Validate size, length, or value.
+
+Size rules behave differently based on the field type:
+- **Strings**: Validates character length
+- **Numbers**: Validates the numeric value
+- **Arrays**: Validates item count
+
+### min
+
+Minimum size/length/value.
+
+```json
+{
+  "password": "required|string|min:8",
+  "age": "required|integer|min:18",
+  "items": "required|array|min:1"
+}
+```
+
+### max
+
+Maximum size/length/value.
+
+```json
+{
+  "username": "required|string|max:20",
+  "quantity": "required|integer|max:100",
+  "tags": "array|max:10"
+}
+```
+
+### size
+
+Exact size/length/value.
+
+```json
+{
+  "pin": "required|string|size:4",
+  "coordinates": "required|array|size:2"
+}
+```
+
+### between
+
+Value/length must be in range.
+
+```json
+{
+  "age": "required|integer|between:18,120",
+  "title": "required|string|between:5,100"
+}
+```
+
+## Format Rules
+
+Validate string formats.
+
+### email
+
+Valid email address format.
+
+```json
+{
+  "email": "required|email"
+}
+```
+
+### url
+
+Valid URL format.
+
+```json
+{
+  "website": "sometimes|url"
+}
+```
+
+### uuid
+
+Valid UUID format.
+
+```json
+{
+  "id": "required|uuid"
+}
+```
+
+### ip
+
+Valid IP address (v4 or v6).
+
+```json
+{
+  "ip_address": "required|ip"
+}
+```
+
+### ipv4
+
+Valid IPv4 address.
+
+```json
+{
+  "ip_address": "required|ipv4"
+}
+```
+
+### ipv6
+
+Valid IPv6 address.
+
+```json
+{
+  "ip_address": "required|ipv6"
+}
+```
+
+### json
+
+Valid JSON string.
+
+```json
+{
+  "config": "required|json"
+}
+```
+
+### regex
+
+Matches regular expression pattern.
+
+```json
+{
+  "sku": "required|regex:^[A-Z]{3}-[0-9]{4}$",
+  "phone": "required|regex:^\\+[0-9]{10,15}$"
+}
+```
+
+## Date Rules
+
+Validate date values.
+
+### date
+
+Valid date format.
+
+```json
+{
+  "birth_date": "required|date"
+}
+```
+
+### datetime
+
+Valid datetime format.
+
+```json
+{
+  "scheduled_at": "required|datetime"
+}
+```
+
+### before
+
+Date must be before specified date.
+
+```json
+{
+  "start_date": "required|date|before:2025-01-01"
+}
+```
+
+### after
+
+Date must be after specified date.
+
+```json
+{
+  "end_date": "required|date|after:start_date"
+}
+```
+
+### before_or_equal
+
+Date must be before or equal to specified date.
+
+```json
+{
+  "expiry": "required|date|before_or_equal:2030-12-31"
+}
+```
+
+### after_or_equal
+
+Date must be after or equal to specified date.
+
+```json
+{
+  "publish_date": "required|date|after_or_equal:today"
+}
+```
+
+## Comparison Rules
+
+Compare fields to each other.
+
+### same
+
+Must match another field's value.
+
+```json
+{
+  "password_confirmation": "required|same:password"
+}
+```
+
+### different
+
+Must differ from another field's value.
+
+```json
+{
+  "new_password": "required|different:current_password"
+}
+```
+
+### confirmed
+
+Field must have a matching `_confirmation` field.
+
+```json
+{
+  "email": "required|email|confirmed"
+}
+```
+
+This expects an `email_confirmation` field with the same value.
+
+### gt
+
+Greater than another field.
+
+```json
+{
+  "max_price": "required|numeric|gt:min_price"
+}
+```
+
+### gte
+
+Greater than or equal to another field.
+
+```json
+{
+  "end_date": "required|date|gte:start_date"
+}
+```
+
+### lt
+
+Less than another field.
+
+```json
+{
+  "min_price": "required|numeric|lt:max_price"
+}
+```
+
+### lte
+
+Less than or equal to another field.
+
+```json
+{
+  "discount": "required|numeric|lte:total"
+}
+```
+
+## Inclusion Rules
+
+Validate against a list of values.
+
+### in
+
+Must be one of the specified values.
+
+```json
+{
+  "status": "required|in:pending,active,suspended,closed",
+  "role": "required|in:admin,editor,viewer"
+}
+```
+
+### not_in
+
+Must not be one of the specified values.
+
+```json
+{
+  "username": "required|string|not_in:admin,root,system"
+}
+```
+
+## Control Rules
+
+Control validation behavior.
+
+### bail
+
+Stop validating the field on first error.
+
+```json
+{
+  "email": "bail|required|email|unique"
+}
+```
+
+Without `bail`, all rules are checked. With `bail`, validation stops at first failure.
+
+## Array Validation
+
+Validate nested array items using `.*` wildcard.
+
+### Basic Array Items
+
+```json
+{
+  "tags": "required|array",
+  "tags.*": "string|max:50"
+}
+```
+
+### Object Array Items
+
+```json
+{
+  "items": "required|array|min:1",
+  "items.*.product_id": "required|uuid",
+  "items.*.quantity": "required|integer|min:1",
+  "items.*.price": "required|numeric|min:0"
+}
+```
+
+### Nested Array Validation
+
+```json
+{
+  "orders": "required|array",
+  "orders.*.items": "required|array|min:1",
+  "orders.*.items.*.sku": "required|string"
+}
+```
+
+## Complete Examples
+
+### User Registration
+
+```json
+{
+  "source": "request.body",
+  "schema": {
+    "username": "required|string|min:3|max:20|regex:^[a-zA-Z0-9_]+$",
+    "email": "required|email",
+    "password": "required|string|min:8",
+    "password_confirmation": "required|same:password",
+    "date_of_birth": "required|date|before:2010-01-01",
+    "terms_accepted": "required|boolean"
+  }
+}
+```
+
+### Product Creation
+
+```json
+{
+  "source": "request.body",
+  "schema": {
+    "name": "required|string|min:2|max:200",
+    "description": "nullable|string|max:5000",
+    "price": "required|numeric|min:0",
+    "compare_price": "nullable|numeric|gt:price",
+    "sku": "required|string|regex:^[A-Z0-9-]+$",
+    "category": "required|in:electronics,clothing,home,sports",
+    "tags": "array|max:10",
+    "tags.*": "string|max:30",
+    "variants": "sometimes|array",
+    "variants.*.name": "required|string",
+    "variants.*.price": "required|numeric|min:0",
+    "variants.*.stock": "required|integer|min:0"
+  }
+}
+```
+
+### Order Placement
+
+```json
+{
+  "source": "request.body",
+  "schema": {
+    "items": "required|array|min:1|max:50",
+    "items.*.product_id": "required|uuid",
+    "items.*.quantity": "required|integer|min:1|max:100",
+    "shipping_address": "required|object",
+    "shipping_address.street": "required|string|max:200",
+    "shipping_address.city": "required|string|max:100",
+    "shipping_address.postal_code": "required|string|max:20",
+    "shipping_address.country": "required|string|size:2",
+    "billing_same_as_shipping": "required|boolean",
+    "billing_address": "required_if:billing_same_as_shipping,false|object",
+    "payment_method": "required|in:card,paypal,bank_transfer",
+    "card_token": "required_if:payment_method,card|string",
+    "notes": "nullable|string|max:500"
+  }
+}
+```
+
+### Profile Update
+
+```json
+{
+  "source": "request.body",
+  "schema": {
+    "display_name": "sometimes|string|min:2|max:50",
+    "bio": "nullable|string|max:500",
+    "website": "nullable|url",
+    "social_links": "sometimes|object",
+    "social_links.twitter": "nullable|url",
+    "social_links.linkedin": "nullable|url",
+    "notification_preferences": "sometimes|object",
+    "notification_preferences.email": "boolean",
+    "notification_preferences.push": "boolean"
+  }
+}
+```
+
+## Error Messages
+
+Each rule generates a specific error message:
+
+| Rule | Message Example |
+|------|-----------------|
+| required | The name field is required |
+| email | The email field must be a valid email address |
+| min (string) | The password field must be at least 8 characters |
+| min (number) | The age field must be at least 18 |
+| min (array) | The items field must have at least 1 items |
+| max | The title field may not be greater than 100 characters |
+| in | The status field must be one of: pending, active, closed |
+| uuid | The id field must be a valid UUID |
+| same | The password_confirmation field must match password |
+
+## Related
+
+- [Request Node](/nodes/request) - Validation node usage
+- [Condition Node](/nodes/condition) - Branch on validation results
+- [Abort Node](/nodes/abort) - Error responses

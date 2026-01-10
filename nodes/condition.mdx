@@ -1,0 +1,199 @@
+---
+title: Condition Node
+description: If/else branching based on expressions
+---
+
+The `condition` node provides if/else-if/else branching. It evaluates conditions in order and executes the first matching branch.
+
+## Configuration
+
+```json
+{
+  "id": "check_amount",
+  "type": "condition",
+  "config": {
+    "conditions": [
+      {
+        "if": "{{request.body.amount}} > 1000",
+        "then": ["high_value_flow"]
+      },
+      {
+        "if": "{{request.body.amount}} > 100",
+        "then": ["medium_value_flow"]
+      }
+    ],
+    "else": ["standard_flow"]
+  }
+}
+```
+
+## Config Fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `conditions` | array | Yes | Array of condition objects |
+| `conditions[].if` | string | Yes | Boolean expression to evaluate |
+| `conditions[].then` | string[] | Yes | Node IDs to execute if condition is true |
+| `else` | string[] | No | Node IDs to execute if no condition matches |
+
+## Expression Syntax
+
+Conditions use template expressions that evaluate to boolean values.
+
+### Comparison Operators
+
+| Operator | Description | Example |
+|----------|-------------|---------|
+| `==` | Equal | `{{status}} == "active"` |
+| `!=` | Not equal | `{{status}} != "deleted"` |
+| `>` | Greater than | `{{amount}} > 100` |
+| `<` | Less than | `{{count}} < 10` |
+| `>=` | Greater or equal | `{{age}} >= 18` |
+| `<=` | Less or equal | `{{score}} <= 100` |
+
+### Logical Operators
+
+| Operator | Description | Example |
+|----------|-------------|---------|
+| `&&` | AND | `{{amount}} > 100 && {{status}} == "active"` |
+| `\|\|` | OR | `{{role}} == "admin" \|\| {{role}} == "moderator"` |
+
+### Examples
+
+```
+"if": "{{request.body.amount}} > 100"        # Simple comparison
+"if": "{{user.status}} == active"            # String equality
+"if": "{{amount}} > 100 && {{currency}} == USD"  # Combined conditions
+"if": "{{user.email}} != null"               # Null check
+"if": "{{user.verified}} == true"            # Boolean check
+```
+
+## Output
+
+The condition node outputs information about the evaluation:
+
+```json
+{
+  "result": true,
+  "branch": "conditions[0]",
+  "matched_index": 0
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `result` | boolean | Whether any condition matched |
+| `branch` | string | Which branch was taken: `"conditions[N]"` or `"else"` |
+| `matched_index` | number | Index of matched condition (-1 if else branch) |
+
+## Examples
+
+### Basic If/Else
+
+```json
+{
+  "id": "check_auth",
+  "type": "condition",
+  "config": {
+    "conditions": [
+      {
+        "if": "{{request.headers.Authorization}} != null",
+        "then": ["process_request"]
+      }
+    ],
+    "else": ["unauthorized_response"]
+  }
+}
+```
+
+### Multiple Conditions (If/Else-If/Else)
+
+```json
+{
+  "id": "route_by_tier",
+  "type": "condition",
+  "config": {
+    "conditions": [
+      {
+        "if": "{{user.tier}} == enterprise",
+        "then": ["enterprise_handler"]
+      },
+      {
+        "if": "{{user.tier}} == pro",
+        "then": ["pro_handler"]
+      },
+      {
+        "if": "{{user.tier}} == basic",
+        "then": ["basic_handler"]
+      }
+    ],
+    "else": ["free_handler"]
+  }
+}
+```
+
+### Complex Condition
+
+```json
+{
+  "id": "check_eligibility",
+  "type": "condition",
+  "config": {
+    "conditions": [
+      {
+        "if": "{{user.age}} >= 18 && {{user.verified}} == true && {{user.balance}} > 0",
+        "then": ["approve"]
+      }
+    ],
+    "else": ["reject"]
+  }
+}
+```
+
+### Checking HTTP Response
+
+```json
+{
+  "id": "check_api_response",
+  "type": "condition",
+  "config": {
+    "conditions": [
+      {
+        "if": "{{fetch_data.output.success}} == true && {{fetch_data.output.status_code}} == 200",
+        "then": ["process_data"]
+      }
+    ],
+    "else": ["handle_error"]
+  }
+}
+```
+
+## Execution Behavior
+
+1. Conditions are evaluated **in order**
+2. The **first** matching condition's `then` branch executes
+3. If no condition matches, the `else` branch executes (if defined)
+4. Unmatched branches are **skipped**
+
+### Branch Merging
+
+Branches can merge back by pointing to the same subsequent node:
+
+```
+         Condition
+             |
+    +--------+--------+
+    |                 |
+  (then)           (else)
+    |                 |
+  Node A           Node B
+    |                 |
+    +--------+--------+
+             |
+          Node C (merge point)
+```
+
+## Related
+
+- [Switch Node](/nodes/switch) - Multi-way branching with pattern matching
+- [Template Expressions](/reference/templates) - Expression syntax reference

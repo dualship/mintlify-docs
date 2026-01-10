@@ -1,0 +1,337 @@
+---
+title: Request Node
+description: Validate incoming request data
+---
+
+The `request` node validates incoming request data against a schema. Use it at the start of flows to ensure data meets requirements before processing.
+
+## Configuration
+
+```json
+{
+  "id": "validate_input",
+  "type": "request",
+  "config": {
+    "source": "request.body",
+    "schema": {
+      "name": "required|string|min:2|max:100",
+      "email": "required|email",
+      "age": "integer|min:18"
+    }
+  }
+}
+```
+
+## Config Fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `source` | string | Yes | Context path to validate (e.g., `request.body`, `request.query`) |
+| `schema` | object | Yes | Field-to-rules mapping |
+| `on_error` | object | No | Custom error handling |
+
+## on_error Config
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `action` | string | `"abort"` | `"abort"` or `"continue"` |
+| `status` | number | `400` | HTTP status code for abort |
+| `body` | object | - | Custom error response body |
+
+## Output
+
+### On Success
+
+```json
+{
+  "valid": true,
+  "data": {
+    "name": "John Doe",
+    "email": "john@example.com",
+    "age": 25
+  }
+}
+```
+
+### On Failure
+
+```json
+{
+  "valid": false,
+  "errors": [
+    {
+      "field": "email",
+      "rule": "email",
+      "message": "The email field must be a valid email address"
+    }
+  ]
+}
+```
+
+## Validation Rules
+
+Rules are separated by `|` (pipe). Some rules accept parameters after `:` (colon).
+
+### Presence Rules
+
+| Rule | Description |
+|------|-------------|
+| `required` | Field must be present and not empty |
+| `nullable` | Field can be null |
+| `present` | Field must exist (can be empty) |
+| `sometimes` | Only validate if field exists |
+
+### Conditional Required
+
+| Rule | Description |
+|------|-------------|
+| `required_if:field,value` | Required if another field equals value |
+| `required_unless:field,value` | Required unless another field equals value |
+| `required_with:field` | Required if another field is present |
+| `required_without:field` | Required if another field is absent |
+| `required_with_all:field1,field2` | Required if all listed fields present |
+| `required_without_all:field1,field2` | Required if all listed fields absent |
+
+### Type Rules
+
+| Rule | Description |
+|------|-------------|
+| `string` | Must be a string |
+| `integer` | Must be an integer |
+| `numeric` | Must be a number |
+| `boolean` | Must be true or false |
+| `array` | Must be an array |
+| `object` | Must be an object |
+
+### Size Rules
+
+| Rule | Description |
+|------|-------------|
+| `min:n` | Minimum value/length/count |
+| `max:n` | Maximum value/length/count |
+| `size:n` | Exact value/length/count |
+| `between:min,max` | Value/length/count between range |
+
+### Format Rules
+
+| Rule | Description |
+|------|-------------|
+| `email` | Valid email format |
+| `url` | Valid URL format |
+| `uuid` | Valid UUID format |
+| `ip` | Valid IP address |
+| `ipv4` | Valid IPv4 address |
+| `ipv6` | Valid IPv6 address |
+| `json` | Valid JSON string |
+| `regex:pattern` | Matches regex pattern |
+
+### Date Rules
+
+| Rule | Description |
+|------|-------------|
+| `date` | Valid date format |
+| `datetime` | Valid datetime format |
+| `before:date` | Must be before date |
+| `after:date` | Must be after date |
+| `before_or_equal:date` | Must be before or equal to date |
+| `after_or_equal:date` | Must be after or equal to date |
+
+### Comparison Rules
+
+| Rule | Description |
+|------|-------------|
+| `same:field` | Must match another field |
+| `different:field` | Must differ from another field |
+| `confirmed` | Must have matching `field_confirmation` |
+| `gt:field` | Greater than another field |
+| `gte:field` | Greater than or equal to another field |
+| `lt:field` | Less than another field |
+| `lte:field` | Less than or equal to another field |
+
+### Inclusion Rules
+
+| Rule | Description |
+|------|-------------|
+| `in:val1,val2,val3` | Must be one of listed values |
+| `not_in:val1,val2,val3` | Must not be one of listed values |
+
+### Control Rules
+
+| Rule | Description |
+|------|-------------|
+| `bail` | Stop validating field on first failure |
+
+## Examples
+
+### User Registration
+
+```json
+{
+  "id": "validate_registration",
+  "type": "request",
+  "config": {
+    "source": "request.body",
+    "schema": {
+      "username": "required|string|min:3|max:20",
+      "email": "required|email",
+      "password": "required|string|min:8",
+      "password_confirmation": "required|same:password",
+      "age": "required|integer|min:13",
+      "terms_accepted": "required|boolean"
+    }
+  }
+}
+```
+
+### Product Creation
+
+```json
+{
+  "id": "validate_product",
+  "type": "request",
+  "config": {
+    "source": "request.body",
+    "schema": {
+      "name": "required|string|max:200",
+      "price": "required|numeric|min:0",
+      "category": "required|in:electronics,clothing,food,other",
+      "stock": "integer|min:0",
+      "sku": "sometimes|string|regex:^[A-Z]{3}-[0-9]{4}$"
+    }
+  }
+}
+```
+
+### Array Validation
+
+Use `.*` wildcard to validate array items:
+
+```json
+{
+  "id": "validate_order",
+  "type": "request",
+  "config": {
+    "source": "request.body",
+    "schema": {
+      "items": "required|array|min:1",
+      "items.*.product_id": "required|string|uuid",
+      "items.*.quantity": "required|integer|min:1|max:100"
+    }
+  }
+}
+```
+
+### Optional Fields
+
+```json
+{
+  "id": "validate_profile_update",
+  "type": "request",
+  "config": {
+    "source": "request.body",
+    "schema": {
+      "name": "sometimes|string|max:100",
+      "bio": "nullable|string|max:500",
+      "website": "sometimes|url"
+    }
+  }
+}
+```
+
+### Custom Error Response
+
+```json
+{
+  "id": "validate_with_custom_error",
+  "type": "request",
+  "config": {
+    "source": "request.body",
+    "schema": {
+      "email": "required|email"
+    },
+    "on_error": {
+      "action": "abort",
+      "status": 422,
+      "body": {
+        "success": false,
+        "error": "validation_failed",
+        "message": "{{first_error}}",
+        "errors": "{{validation_errors}}"
+      }
+    }
+  }
+}
+```
+
+### Continue on Error
+
+Capture validation errors without aborting:
+
+```json
+{
+  "id": "soft_validate",
+  "type": "request",
+  "config": {
+    "source": "request.body",
+    "schema": {
+      "email": "required|email"
+    },
+    "on_error": {
+      "action": "continue"
+    }
+  }
+}
+```
+
+Then check validation result:
+
+```json
+{
+  "id": "check_validation",
+  "type": "condition",
+  "config": {
+    "conditions": [
+      {
+        "if": "{{soft_validate.output.valid}} == true",
+        "then": ["process_data"]
+      }
+    ],
+    "else": ["handle_invalid"]
+  }
+}
+```
+
+## Error Response Context
+
+In custom error body templates, these variables are available:
+
+| Variable | Description |
+|----------|-------------|
+| `{{validation_errors}}` | Array of all error objects |
+| `{{validation_errors_map}}` | Map of field to first error message |
+| `{{first_error}}` | First error message |
+| `{{error_count}}` | Total number of errors |
+
+## Default Error Response
+
+Without custom `on_error.body`:
+
+```json
+{
+  "success": false,
+  "message": "Validation failed",
+  "errors": [
+    {
+      "field": "email",
+      "rule": "email",
+      "message": "The email field must be a valid email address"
+    }
+  ]
+}
+```
+
+## Related
+
+- [Validation Rules Reference](/reference/validation-rules) - Complete rules documentation
+- [Transform Node](/nodes/transform) - Transform validated data
+- [Condition Node](/nodes/condition) - Branch based on validation

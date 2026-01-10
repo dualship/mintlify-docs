@@ -1,0 +1,233 @@
+---
+title: Quickstart
+description: Create your first API flow in minutes
+---
+
+This guide walks you through creating a simple API that fetches user data and returns a formatted response.
+
+## Your First Flow
+
+Create a flow that:
+1. Accepts a `user_id` query parameter
+2. Fetches user data from an external API
+3. Returns a formatted response
+
+```json
+{
+  "name": "Get User",
+  "trigger": {
+    "type": "http",
+    "config": {
+      "method": "GET",
+      "path": "/users"
+    }
+  },
+  "nodes": [
+    {
+      "id": "fetch_user",
+      "type": "http",
+      "config": {
+        "method": "GET",
+        "url": "https://jsonplaceholder.typicode.com/users/{{request.query.user_id}}"
+      }
+    },
+    {
+      "id": "respond",
+      "type": "response",
+      "config": {
+        "status": 200,
+        "body": {
+          "user": {
+            "id": "{{fetch_user.output.body.id}}",
+            "name": "{{fetch_user.output.body.name}}",
+            "email": "{{fetch_user.output.body.email}}"
+          }
+        }
+      }
+    }
+  ]
+}
+```
+
+## Understanding the Structure
+
+### Trigger
+
+The trigger defines how the API is invoked:
+
+```json
+"trigger": {
+  "type": "http",
+  "config": {
+    "method": "GET",
+    "path": "/users"
+  }
+}
+```
+
+This creates an endpoint at `GET /users`.
+
+### Nodes
+
+Nodes are the steps in your flow. Each node has:
+- `id` - Unique identifier (used to reference outputs)
+- `type` - The node type
+- `config` - Type-specific configuration
+
+### Template Expressions
+
+Use `{{path}}` to reference data:
+
+| Expression | Description |
+|------------|-------------|
+| `{{request.query.user_id}}` | Query parameter from the request |
+| `{{request.body.email}}` | Field from request body |
+| `{{fetch_user.output.body.id}}` | Output from a previous node |
+
+## Adding Validation
+
+Add a `request` node to validate input:
+
+```json
+{
+  "name": "Get User (with validation)",
+  "trigger": {
+    "type": "http",
+    "config": {
+      "method": "GET",
+      "path": "/users"
+    }
+  },
+  "nodes": [
+    {
+      "id": "validate",
+      "type": "request",
+      "config": {
+        "source": "request.query",
+        "schema": {
+          "user_id": "required|integer|min:1"
+        }
+      }
+    },
+    {
+      "id": "fetch_user",
+      "type": "http",
+      "config": {
+        "method": "GET",
+        "url": "https://jsonplaceholder.typicode.com/users/{{request.query.user_id}}"
+      }
+    },
+    {
+      "id": "respond",
+      "type": "response",
+      "config": {
+        "status": 200,
+        "body": {
+          "user": "{{fetch_user.output.body | pick:id:name:email}}"
+        }
+      }
+    }
+  ]
+}
+```
+
+The `pick` pipe extracts only the specified fields from the response.
+
+## Adding Conditional Logic
+
+Handle cases where the user might not exist:
+
+```json
+{
+  "id": "check_exists",
+  "type": "condition",
+  "config": {
+    "conditions": [
+      {
+        "if": "{{fetch_user.output.status_code}} == 200",
+        "then": ["respond_success"]
+      }
+    ],
+    "else": ["respond_not_found"]
+  }
+}
+```
+
+## Complete Example
+
+Here's a full flow with validation, error handling, and conditional responses:
+
+```json
+{
+  "name": "Get User (Complete)",
+  "trigger": {
+    "type": "http",
+    "config": {
+      "method": "GET",
+      "path": "/users"
+    }
+  },
+  "nodes": [
+    {
+      "id": "validate",
+      "type": "request",
+      "config": {
+        "source": "request.query",
+        "schema": {
+          "user_id": "required|integer|min:1|max:10"
+        }
+      }
+    },
+    {
+      "id": "fetch_user",
+      "type": "http",
+      "config": {
+        "method": "GET",
+        "url": "https://jsonplaceholder.typicode.com/users/{{request.query.user_id}}",
+        "on_error": "continue"
+      }
+    },
+    {
+      "id": "check_exists",
+      "type": "condition",
+      "config": {
+        "conditions": [
+          {
+            "if": "{{fetch_user.output.success}} == true",
+            "then": ["respond_success"]
+          }
+        ],
+        "else": ["respond_not_found"]
+      }
+    },
+    {
+      "id": "respond_success",
+      "type": "response",
+      "config": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "user": "{{fetch_user.output.body | pick:id:name:email:phone}}"
+        }
+      }
+    },
+    {
+      "id": "respond_not_found",
+      "type": "response",
+      "config": {
+        "status": 404,
+        "body": {
+          "success": false,
+          "error": "User not found"
+        }
+      }
+    }
+  ]
+}
+```
+
+## Next Steps
+
+- [Flow Structure](/flow-structure) - Learn about triggers and execution flow
+- [Nodes Overview](/nodes/overview) - Explore all 12 node types
+- [Template Expressions](/reference/templates) - Master the template syntax

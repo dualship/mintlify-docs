@@ -1,0 +1,355 @@
+---
+title: HTTP Node
+description: Make outbound HTTP requests to external services
+---
+
+The `http` node makes HTTP requests to external APIs. It supports all standard HTTP methods, custom headers, query parameters, and request bodies.
+
+## Configuration
+
+```json
+{
+  "id": "fetch_user",
+  "type": "http",
+  "config": {
+    "method": "GET",
+    "url": "https://api.example.com/users/{{user_id}}",
+    "headers": {
+      "Authorization": "Bearer {{env.API_KEY}}"
+    },
+    "timeout": 10000
+  }
+}
+```
+
+## Config Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `url` | string | Yes | - | Request URL (supports templates) |
+| `method` | string | No | `"GET"` | HTTP method |
+| `headers` | object | No | - | Request headers |
+| `query` | object | No | - | Query string parameters |
+| `body` | any | No | - | Request body |
+| `timeout` | number | No | `30000` | Timeout in milliseconds (max 60000) |
+| `content_type` | string | No | auto | Content-Type header |
+| `on_error` | string | No | `"abort"` | Error handling: `"abort"` or `"continue"` |
+
+## HTTP Methods
+
+Supported methods: `GET`, `POST`, `PUT`, `DELETE`, `PATCH`, `HEAD`, `OPTIONS`
+
+```json
+{ "method": "GET" }
+{ "method": "POST" }
+{ "method": "PUT" }
+{ "method": "DELETE" }
+{ "method": "PATCH" }
+```
+
+## Output
+
+```json
+{
+  "status_code": 200,
+  "headers": {
+    "content-type": "application/json",
+    "x-request-id": "abc123"
+  },
+  "body": {
+    "id": 1,
+    "name": "John Doe"
+  },
+  "latency_ms": 150,
+  "success": true,
+  "error": null
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `status_code` | number | HTTP status code |
+| `headers` | object | Response headers |
+| `body` | any | Response body (auto-parsed if JSON) |
+| `latency_ms` | number | Request duration in milliseconds |
+| `success` | boolean | `true` if status is 2xx |
+| `error` | string | Error message (only with `on_error: "continue"`) |
+
+## Examples
+
+### GET Request
+
+```json
+{
+  "id": "get_user",
+  "type": "http",
+  "config": {
+    "method": "GET",
+    "url": "https://api.example.com/users/{{request.query.user_id}}"
+  }
+}
+```
+
+### GET with Query Parameters
+
+```json
+{
+  "id": "search_users",
+  "type": "http",
+  "config": {
+    "method": "GET",
+    "url": "https://api.example.com/users",
+    "query": {
+      "search": "{{request.query.q}}",
+      "limit": "10",
+      "offset": "{{request.query.page | multiply:10}}"
+    }
+  }
+}
+```
+
+### POST with JSON Body
+
+```json
+{
+  "id": "create_user",
+  "type": "http",
+  "config": {
+    "method": "POST",
+    "url": "https://api.example.com/users",
+    "headers": {
+      "Authorization": "Bearer {{env.API_KEY}}",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "name": "{{request.body.name}}",
+      "email": "{{request.body.email}}",
+      "role": "user"
+    }
+  }
+}
+```
+
+### PUT Request
+
+```json
+{
+  "id": "update_user",
+  "type": "http",
+  "config": {
+    "method": "PUT",
+    "url": "https://api.example.com/users/{{user_id}}",
+    "body": {
+      "name": "{{request.body.name}}",
+      "updated_at": "{{now}}"
+    }
+  }
+}
+```
+
+### DELETE Request
+
+```json
+{
+  "id": "delete_user",
+  "type": "http",
+  "config": {
+    "method": "DELETE",
+    "url": "https://api.example.com/users/{{request.body.user_id}}"
+  }
+}
+```
+
+### With Custom Headers
+
+```json
+{
+  "id": "api_call",
+  "type": "http",
+  "config": {
+    "method": "POST",
+    "url": "https://api.example.com/webhook",
+    "headers": {
+      "Authorization": "Bearer {{env.API_TOKEN}}",
+      "X-Request-ID": "{{request_id}}",
+      "X-Timestamp": "{{now}}",
+      "Accept": "application/json"
+    },
+    "body": "{{payload}}"
+  }
+}
+```
+
+### With Timeout
+
+```json
+{
+  "id": "slow_api",
+  "type": "http",
+  "config": {
+    "url": "https://slow-api.example.com/process",
+    "timeout": 60000
+  }
+}
+```
+
+## Error Handling
+
+### `on_error: "abort"` (default)
+
+If the request fails (network error, timeout, non-2xx status), the flow stops immediately.
+
+```json
+{
+  "id": "critical_api",
+  "type": "http",
+  "config": {
+    "url": "https://api.example.com/critical",
+    "on_error": "abort"
+  }
+}
+```
+
+### `on_error: "continue"`
+
+Errors are captured in the output instead of failing the flow:
+
+```json
+{
+  "id": "optional_api",
+  "type": "http",
+  "config": {
+    "url": "https://api.example.com/optional",
+    "on_error": "continue"
+  }
+}
+```
+
+Then check the result:
+
+```json
+{
+  "id": "check_result",
+  "type": "condition",
+  "config": {
+    "conditions": [
+      {
+        "if": "{{optional_api.output.success}} == true",
+        "then": ["process_data"]
+      }
+    ],
+    "else": ["use_fallback"]
+  }
+}
+```
+
+## Body Handling
+
+### JSON Body (default)
+
+Objects are automatically serialized as JSON:
+
+```json
+{
+  "body": {
+    "name": "John",
+    "age": 30
+  }
+}
+```
+
+### String Body
+
+Strings are sent as-is:
+
+```json
+{
+  "body": "raw string content",
+  "content_type": "text/plain"
+}
+```
+
+### Template Body
+
+Use templates for dynamic content:
+
+```json
+{
+  "body": "{{prepared_payload}}"
+}
+```
+
+## Response Parsing
+
+- **JSON responses** are automatically parsed into objects
+- **Other responses** are returned as strings
+- Check `Content-Type` header to determine response format
+
+## URL Templates
+
+The URL supports template expressions:
+
+```
+"url": "https://api.example.com/users/{{user_id}}/posts/{{post_id}}"  # Path parameters
+"url": "https://{{env.API_HOST}}/v1/users"                            # Dynamic host
+"url": "https://api.example.com/{{api_version}}/users"                # Conditional path
+```
+
+## Common Patterns
+
+### Authenticated Request
+
+```json
+{
+  "id": "authenticated_call",
+  "type": "http",
+  "config": {
+    "url": "https://api.example.com/protected",
+    "headers": {
+      "Authorization": "Bearer {{auth_token}}"
+    }
+  }
+}
+```
+
+### Pagination
+
+```json
+{
+  "id": "fetch_page",
+  "type": "http",
+  "config": {
+    "url": "https://api.example.com/items",
+    "query": {
+      "page": "{{current_page}}",
+      "per_page": "50"
+    }
+  }
+}
+```
+
+### Webhook Call
+
+```json
+{
+  "id": "send_webhook",
+  "type": "http",
+  "config": {
+    "method": "POST",
+    "url": "{{webhook_url}}",
+    "headers": {
+      "X-Webhook-Secret": "{{env.WEBHOOK_SECRET}}"
+    },
+    "body": {
+      "event": "order.created",
+      "data": "{{order}}"
+    }
+  }
+}
+```
+
+## Related
+
+- [Transform Node](/nodes/transform) - Process response data
+- [Condition Node](/nodes/condition) - Check response status
+- [Try Node](/nodes/try) - Handle request failures

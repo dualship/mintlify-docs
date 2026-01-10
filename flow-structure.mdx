@@ -1,0 +1,252 @@
+---
+title: Flow Structure
+description: Understanding triggers, nodes, and execution order
+---
+
+A flow is a JSON document with three main sections: metadata, trigger, and nodes.
+
+## Basic Structure
+
+```json
+{
+  "id": "uuid",
+  "name": "Flow Name",
+  "slug": "flow-name",
+  "trigger": {
+    "type": "http",
+    "config": { ... }
+  },
+  "nodes": [
+    { "id": "node1", "type": "...", "config": { ... } },
+    { "id": "node2", "type": "...", "config": { ... } }
+  ]
+}
+```
+
+## Trigger Types
+
+Triggers define how a flow is invoked.
+
+### HTTP Trigger
+
+The most common trigger type. Creates a REST endpoint.
+
+```json
+{
+  "trigger": {
+    "type": "http",
+    "config": {
+      "method": "POST",
+      "path": "/payments",
+      "middleware": {
+        "before": ["auth_middleware"],
+        "after": ["log_middleware"]
+      }
+    }
+  }
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `method` | string | Yes | HTTP method: GET, POST, PUT, DELETE, PATCH |
+| `path` | string | Yes | URL path for the endpoint |
+| `middleware.before` | string[] | No | Node IDs to run before main flow |
+| `middleware.after` | string[] | No | Node IDs to run after main flow |
+
+### Cron Trigger
+
+Schedule flows to run at specific times.
+
+```json
+{
+  "trigger": {
+    "type": "cron",
+    "config": {
+      "schedule": "0 9 * * *",
+      "timezone": "America/New_York"
+    }
+  }
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `schedule` | string | Yes | Cron expression |
+| `timezone` | string | No | IANA timezone (default: UTC) |
+
+### Webhook Trigger
+
+Receive callbacks from external services.
+
+```json
+{
+  "trigger": {
+    "type": "webhook",
+    "config": {
+      "secret": "{{env.WEBHOOK_SECRET}}",
+      "signature_header": "X-Signature"
+    }
+  }
+}
+```
+
+## Node Structure
+
+Every node has the same base structure:
+
+```json
+{
+  "id": "unique_node_id",
+  "type": "node_type",
+  "config": { }
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `id` | string | Yes | Unique identifier within the flow |
+| `type` | string | Yes | One of the 12 node types |
+| `config` | object | Yes | Type-specific configuration |
+
+## Execution Order
+
+By default, nodes execute sequentially in the order they appear in the `nodes` array.
+
+```
+Node 1 -> Node 2 -> Node 3 -> Response
+```
+
+### Branching
+
+Control flow nodes (`condition`, `switch`) can branch execution:
+
+```
+Node 1 -> Condition
+              |
+    +---------+---------+
+    |                   |
+  (then)              (else)
+    |                   |
+  Node 2              Node 3
+    |                   |
+    +---------+---------+
+              |
+           Node 4
+```
+
+Branches are specified by node IDs in the `then` and `else` arrays.
+
+### Parallel Execution
+
+The `parallel` node runs multiple branches concurrently:
+
+```
+Node 1 -> Parallel
+              |
+    +---------+---------+
+    |         |         |
+ Branch 1  Branch 2  Branch 3
+    |         |         |
+    +---------+---------+
+              |
+           Node 5
+```
+
+## Context
+
+Every flow execution has a **context** - a data store that nodes read from and write to.
+
+### Initial Context
+
+When a flow starts, context is seeded with trigger data:
+
+```json
+{
+  "request": {
+    "method": "POST",
+    "path": "/payments",
+    "headers": { "Authorization": "Bearer xxx" },
+    "query": { "debug": "true" },
+    "body": { "amount": 1000 }
+  },
+  "env": {
+    "environment": "production"
+  }
+}
+```
+
+### Node Outputs
+
+After each node executes, its output is written to context:
+
+```
+Node "fetch_user" runs -> context["fetch_user.output"] = { ... }
+Node "transform"  runs -> context["transform.output"] = { ... }
+```
+
+Access outputs using template expressions:
+
+```
+{{fetch_user.output.body.name}}
+{{transform.output.total}}
+```
+
+## Middleware
+
+Middleware runs before and/or after the main flow. Common uses:
+- Authentication
+- Rate limiting
+- Logging
+- Request/response transformation
+
+```json
+{
+  "trigger": {
+    "type": "http",
+    "config": {
+      "method": "POST",
+      "path": "/payments",
+      "middleware": {
+        "before": ["verify_auth", "check_rate_limit"],
+        "after": ["log_request"]
+      }
+    }
+  }
+}
+```
+
+**Execution order:**
+```
+Request -> Before Middleware -> Main Flow -> After Middleware -> Response
+```
+
+Middleware nodes can:
+- Add data to context (e.g., `{{verify_auth.output.user_id}}`)
+- Abort the flow early with an error response
+
+## Flow States
+
+Flows have a status that controls execution:
+
+| Status | Description |
+|--------|-------------|
+| `draft` | In development, not executable |
+| `published` | Live and accepting requests |
+| `disabled` | Temporarily stopped |
+| `archived` | Soft deleted |
+
+## Versioning
+
+Flows maintain version history for rollback:
+
+- `current_version` - Latest saved version
+- `published_version` - Currently deployed version
+
+You can deploy specific versions to different environments (production, staging).
+
+## Next Steps
+
+- [Nodes Overview](/nodes/overview) - Learn about all node types
+- [Template Expressions](/reference/templates) - Reference data in your flows
+- [Pipes](/reference/pipes) - Transform data inline

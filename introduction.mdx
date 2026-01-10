@@ -1,0 +1,112 @@
+---
+title: Introduction
+description: Build APIs without writing code using JSON flow definitions
+---
+
+Dualship is a visual API builder platform. Users create fully functional backend APIs without writing code by defining **flows** - JSON documents that describe how an API should behave.
+
+## Core Concept
+
+Instead of writing code, you define APIs as flows. A flow is a JSON document that describes:
+
+1. **Trigger** - How the API is invoked (HTTP request, cron schedule, webhook)
+2. **Nodes** - What steps to execute in sequence
+3. **Response** - What to return to the caller
+
+These flows are stored as data and interpreted at runtime. When a request comes in, the executor processes the flow in real-time. No code generation. No deployment. The API is live the moment the flow is saved.
+
+## How It Works
+
+```json
+{
+  "name": "Create Payment",
+  "trigger": {
+    "type": "http",
+    "config": {
+      "method": "POST",
+      "path": "/payments"
+    }
+  },
+  "nodes": [
+    {
+      "id": "validate",
+      "type": "request",
+      "config": {
+        "source": "request.body",
+        "schema": {
+          "amount": "required|numeric|min:1",
+          "email": "required|email"
+        }
+      }
+    },
+    {
+      "id": "process",
+      "type": "http",
+      "config": {
+        "method": "POST",
+        "url": "https://api.stripe.com/charges",
+        "body": {
+          "amount": "{{request.body.amount}}",
+          "email": "{{request.body.email}}"
+        }
+      }
+    },
+    {
+      "id": "respond",
+      "type": "response",
+      "config": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "charge_id": "{{process.output.body.id}}"
+        }
+      }
+    }
+  ]
+}
+```
+
+## Key Features
+
+| Feature | Description |
+|---------|-------------|
+| **12 Node Types** | Control flow, data manipulation, HTTP requests, and more |
+| **Template Expressions** | Reference data with `{{path.to.value}}` syntax |
+| **70+ Pipes** | Transform data inline with filters like `map`, `filter`, `sort` |
+| **Parallel Execution** | Run multiple operations concurrently |
+| **Error Handling** | Try-catch patterns for robust APIs |
+| **Validation** | Built-in request validation with 50+ rules |
+
+## Node Categories
+
+Nodes are organized into categories:
+
+**Control Flow**
+- `condition` - If/else branching
+- `switch` - Multi-way branching
+- `parallel` - Concurrent execution
+- `loop` - Iteration over arrays or counts
+- `try` - Error handling with catch/finally
+
+**Data Manipulation**
+- `set` - Store values in context
+- `transform` - Reshape and compute data
+
+**HTTP/Network**
+- `http` - Make outbound HTTP requests
+
+**Response/Abort**
+- `response` - Send HTTP response
+- `abort` - Stop flow with error
+
+**Timing**
+- `delay` - Pause execution
+
+**Validation**
+- `request` - Validate incoming data
+
+## Next Steps
+
+- [Quickstart](/quickstart) - Create your first flow
+- [Flow Structure](/flow-structure) - Understand triggers and node execution
+- [Nodes Overview](/nodes/overview) - Learn about all node types

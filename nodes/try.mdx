@@ -1,0 +1,309 @@
+---
+title: Try Node
+description: Error handling with catch and finally blocks
+---
+
+The `try` node provides structured error handling, similar to try/catch/finally in programming languages. Use it to gracefully handle errors and ensure cleanup code runs.
+
+## Configuration
+
+```json
+{
+  "id": "safe_api_call",
+  "type": "try",
+  "config": {
+    "try": ["fetch_data", "process_data"],
+    "catch": ["handle_error"],
+    "finally": ["cleanup"]
+  }
+}
+```
+
+## Config Fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `try` | string[] | Yes | Node IDs to execute (at least one required) |
+| `catch` | string[] | No | Node IDs to execute if an error occurs |
+| `finally` | string[] | No | Node IDs that always execute |
+
+## Execution Flow
+
+```
+      try block
+          |
+    +-----+-----+
+    |           |
+ success      error
+    |           |
+    |        catch block
+    |           |
+    +-----+-----+
+          |
+    finally block
+          |
+       continue
+```
+
+1. Execute all nodes in `try`
+2. If error occurs, execute `catch` nodes
+3. Always execute `finally` nodes
+4. Continue with flow
+
+## Output
+
+### On Success
+
+```json
+{
+  "success": true,
+  "result": { ... },
+  "error": null,
+  "failed_node": null
+}
+```
+
+### On Error
+
+```json
+{
+  "success": false,
+  "result": null,
+  "error": "connection timeout",
+  "failed_node": "fetch_data"
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `success` | boolean | Whether try block completed without error |
+| `result` | any | Output from last successful node |
+| `error` | string | Error message if failed |
+| `failed_node` | string | ID of node that failed |
+
+## Error Context
+
+In the `catch` block, error information is available:
+
+| Expression | Description |
+|------------|-------------|
+| `{{error.message}}` | The error message |
+| `{{error.node}}` | ID of the node that failed |
+| `{{error.type}}` | Type of error |
+
+## Examples
+
+### Basic Error Handling
+
+```json
+{
+  "id": "fetch_with_fallback",
+  "type": "try",
+  "config": {
+    "try": ["fetch_from_primary_api"],
+    "catch": ["fetch_from_backup_api"]
+  }
+}
+```
+
+### With Cleanup
+
+```json
+{
+  "id": "transaction",
+  "type": "try",
+  "config": {
+    "try": ["start_transaction", "process_payment", "commit"],
+    "catch": ["rollback"],
+    "finally": ["release_lock"]
+  }
+}
+```
+
+### Logging Errors
+
+```json
+[
+  {
+    "id": "safe_operation",
+    "type": "try",
+    "config": {
+      "try": ["risky_operation"],
+      "catch": ["log_error", "set_fallback"],
+      "finally": ["track_metrics"]
+    }
+  },
+  {
+    "id": "log_error",
+    "type": "set",
+    "config": {
+      "key": "error_log",
+      "value": {
+        "message": "{{error.message}}",
+        "node": "{{error.node}}",
+        "timestamp": "{{now}}"
+      }
+    }
+  },
+  {
+    "id": "set_fallback",
+    "type": "set",
+    "config": {
+      "key": "result",
+      "value": {
+        "data": [],
+        "source": "fallback",
+        "error": "{{error.message}}"
+      }
+    }
+  }
+]
+```
+
+### API Call with Fallback Response
+
+```json
+[
+  {
+    "id": "try_fetch",
+    "type": "try",
+    "config": {
+      "try": ["fetch_user_data", "transform_data"],
+      "catch": ["set_default_data"]
+    }
+  },
+  {
+    "id": "fetch_user_data",
+    "type": "http",
+    "config": {
+      "url": "https://api.example.com/users/{{user_id}}",
+      "timeout": 5000
+    }
+  },
+  {
+    "id": "set_default_data",
+    "type": "set",
+    "config": {
+      "key": "user_data",
+      "value": {
+        "id": "{{user_id}}",
+        "name": "Unknown",
+        "loaded_from": "fallback"
+      }
+    }
+  }
+]
+```
+
+### Conditional Error Response
+
+```json
+[
+  {
+    "id": "try_operation",
+    "type": "try",
+    "config": {
+      "try": ["validate", "process"],
+      "catch": ["set_error"]
+    }
+  },
+  {
+    "id": "set_error",
+    "type": "set",
+    "config": {
+      "key": "operation_error",
+      "value": {
+        "failed": true,
+        "message": "{{error.message}}",
+        "recoverable": true
+      }
+    }
+  },
+  {
+    "id": "check_error",
+    "type": "condition",
+    "config": {
+      "conditions": [
+        {
+          "if": "{{operation_error.failed}} == true",
+          "then": ["error_response"]
+        }
+      ],
+      "else": ["success_response"]
+    }
+  }
+]
+```
+
+### Nested Try Blocks
+
+Try nodes can be nested for granular error handling:
+
+```json
+[
+  {
+    "id": "outer_try",
+    "type": "try",
+    "config": {
+      "try": ["inner_try", "final_step"],
+      "catch": ["catastrophic_error"]
+    }
+  },
+  {
+    "id": "inner_try",
+    "type": "try",
+    "config": {
+      "try": ["risky_step"],
+      "catch": ["recover_from_risky"]
+    }
+  }
+]
+```
+
+## Use Cases
+
+### API Resilience
+
+Wrap external API calls to handle failures gracefully:
+
+```json
+{
+  "try": ["call_external_api"],
+  "catch": ["use_cached_data"],
+  "finally": ["log_attempt"]
+}
+```
+
+### Transaction Safety
+
+Ensure rollback happens if processing fails:
+
+```json
+{
+  "try": ["begin_tx", "update_db", "commit_tx"],
+  "catch": ["rollback_tx", "log_failure"]
+}
+```
+
+### Resource Cleanup
+
+Always release resources regardless of success/failure:
+
+```json
+{
+  "try": ["acquire_lock", "do_work"],
+  "finally": ["release_lock"]
+}
+```
+
+## Error Propagation
+
+- If `catch` handles the error, the flow continues normally
+- If `catch` itself fails, the error propagates up
+- `finally` always runs, even if `catch` fails
+
+## Related
+
+- [Abort Node](/nodes/abort) - Explicitly fail the flow
+- [Condition Node](/nodes/condition) - Check error status
+- [HTTP Node](/nodes/http) - Has built-in `on_error` option

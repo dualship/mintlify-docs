@@ -1,0 +1,223 @@
+---
+title: Switch Node
+description: Multi-way branching with pattern, range, or exact matching
+---
+
+The `switch` node provides multi-way branching. It evaluates an expression and matches against cases using exact values, numeric ranges, or regex patterns.
+
+## Configuration
+
+```json
+{
+  "id": "route_payment",
+  "type": "switch",
+  "config": {
+    "expression": "{{request.body.payment_method}}",
+    "cases": [
+      { "value": "card", "then": ["process_card"] },
+      { "value": "bank_transfer", "then": ["process_bank"] },
+      { "pattern": "^crypto_.*", "then": ["process_crypto"] }
+    ],
+    "default": ["unsupported_method"]
+  }
+}
+```
+
+## Config Fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `expression` | string | Yes | Template expression to evaluate |
+| `cases` | array | Yes | Array of case objects |
+| `default` | string[] | No | Node IDs if no case matches |
+
+### Case Object
+
+Each case can use one of three match types:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `value` | any | Exact value match (string, number, boolean, or array of values) |
+| `min` | number | Minimum value for range match (inclusive) |
+| `max` | number | Maximum value for range match (inclusive) |
+| `pattern` | string | Regex pattern for pattern match |
+| `then` | string[] | Node IDs to execute if case matches |
+
+## Match Types
+
+### Exact Match
+
+Match against a specific value:
+
+```json
+{
+  "cases": [
+    { "value": "active", "then": ["handle_active"] },
+    { "value": "pending", "then": ["handle_pending"] },
+    { "value": "cancelled", "then": ["handle_cancelled"] }
+  ]
+}
+```
+
+Match against multiple values:
+
+```json
+{
+  "cases": [
+    { "value": ["admin", "superadmin"], "then": ["admin_access"] },
+    { "value": ["user", "guest"], "then": ["standard_access"] }
+  ]
+}
+```
+
+### Range Match
+
+Match numeric values within a range:
+
+```json
+{
+  "expression": "{{order.total}}",
+  "cases": [
+    { "min": 1000, "then": ["high_value"] },
+    { "min": 100, "max": 999, "then": ["medium_value"] },
+    { "max": 99, "then": ["low_value"] }
+  ]
+}
+```
+
+| Config | Matches |
+|--------|---------|
+| min: 100 | Values 100 or greater |
+| max: 99 | Values 99 or less |
+| min: 100, max: 999 | Values between 100 and 999 (inclusive) |
+
+### Pattern Match
+
+Match using regular expressions:
+
+```json
+{
+  "expression": "{{request.body.email}}",
+  "cases": [
+    { "pattern": "@company\\.com$", "then": ["internal_user"] },
+    { "pattern": "@partner\\.(com|org)$", "then": ["partner_user"] }
+  ],
+  "default": ["external_user"]
+}
+```
+
+## Output
+
+```json
+{
+  "matched": true,
+  "matched_index": 0,
+  "matched_value": "card",
+  "match_type": "exact"
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `matched` | boolean | Whether any case matched |
+| `matched_index` | number | Index of matched case (-1 if default) |
+| `matched_value` | any | The value that was matched |
+| `match_type` | string | `"exact"`, `"range"`, `"pattern"`, or `"default"` |
+
+## Examples
+
+### Route by HTTP Status
+
+```json
+{
+  "id": "handle_response",
+  "type": "switch",
+  "config": {
+    "expression": "{{api_call.output.status_code}}",
+    "cases": [
+      { "value": 200, "then": ["success"] },
+      { "value": 201, "then": ["created"] },
+      { "value": [400, 422], "then": ["validation_error"] },
+      { "value": 401, "then": ["unauthorized"] },
+      { "value": 404, "then": ["not_found"] },
+      { "min": 500, "then": ["server_error"] }
+    ],
+    "default": ["unknown_error"]
+  }
+}
+```
+
+### Categorize by Score
+
+```json
+{
+  "id": "assign_grade",
+  "type": "switch",
+  "config": {
+    "expression": "{{student.score}}",
+    "cases": [
+      { "min": 90, "then": ["grade_a"] },
+      { "min": 80, "max": 89, "then": ["grade_b"] },
+      { "min": 70, "max": 79, "then": ["grade_c"] },
+      { "min": 60, "max": 69, "then": ["grade_d"] }
+    ],
+    "default": ["grade_f"]
+  }
+}
+```
+
+### Route by URL Pattern
+
+```json
+{
+  "id": "route_webhook",
+  "type": "switch",
+  "config": {
+    "expression": "{{request.headers.X-Webhook-Source}}",
+    "cases": [
+      { "pattern": "^stripe_", "then": ["handle_stripe"] },
+      { "pattern": "^github_", "then": ["handle_github"] },
+      { "pattern": "^slack_", "then": ["handle_slack"] }
+    ],
+    "default": ["unknown_source"]
+  }
+}
+```
+
+### Boolean Switch
+
+```json
+{
+  "id": "check_premium",
+  "type": "switch",
+  "config": {
+    "expression": "{{user.is_premium}}",
+    "cases": [
+      { "value": true, "then": ["premium_features"] },
+      { "value": false, "then": ["standard_features"] }
+    ]
+  }
+}
+```
+
+## Evaluation Order
+
+1. Cases are evaluated **in order**
+2. **Pattern** match is checked first (if `pattern` is set)
+3. **Range** match is checked next (if `min` or `max` is set)
+4. **Exact** match is checked last (if `value` is set)
+5. First matching case wins
+6. If no case matches, `default` branch executes
+
+## Type Coercion
+
+The switch node performs smart type coercion:
+
+- String `"true"`/`"false"` are converted to booleans
+- Numeric strings are parsed as numbers for range comparisons
+- Array values allow matching against any element
+
+## Related
+
+- [Condition Node](/nodes/condition) - Simple if/else branching
+- [Template Expressions](/reference/templates) - Expression syntax

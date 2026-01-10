@@ -1,0 +1,182 @@
+---
+title: Delay Node
+description: Pause flow execution for a specified duration
+---
+
+The `delay` node pauses flow execution for a specified number of milliseconds. Use it for rate limiting, throttling, or simulating processing time.
+
+## Configuration
+
+```json
+{
+  "id": "wait",
+  "type": "delay",
+  "config": {
+    "duration": 1000
+  }
+}
+```
+
+## Config Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `duration` | number | Yes | - | Delay in milliseconds (max 30000) |
+
+## Limits
+
+- **Minimum**: Must be greater than 0
+- **Maximum**: 30000ms (30 seconds) - values above this are capped
+
+## Output
+
+```json
+{
+  "delayed_ms": 1000,
+  "started_at": "2024-01-15T10:30:00Z",
+  "ended_at": "2024-01-15T10:30:01Z"
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `delayed_ms` | number | Actual delay duration |
+| `started_at` | string | ISO timestamp when delay started |
+| `ended_at` | string | ISO timestamp when delay ended |
+
+## Examples
+
+### Simple Delay
+
+```json
+{
+  "id": "wait_1s",
+  "type": "delay",
+  "config": {
+    "duration": 1000
+  }
+}
+```
+
+### Rate Limiting
+
+Add delay between API calls to avoid rate limits:
+
+```json
+[
+  {
+    "id": "fetch_first",
+    "type": "http",
+    "config": {
+      "url": "https://api.example.com/data/1"
+    }
+  },
+  {
+    "id": "rate_limit_pause",
+    "type": "delay",
+    "config": {
+      "duration": 500
+    }
+  },
+  {
+    "id": "fetch_second",
+    "type": "http",
+    "config": {
+      "url": "https://api.example.com/data/2"
+    }
+  }
+]
+```
+
+### Webhook Retry Backoff
+
+```json
+[
+  {
+    "id": "retry_delay",
+    "type": "delay",
+    "config": {
+      "duration": 2000
+    }
+  },
+  {
+    "id": "retry_webhook",
+    "type": "http",
+    "config": {
+      "url": "{{webhook_url}}",
+      "method": "POST",
+      "body": "{{payload}}"
+    }
+  }
+]
+```
+
+### Polling Interval
+
+```json
+{
+  "id": "poll_interval",
+  "type": "delay",
+  "config": {
+    "duration": 5000
+  }
+}
+```
+
+## Use Cases
+
+### API Rate Limiting
+
+When calling external APIs with rate limits, add delays between requests:
+
+```json
+{
+  "id": "api_throttle",
+  "type": "delay",
+  "config": {
+    "duration": 100
+  }
+}
+```
+
+### Simulated Processing
+
+For testing or demo purposes:
+
+```json
+{
+  "id": "simulate_processing",
+  "type": "delay",
+  "config": {
+    "duration": 2000
+  }
+}
+```
+
+### Debouncing
+
+Prevent rapid repeated actions:
+
+```json
+{
+  "id": "debounce",
+  "type": "delay",
+  "config": {
+    "duration": 300
+  }
+}
+```
+
+## Accessing Delay Output
+
+```
+{{wait.output.delayed_ms}}    -> 1000
+{{wait.output.started_at}}    -> "2024-01-15T10:30:00Z"
+{{wait.output.ended_at}}      -> "2024-01-15T10:30:01Z"
+```
+
+## Related
+
+- [Loop Node](/nodes/loop) - Iterate with delays
+- [Parallel Node](/nodes/parallel) - Run operations concurrently
+- [HTTP Node](/nodes/http) - Make API calls with timing

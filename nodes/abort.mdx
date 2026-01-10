@@ -1,0 +1,212 @@
+---
+title: Abort Node
+description: Stop flow execution with an error response
+---
+
+The `abort` node immediately stops flow execution and returns an error response to the client. Use it when you encounter critical errors that should halt processing.
+
+## Configuration
+
+```json
+{
+  "id": "validation_error",
+  "type": "abort",
+  "config": {
+    "status": 400,
+    "message": "Invalid request data"
+  }
+}
+```
+
+## Config Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `status` | number | No | `400` | HTTP status code |
+| `message` | string | No | `"Request aborted"` | Error message |
+| `body` | any | No | - | Custom response body (overrides message) |
+
+## Response Behavior
+
+The abort node generates a response based on configuration:
+
+1. If `body` is provided, it becomes the response body
+2. If only `message` is provided, response is `{ "error": "<message>" }`
+3. If neither is provided, response is `{ "error": "Request aborted" }`
+
+## Examples
+
+### Simple Error Message
+
+```json
+{
+  "id": "abort_invalid",
+  "type": "abort",
+  "config": {
+    "status": 400,
+    "message": "Invalid user ID format"
+  }
+}
+```
+
+Response:
+```json
+{
+  "error": "Invalid user ID format"
+}
+```
+
+### Custom Error Body
+
+```json
+{
+  "id": "abort_detailed",
+  "type": "abort",
+  "config": {
+    "status": 422,
+    "body": {
+      "success": false,
+      "error": "validation_failed",
+      "message": "{{error_message}}",
+      "details": "{{validation_errors}}"
+    }
+  }
+}
+```
+
+### Not Found Error
+
+```json
+{
+  "id": "not_found",
+  "type": "abort",
+  "config": {
+    "status": 404,
+    "body": {
+      "error": "not_found",
+      "message": "User {{request.params.id}} not found"
+    }
+  }
+}
+```
+
+### Unauthorized Error
+
+```json
+{
+  "id": "unauthorized",
+  "type": "abort",
+  "config": {
+    "status": 401,
+    "message": "Invalid or expired token"
+  }
+}
+```
+
+### Dynamic Error Message
+
+```json
+{
+  "id": "abort_dynamic",
+  "type": "abort",
+  "config": {
+    "status": 400,
+    "message": "{{validation_result.first_error}}"
+  }
+}
+```
+
+## Common Use Cases
+
+### After Failed Validation
+
+```json
+[
+  {
+    "id": "check_auth",
+    "type": "condition",
+    "config": {
+      "conditions": [
+        { "if": "{{auth.valid}} == false", "then": ["abort_auth"] }
+      ],
+      "else": ["continue_processing"]
+    }
+  },
+  {
+    "id": "abort_auth",
+    "type": "abort",
+    "config": {
+      "status": 401,
+      "body": {
+        "error": "unauthorized",
+        "message": "Authentication required"
+      }
+    }
+  }
+]
+```
+
+### Rate Limit Exceeded
+
+```json
+{
+  "id": "rate_limited",
+  "type": "abort",
+  "config": {
+    "status": 429,
+    "body": {
+      "error": "rate_limit_exceeded",
+      "message": "Too many requests",
+      "retry_after": 60
+    }
+  }
+}
+```
+
+### Missing Required Resource
+
+```json
+{
+  "id": "resource_missing",
+  "type": "abort",
+  "config": {
+    "status": 404,
+    "body": {
+      "error": "resource_not_found",
+      "resource_type": "order",
+      "resource_id": "{{request.params.order_id}}"
+    }
+  }
+}
+```
+
+## vs Response Node
+
+| Abort | Response |
+|-------|----------|
+| Error termination | Normal termination |
+| Typically 4xx/5xx status | Any status code |
+| Stops immediately | Ends flow normally |
+| Skips remaining nodes | Final node in flow path |
+
+Use `abort` for unexpected errors that should stop processing. Use `response` for normal flow completion, including handled error responses.
+
+## Common Status Codes
+
+| Code | Meaning | Use Case |
+|------|---------|----------|
+| 400 | Bad Request | Invalid input |
+| 401 | Unauthorized | Missing or invalid auth |
+| 403 | Forbidden | Insufficient permissions |
+| 404 | Not Found | Resource doesn't exist |
+| 409 | Conflict | Resource state conflict |
+| 422 | Unprocessable Entity | Validation failed |
+| 429 | Too Many Requests | Rate limit exceeded |
+| 500 | Internal Server Error | Unexpected error |
+| 503 | Service Unavailable | Dependency down |
+
+## Related
+
+- [Response Node](/nodes/response) - Normal flow termination
+- [Condition Node](/nodes/condition) - Branch to abort on errors
+- [Try Node](/nodes/try) - Handle errors gracefully

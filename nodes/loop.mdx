@@ -1,0 +1,289 @@
+---
+title: Loop Node
+description: Iterate over arrays, counts, or while conditions
+---
+
+The `loop` node iterates over data, executing a set of nodes for each iteration. It supports three modes: iterating over arrays, running a fixed count, or looping while a condition is true.
+
+## Configuration
+
+```json
+{
+  "id": "process_orders",
+  "type": "loop",
+  "config": {
+    "items": "{{request.body.orders}}",
+    "as": "order",
+    "index": "i",
+    "do": ["validate_order", "process_order"],
+    "concurrent": false
+  }
+}
+```
+
+## Config Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `items` | string | * | - | Template resolving to an array |
+| `count` | number/string | * | - | Number of iterations or template |
+| `while` | string | * | - | Condition to check each iteration |
+| `max` | number | ** | - | Maximum iterations (required for `while`) |
+| `as` | string | No | `"item"` | Variable name for current item |
+| `index` | string | No | `"index"` | Variable name for current index |
+| `do` | string[] | Yes | - | Node IDs to execute each iteration |
+| `concurrent` | boolean | No | `false` | Run iterations in parallel |
+
+\* Must specify exactly one of: `items`, `count`, or `while`
+\** Required when using `while` mode
+
+## Loop Modes
+
+### Items Mode
+
+Iterate over an array:
+
+```json
+{
+  "id": "send_emails",
+  "type": "loop",
+  "config": {
+    "items": "{{users}}",
+    "as": "user",
+    "index": "i",
+    "do": ["send_email"]
+  }
+}
+```
+
+Inside the loop, access:
+- `{{user}}` - Current array element
+- `{{i}}` - Current index (0-based)
+
+### Count Mode
+
+Run a fixed number of times:
+
+```json
+{
+  "id": "retry_request",
+  "type": "loop",
+  "config": {
+    "count": 3,
+    "index": "attempt",
+    "do": ["make_request", "check_success"]
+  }
+}
+```
+
+Count can be a template:
+
+```json
+{
+  "count": "{{request.body.quantity}}"
+}
+```
+
+### While Mode
+
+Loop while a condition is true:
+
+```json
+{
+  "id": "paginate",
+  "type": "loop",
+  "config": {
+    "while": "{{has_more_pages}} == true",
+    "max": 100,
+    "do": ["fetch_page", "check_more"]
+  }
+}
+```
+
+The `max` field is **required** to prevent infinite loops.
+
+## Output
+
+```json
+{
+  "iterations": 5,
+  "results": [
+    { "index": 0, "output": { ... } },
+    { "index": 1, "output": { ... } },
+    { "index": 2, "output": { ... } },
+    { "index": 3, "output": { ... } },
+    { "index": 4, "output": { ... } }
+  ],
+  "completed": true,
+  "error": null
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `iterations` | number | Total iterations completed |
+| `results` | array | Output from each iteration |
+| `completed` | boolean | Whether loop finished normally |
+| `error` | string | Error message if loop failed |
+
+## Context Variables
+
+During each iteration, these variables are available:
+
+| Variable | Description |
+|----------|-------------|
+| `{{item}}` (or custom `as`) | Current item (items mode) or iteration number (count mode) |
+| `{{index}}` (or custom name) | Zero-based iteration index |
+
+### Example Access
+
+```json
+{
+  "id": "process_item",
+  "type": "http",
+  "config": {
+    "method": "POST",
+    "url": "https://api.example.com/items",
+    "body": {
+      "item_id": "{{order.id}}",
+      "iteration": "{{i}}"
+    }
+  }
+}
+```
+
+## Examples
+
+### Process Array Items
+
+```json
+{
+  "id": "process_all_orders",
+  "type": "loop",
+  "config": {
+    "items": "{{fetch_orders.output.body}}",
+    "as": "order",
+    "do": ["validate_order", "save_order"]
+  }
+}
+```
+
+### Concurrent Processing
+
+Process items in parallel for better performance:
+
+```json
+{
+  "id": "send_notifications",
+  "type": "loop",
+  "config": {
+    "items": "{{subscribers}}",
+    "as": "subscriber",
+    "do": ["send_notification"],
+    "concurrent": true
+  }
+}
+```
+
+### Pagination Loop
+
+Fetch all pages from a paginated API:
+
+```json
+[
+  {
+    "id": "init_pagination",
+    "type": "set",
+    "config": {
+      "key": "page",
+      "value": 1
+    }
+  },
+  {
+    "id": "init_has_more",
+    "type": "set",
+    "config": {
+      "key": "has_more",
+      "value": true
+    }
+  },
+  {
+    "id": "fetch_all_pages",
+    "type": "loop",
+    "config": {
+      "while": "{{has_more}} == true",
+      "max": 50,
+      "do": ["fetch_page", "update_pagination"]
+    }
+  }
+]
+```
+
+### Retry Pattern
+
+Retry a request up to 3 times:
+
+```json
+{
+  "id": "retry_api_call",
+  "type": "loop",
+  "config": {
+    "count": 3,
+    "index": "attempt",
+    "do": ["make_request", "check_if_should_retry"]
+  }
+}
+```
+
+### Accessing Loop Results
+
+After the loop, access results by index:
+
+```json
+{
+  "id": "summarize",
+  "type": "transform",
+  "config": {
+    "output": {
+      "total_processed": "{{process_all_orders.output.iterations}}",
+      "first_result": "{{process_all_orders.output.results[0]}}",
+      "all_results": "{{process_all_orders.output.results}}"
+    }
+  }
+}
+```
+
+### Nested Data Access
+
+When iterating over objects with nested data:
+
+```json
+{
+  "id": "process_nested",
+  "type": "loop",
+  "config": {
+    "items": "{{data.users}}",
+    "as": "user",
+    "do": ["process_user"]
+  }
+}
+```
+
+Inside `process_user`:
+```
+{{user.name}}           -> Access user's name
+{{user.address.city}}   -> Access nested properties
+{{index}}               -> Current iteration index
+```
+
+## Performance Considerations
+
+1. **Use `concurrent: true`** for independent operations
+2. **Set reasonable `max`** for while loops to prevent runaway execution
+3. **Batch operations** when possible instead of individual API calls
+4. **Limit iterations** - very large loops can impact performance
+
+## Related
+
+- [Parallel Node](/nodes/parallel) - Run fixed branches concurrently
+- [Transform Node](/nodes/transform) - Process array data with pipes

@@ -1,0 +1,287 @@
+---
+title: Transform Node
+description: Reshape data and compute new values
+---
+
+The `transform` node reshapes data by creating a new object with computed fields. Use it to restructure API responses, compute derived values, or prepare data for the response.
+
+## Configuration
+
+```json
+{
+  "id": "build_response",
+  "type": "transform",
+  "config": {
+    "output": {
+      "user_id": "{{fetch_user.output.body.id}}",
+      "full_name": "{{fetch_user.output.body.name}}",
+      "post_count": "{{fetch_posts.output.body | count}}",
+      "recent_posts": "{{fetch_posts.output.body | slice:5}}"
+    }
+  }
+}
+```
+
+## Config Fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `output` | object | Yes | Object defining the transformed structure |
+
+## Output
+
+The node outputs the transformed object:
+
+```json
+{
+  "user_id": 123,
+  "full_name": "John Doe",
+  "post_count": 42,
+  "recent_posts": [...]
+}
+```
+
+Access via `{{transform_node_id.output.field}}`.
+
+## Features
+
+### Template Resolution
+
+All string values are resolved as templates:
+
+```json
+{
+  "output": {
+    "name": "{{user.name}}",
+    "email": "{{user.email}}"
+  }
+}
+```
+
+### Nested Objects
+
+Create nested structures:
+
+```json
+{
+  "output": {
+    "user": {
+      "id": "{{data.id}}",
+      "profile": {
+        "name": "{{data.name}}",
+        "avatar": "{{data.avatar_url}}"
+      }
+    }
+  }
+}
+```
+
+### Arrays
+
+Create arrays with transformed data:
+
+```json
+{
+  "output": {
+    "items": "{{raw_items | map:name}}",
+    "ids": "{{raw_items | map:id}}"
+  }
+}
+```
+
+### Arithmetic Expressions
+
+Perform calculations:
+
+```json
+{
+  "output": {
+    "total": "{{subtotal}} + {{tax}}",
+    "discounted": "{{price}} * 0.9",
+    "per_item": "{{total}} / {{quantity}}"
+  }
+}
+```
+
+Supported operators: `+`, `-`, `*`, `/`
+
+### Pipe Transformations
+
+Apply pipes to transform values:
+
+```json
+{
+  "output": {
+    "active_users": "{{users | filter:status=active}}",
+    "user_names": "{{users | map:name | join:, }}",
+    "total_value": "{{orders | sum:amount}}",
+    "formatted_date": "{{created_at | formatDate:YYYY-MM-DD}}"
+  }
+}
+```
+
+## Examples
+
+### Reshape API Response
+
+```json
+{
+  "id": "transform_user",
+  "type": "transform",
+  "config": {
+    "output": {
+      "id": "{{api_response.output.body.data.user.id}}",
+      "name": "{{api_response.output.body.data.user.full_name}}",
+      "email": "{{api_response.output.body.data.user.email_address}}",
+      "joined": "{{api_response.output.body.data.user.created_at | formatDate:YYYY-MM-DD}}"
+    }
+  }
+}
+```
+
+### Compute Statistics
+
+```json
+{
+  "id": "calculate_stats",
+  "type": "transform",
+  "config": {
+    "output": {
+      "total_orders": "{{orders | count}}",
+      "total_revenue": "{{orders | sum:amount}}",
+      "average_order": "{{orders | avg:amount}}",
+      "highest_order": "{{orders | max:amount}}",
+      "completed_count": "{{orders | filter:status=completed | count}}"
+    }
+  }
+}
+```
+
+### Build Dashboard Data
+
+```json
+{
+  "id": "build_dashboard",
+  "type": "transform",
+  "config": {
+    "output": {
+      "user": "{{fetch_user.output.body | pick:id:name:email}}",
+      "stats": {
+        "posts": "{{fetch_posts.output.body | count}}",
+        "comments": "{{fetch_comments.output.body | count}}",
+        "likes": "{{fetch_likes.output.body | count}}"
+      },
+      "recent_activity": {
+        "latest_post": "{{fetch_posts.output.body | first}}",
+        "latest_comment": "{{fetch_comments.output.body | first}}"
+      },
+      "notifications": "{{fetch_notifications.output.body | filter:read=false | slice:5}}"
+    }
+  }
+}
+```
+
+### Prepare Request Body
+
+```json
+{
+  "id": "prepare_payload",
+  "type": "transform",
+  "config": {
+    "output": {
+      "customer_id": "{{user.id}}",
+      "items": "{{cart.items | map:product_id}}",
+      "total_amount": "{{cart.items | sum:price}}",
+      "currency": "USD",
+      "metadata": {
+        "source": "web",
+        "timestamp": "{{now}}"
+      }
+    }
+  }
+}
+```
+
+### Combine Multiple Sources
+
+```json
+{
+  "id": "merge_data",
+  "type": "transform",
+  "config": {
+    "output": {
+      "profile": "{{fetch_profile.output.body}}",
+      "settings": "{{fetch_settings.output.body}}",
+      "permissions": "{{fetch_permissions.output.body.roles}}",
+      "combined_name": "{{profile.first_name}} {{profile.last_name}}"
+    }
+  }
+}
+```
+
+### Array Transformation
+
+```json
+{
+  "id": "transform_items",
+  "type": "transform",
+  "config": {
+    "output": {
+      "items": "{{raw_items}}",
+      "active_items": "{{raw_items | filter:active=true}}",
+      "item_names": "{{raw_items | map:name}}",
+      "sorted_by_date": "{{raw_items | sort:created_at:desc}}",
+      "first_five": "{{raw_items | slice:5}}",
+      "unique_categories": "{{raw_items | map:category | unique}}"
+    }
+  }
+}
+```
+
+### Conditional Values
+
+Use the `default` pipe for fallback values:
+
+```json
+{
+  "output": {
+    "name": "{{user.name | default:Anonymous}}",
+    "avatar": "{{user.avatar | default:https://example.com/default.png}}",
+    "tier": "{{user.subscription.tier | default:free}}"
+  }
+}
+```
+
+## vs Set Node
+
+| Transform | Set |
+|-----------|-----|
+| Creates multiple output fields | Stores a single value |
+| Complex data reshaping | Simple key-value storage |
+| `output` object config | `key` + `value` config |
+| Ideal for building responses | Ideal for storing intermediate values |
+
+## Accessing Transform Output
+
+**Transform node with id "build_user":**
+```json
+{
+  "output": {
+    "name": "John",
+    "email": "john@example.com"
+  }
+}
+```
+
+**Access in later nodes:**
+```
+{{build_user.output.name}}   -> "John"
+{{build_user.output.email}}  -> "john@example.com"
+{{build_user.output}}        -> entire object
+```
+
+## Related
+
+- [Set Node](/nodes/set) - Store single values
+- [Pipes](/reference/pipes) - Transform data inline
+- [Response Node](/nodes/response) - Send transformed data

@@ -1,0 +1,275 @@
+---
+title: Response Node
+description: Send an HTTP response and end the flow
+---
+
+The `response` node sends an HTTP response to the client and terminates the flow. Every HTTP-triggered flow should have at least one response node.
+
+## Configuration
+
+```json
+{
+  "id": "success_response",
+  "type": "response",
+  "config": {
+    "status": 200,
+    "headers": {
+      "X-Request-ID": "{{request_id}}"
+    },
+    "body": {
+      "success": true,
+      "data": "{{transformed_data.output}}"
+    }
+  }
+}
+```
+
+## Config Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `status` | number | No | auto | HTTP status code |
+| `headers` | object | No | - | Response headers |
+| `body` | any | No | - | Response body |
+
+## Default Status Codes
+
+If `status` is not specified, it defaults based on the request method:
+
+| Method | Default Status |
+|--------|----------------|
+| GET | 200 OK |
+| POST | 201 Created |
+| PUT | 200 OK |
+| PATCH | 200 OK |
+| DELETE | 204 No Content |
+
+## Output
+
+The response node stores its output in context:
+
+```json
+{
+  "status": 200,
+  "headers": { ... },
+  "body": { ... }
+}
+```
+
+## Behavior
+
+When a response node executes:
+
+1. The response is sent to the client
+2. The flow is marked as **done**
+3. No subsequent nodes execute (except `finally` blocks in `try` nodes)
+
+## Examples
+
+### Success Response
+
+```json
+{
+  "id": "respond",
+  "type": "response",
+  "config": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": "{{fetch_data.output.body}}"
+    }
+  }
+}
+```
+
+### Created Response (POST)
+
+```json
+{
+  "id": "created",
+  "type": "response",
+  "config": {
+    "status": 201,
+    "body": {
+      "id": "{{create_user.output.body.id}}",
+      "message": "User created successfully"
+    }
+  }
+}
+```
+
+### No Content Response (DELETE)
+
+```json
+{
+  "id": "deleted",
+  "type": "response",
+  "config": {
+    "status": 204
+  }
+}
+```
+
+### Error Response
+
+```json
+{
+  "id": "not_found",
+  "type": "response",
+  "config": {
+    "status": 404,
+    "body": {
+      "error": "not_found",
+      "message": "User not found"
+    }
+  }
+}
+```
+
+### With Custom Headers
+
+```json
+{
+  "id": "respond_with_headers",
+  "type": "response",
+  "config": {
+    "status": 200,
+    "headers": {
+      "X-Request-ID": "{{request_id}}",
+      "X-Processing-Time": "{{processing_time}}ms",
+      "Cache-Control": "max-age=3600"
+    },
+    "body": "{{data}}"
+  }
+}
+```
+
+### Paginated Response
+
+```json
+{
+  "id": "paginated",
+  "type": "response",
+  "config": {
+    "status": 200,
+    "body": {
+      "data": "{{fetch_items.output.body.items}}",
+      "pagination": {
+        "page": "{{request.query.page | default:1}}",
+        "per_page": 20,
+        "total": "{{fetch_items.output.body.total}}",
+        "has_more": "{{fetch_items.output.body.has_more}}"
+      }
+    }
+  }
+}
+```
+
+### Transformed Response
+
+```json
+{
+  "id": "formatted_response",
+  "type": "response",
+  "config": {
+    "status": 200,
+    "body": {
+      "user": "{{user | pick:id:name:email}}",
+      "stats": {
+        "posts": "{{posts | count}}",
+        "followers": "{{followers | count}}"
+      },
+      "recent_activity": "{{activity | slice:5}}"
+    }
+  }
+}
+```
+
+## Multiple Response Nodes
+
+Flows often have multiple response nodes for different outcomes:
+
+```json
+[
+  {
+    "id": "check_auth",
+    "type": "condition",
+    "config": {
+      "conditions": [
+        { "if": "{{auth.valid}} == true", "then": ["process"] }
+      ],
+      "else": ["unauthorized"]
+    }
+  },
+  {
+    "id": "unauthorized",
+    "type": "response",
+    "config": {
+      "status": 401,
+      "body": { "error": "Unauthorized" }
+    }
+  },
+  {
+    "id": "process",
+    "type": "http",
+    "config": { "url": "..." }
+  },
+  {
+    "id": "check_result",
+    "type": "condition",
+    "config": {
+      "conditions": [
+        { "if": "{{process.output.success}} == true", "then": ["success"] }
+      ],
+      "else": ["error"]
+    }
+  },
+  {
+    "id": "success",
+    "type": "response",
+    "config": {
+      "status": 200,
+      "body": { "success": true, "data": "{{process.output.body}}" }
+    }
+  },
+  {
+    "id": "error",
+    "type": "response",
+    "config": {
+      "status": 500,
+      "body": { "error": "Processing failed" }
+    }
+  }
+]
+```
+
+## Common Status Codes
+
+| Code | Meaning | Use Case |
+|------|---------|----------|
+| 200 | OK | Successful GET, PUT, PATCH |
+| 201 | Created | Successful POST that creates a resource |
+| 204 | No Content | Successful DELETE |
+| 400 | Bad Request | Invalid input |
+| 401 | Unauthorized | Missing or invalid auth |
+| 403 | Forbidden | Insufficient permissions |
+| 404 | Not Found | Resource doesn't exist |
+| 422 | Unprocessable Entity | Validation failed |
+| 500 | Internal Server Error | Unexpected error |
+
+## vs Abort Node
+
+| Response | Abort |
+|----------|-------|
+| Normal flow termination | Error termination |
+| Any status code | Error status codes |
+| Success or error responses | Only error responses |
+| Standard way to end a flow | Stop on critical errors |
+
+Use `response` for normal responses (success or handled errors). Use `abort` to immediately stop on unexpected errors.
+
+## Related
+
+- [Abort Node](/nodes/abort) - Stop flow with error
+- [Transform Node](/nodes/transform) - Prepare response data
+- [Condition Node](/nodes/condition) - Branch to different responses

@@ -1,0 +1,213 @@
+---
+title: Nodes Overview
+description: Understanding the 12 node types available in Dualship
+---
+
+Nodes are the building blocks of a flow. Each node performs a specific operation and can read from or write to the execution context.
+
+## Node Structure
+
+Every node follows this structure:
+
+```json
+{
+  "id": "unique_id",
+  "type": "node_type",
+  "config": { }
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `id` | string | Yes | Unique identifier within the flow |
+| `type` | string | Yes | One of the 12 supported node types |
+| `config` | object | Yes | Configuration specific to the node type |
+
+## Node Categories
+
+### Control Flow
+
+Control how execution proceeds through your flow.
+
+| Node | Description |
+|------|-------------|
+| [condition](/nodes/condition) | If/else-if/else branching based on expressions |
+| [switch](/nodes/switch) | Multi-way branching with pattern, range, or exact matching |
+| [parallel](/nodes/parallel) | Execute multiple branches concurrently |
+| [loop](/nodes/loop) | Iterate over arrays, counts, or while conditions |
+| [try](/nodes/try) | Error handling with catch and finally blocks |
+
+### Data Manipulation
+
+Store and transform data in the execution context.
+
+| Node | Description |
+|------|-------------|
+| [set](/nodes/set) | Store a value in the context |
+| [transform](/nodes/transform) | Reshape data and compute new values |
+
+### HTTP/Network
+
+Make outbound HTTP requests to external services.
+
+| Node | Description |
+|------|-------------|
+| [http](/nodes/http) | Make HTTP requests with full control over method, headers, body |
+
+### Response/Abort
+
+Control how the flow responds or terminates.
+
+| Node | Description |
+|------|-------------|
+| [response](/nodes/response) | Send an HTTP response and end the flow |
+| [abort](/nodes/abort) | Stop execution immediately with an error response |
+
+### Timing
+
+Control execution timing.
+
+| Node | Description |
+|------|-------------|
+| [delay](/nodes/delay) | Pause execution for a specified duration |
+
+### Validation
+
+Validate incoming data.
+
+| Node | Description |
+|------|-------------|
+| [request](/nodes/request) | Validate data against a schema with 32 built-in rules |
+
+## Node Outputs
+
+After a node executes, its output is stored in the context under `{node_id}.output`:
+
+**After "fetch_user" node executes:**
+```json
+{
+  "fetch_user": {
+    "output": {
+      "status_code": 200,
+      "body": { "id": 1, "name": "John" }
+    }
+  }
+}
+```
+
+**Access outputs in subsequent nodes:**
+```
+{{fetch_user.output.body.name}}    -> "John"
+{{fetch_user.output.status_code}}  -> 200
+```
+
+## Execution Flow
+
+### Sequential
+
+By default, nodes execute in order:
+
+```
+Node 1 -> Node 2 -> Node 3
+```
+
+### Branching
+
+Control flow nodes specify which nodes to execute next:
+
+```json
+{
+  "id": "check",
+  "type": "condition",
+  "config": {
+    "conditions": [
+      { "if": "{{amount}} > 100", "then": ["high_value"] }
+    ],
+    "else": ["standard"]
+  }
+}
+```
+
+### Skip Behavior
+
+When a branch is taken, sibling branches are skipped. The executor tracks which nodes to skip to prevent unintended execution.
+
+## Common Patterns
+
+### Fetch and Transform
+
+```json
+[
+  {
+    "id": "fetch",
+    "type": "http",
+    "config": { "url": "https://api.example.com/data" }
+  },
+  {
+    "id": "transform",
+    "type": "transform",
+    "config": {
+      "output": {
+        "items": "{{fetch.output.body.results}}",
+        "count": "{{fetch.output.body.results | count}}"
+      }
+    }
+  }
+]
+```
+
+### Validate and Process
+
+```json
+[
+  {
+    "id": "validate",
+    "type": "request",
+    "config": {
+      "source": "request.body",
+      "schema": { "email": "required|email" }
+    }
+  },
+  {
+    "id": "process",
+    "type": "http",
+    "config": { "url": "https://api.example.com/users", "method": "POST" }
+  }
+]
+```
+
+### Conditional Response
+
+```json
+[
+  {
+    "id": "check",
+    "type": "condition",
+    "config": {
+      "conditions": [
+        { "if": "{{data.status}} == active", "then": ["success"] }
+      ],
+      "else": ["error"]
+    }
+  },
+  {
+    "id": "success",
+    "type": "response",
+    "config": { "status": 200, "body": { "ok": true } }
+  },
+  {
+    "id": "error",
+    "type": "response",
+    "config": { "status": 400, "body": { "ok": false } }
+  }
+]
+```
+
+## Next Steps
+
+Explore each node type in detail:
+
+- [Condition](/nodes/condition) - Branching logic
+- [Switch](/nodes/switch) - Multi-way branching
+- [HTTP](/nodes/http) - External API calls
+- [Transform](/nodes/transform) - Data manipulation

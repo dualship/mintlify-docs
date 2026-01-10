@@ -1,0 +1,227 @@
+---
+title: Parallel Node
+description: Execute multiple branches concurrently
+---
+
+The `parallel` node executes multiple branches simultaneously. Use it when you need to make several independent operations and want to reduce total execution time.
+
+## Configuration
+
+```json
+{
+  "id": "fetch_all_data",
+  "type": "parallel",
+  "config": {
+    "branches": [
+      ["fetch_users", "transform_users"],
+      ["fetch_orders", "transform_orders"],
+      ["fetch_products"]
+    ],
+    "wait": "all",
+    "timeout": 15000
+  }
+}
+```
+
+## Config Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `branches` | string[][] | Yes | - | Array of branches, each branch is an array of node IDs |
+| `wait` | string | No | `"all"` | Wait strategy: `"all"`, `"any"`, or `"all_settled"` |
+| `timeout` | number | No | - | Maximum milliseconds to wait |
+
+## Wait Strategies
+
+### `"all"` (default)
+
+Wait for **all** branches to complete. If any branch fails, the entire parallel node fails.
+
+```json
+{
+  "wait": "all"
+}
+```
+
+Use when: All branches must succeed for the flow to continue.
+
+### `"any"`
+
+Continue as soon as the **first** branch completes successfully. Other branches are cancelled.
+
+```json
+{
+  "wait": "any"
+}
+```
+
+Use when: You need the fastest response from multiple sources.
+
+### `"all_settled"`
+
+Wait for **all** branches to complete, regardless of success or failure. Errors are captured but don't fail the node.
+
+```json
+{
+  "wait": "all_settled"
+}
+```
+
+Use when: You want to collect results from all branches even if some fail.
+
+## Output
+
+Each branch's node outputs are available in the context as usual:
+
+**After parallel execution:**
+```json
+{
+  "fetch_users": { "output": { } },
+  "transform_users": { "output": { } },
+  "fetch_orders": { "output": { } },
+  "transform_orders": { "output": { } },
+  "fetch_products": { "output": { } }
+}
+```
+
+The parallel node itself outputs execution metadata:
+
+```json
+{
+  "results": [
+    { "branch": 0, "success": true, "output": { ... } },
+    { "branch": 1, "success": true, "output": { ... } },
+    { "branch": 2, "success": false, "error": "timeout" }
+  ]
+}
+```
+
+## Examples
+
+### Fetch Multiple APIs
+
+```json
+{
+  "id": "fetch_dashboard_data",
+  "type": "parallel",
+  "config": {
+    "branches": [
+      ["fetch_user_profile"],
+      ["fetch_recent_orders"],
+      ["fetch_notifications"],
+      ["fetch_recommendations"]
+    ],
+    "wait": "all",
+    "timeout": 10000
+  }
+}
+```
+
+### Notify Multiple Services
+
+```json
+{
+  "id": "send_notifications",
+  "type": "parallel",
+  "config": {
+    "branches": [
+      ["send_email"],
+      ["send_slack"],
+      ["send_push_notification"]
+    ],
+    "wait": "all_settled"
+  }
+}
+```
+
+Using `"all_settled"` ensures we try all notification channels even if one fails.
+
+### Race for Fastest Response
+
+```json
+{
+  "id": "fetch_from_cache_or_db",
+  "type": "parallel",
+  "config": {
+    "branches": [
+      ["check_redis_cache"],
+      ["query_database"]
+    ],
+    "wait": "any"
+  }
+}
+```
+
+### Branch with Multiple Steps
+
+Each branch can contain multiple nodes that execute sequentially:
+
+```json
+{
+  "id": "process_data",
+  "type": "parallel",
+  "config": {
+    "branches": [
+      ["fetch_posts", "filter_posts", "transform_posts"],
+      ["fetch_comments", "aggregate_comments"],
+      ["fetch_likes"]
+    ],
+    "wait": "all"
+  }
+}
+```
+
+### Accessing Results
+
+After parallel execution, access each node's output normally:
+
+```json
+{
+  "id": "build_response",
+  "type": "transform",
+  "config": {
+    "output": {
+      "posts": "{{transform_posts.output}}",
+      "comments": "{{aggregate_comments.output}}",
+      "likes": "{{fetch_likes.output.body}}"
+    }
+  }
+}
+```
+
+## Error Handling
+
+### With `wait: "all"`
+
+If any branch fails, the parallel node fails and no subsequent nodes execute (unless wrapped in a `try` node).
+
+### With `wait: "all_settled"`
+
+All branches complete regardless of errors. Check individual results:
+
+```json
+{
+  "id": "check_results",
+  "type": "condition",
+  "config": {
+    "conditions": [
+      {
+        "if": "{{send_email.output.success}} == false",
+        "then": ["log_email_failure"]
+      }
+    ]
+  }
+}
+```
+
+## Performance Tips
+
+1. **Group independent operations** - Only parallelize operations that don't depend on each other
+2. **Set timeouts** - Prevent slow branches from blocking execution
+3. **Use `all_settled` for notifications** - Non-critical operations shouldn't fail the flow
+4. **Keep branches focused** - Each branch should do one logical thing
+
+## Related
+
+- [Loop Node](/nodes/loop) - Iterate with optional concurrency
+- [Try Node](/nodes/try) - Error handling wrapper

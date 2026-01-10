@@ -1,0 +1,58 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Dualship",
+  "llmsTxt": true,
+  "logo": {
+    "dark": "/logo/dark.svg",
+    "light": "/logo/light.svg"
+  },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#0D9373",
+    "light": "#07C983",
+    "dark": "#0D9373"
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": ["introduction", "quickstart", "flow-structure"]
+          },
+          {
+            "group": "Nodes",
+            "pages": [
+              "nodes/overview",
+              "nodes/request",
+              "nodes/http",
+              "nodes/set",
+              "nodes/transform",
+              "nodes/condition",
+              "nodes/switch",
+              "nodes/parallel",
+              "nodes/loop",
+              "nodes/try",
+              "nodes/response",
+              "nodes/abort",
+              "nodes/delay"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "reference/templates",
+              "reference/pipes",
+              "reference/validation-rules"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "footerSocials": {
+    "github": "https://github.com/dualship"
+  }
+}

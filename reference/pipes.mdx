@@ -1,0 +1,588 @@
+---
+title: Pipes Reference
+description: Transform data inline with pipe functions
+---
+
+Pipes transform values inline using the syntax `{{value | pipeName:arg1:arg2}}`. Chain multiple pipes with `|`.
+
+## Syntax
+
+```
+{{value | pipe}}
+{{value | pipe:argument}}
+{{value | pipe:arg1:arg2}}
+{{value | pipe1 | pipe2 | pipe3}}
+```
+
+## Aggregation Pipes
+
+Compute aggregate values from arrays.
+
+### sum
+
+Sum numeric values in an array.
+
+```
+{{numbers | sum}}
+{{orders | sum:amount}}
+```
+
+| Argument | Description |
+|----------|-------------|
+| field | Field name to sum (optional) |
+
+### avg
+
+Calculate average of numeric values.
+
+```
+{{scores | avg}}
+{{products | avg:price}}
+```
+
+### min
+
+Find minimum value in array.
+
+```
+{{values | min}}
+{{bids | min:amount}}
+```
+
+### max
+
+Find maximum value in array.
+
+```
+{{values | max}}
+{{sales | max:revenue}}
+```
+
+### count
+
+Count items in array.
+
+```
+{{items | count}}
+{{users | filter:active=true | count}}
+```
+
+### stats
+
+Get all statistics at once.
+
+```
+{{orders | stats:amount}}
+```
+
+Returns:
+```json
+{
+  "sum": 1500,
+  "avg": 150,
+  "min": 50,
+  "max": 300,
+  "count": 10
+}
+```
+
+## Array Pipes
+
+Manipulate arrays of data.
+
+### filter
+
+Filter array items by condition.
+
+```
+{{users | filter:status=active}}
+{{orders | filter:amount>100}}
+{{items | filter:type!=draft}}
+```
+
+Supported operators: `=`, `!=`, `>`, `<`, `>=`, `<=`
+
+### find
+
+Find first matching item.
+
+```
+{{users | find:id=123}}
+{{items | find:name=target}}
+```
+
+Returns `null` if not found.
+
+### map
+
+Extract a field from each item.
+
+```
+{{users | map:name}}
+{{orders | map:id}}
+```
+
+### sort
+
+Sort array by field.
+
+```
+{{users | sort:name}}
+{{orders | sort:created_at:desc}}
+```
+
+| Argument | Description |
+|----------|-------------|
+| field | Field to sort by |
+| direction | `asc` (default) or `desc` |
+
+### first
+
+Get first item in array.
+
+```
+{{items | first}}
+```
+
+### last
+
+Get last item in array.
+
+```
+{{items | last}}
+```
+
+### slice
+
+Get first N items.
+
+```
+{{items | slice:5}}
+{{results | slice:10}}
+```
+
+### flatten
+
+Flatten nested arrays one level.
+
+```
+{{nested_arrays | flatten}}
+```
+
+### unique
+
+Remove duplicate items.
+
+```
+{{items | unique}}
+{{items | unique:category}}
+```
+
+### reverse
+
+Reverse array order.
+
+```
+{{items | reverse}}
+```
+
+## String Pipes
+
+Transform string values.
+
+### upper
+
+Convert to uppercase.
+
+```
+{{name | upper}}
+```
+
+### lower
+
+Convert to lowercase.
+
+```
+{{email | lower}}
+```
+
+### trim
+
+Remove leading/trailing whitespace.
+
+```
+{{input | trim}}
+```
+
+### replace
+
+Replace all occurrences.
+
+```
+{{text | replace:old:new}}
+{{path | replace:/:_}}
+```
+
+### contains
+
+Check if string contains substring (or array contains value).
+
+```
+{{description | contains:keyword}}
+{{tags | contains:featured}}
+```
+
+Returns `true` or `false`.
+
+### match
+
+Find regex matches.
+
+```
+{{text | match:[0-9]+}}
+```
+
+Returns matched string(s) or `null`.
+
+### extract
+
+Extract regex capture groups.
+
+```
+{{email | extract:(.+)@(.+)}}
+```
+
+Returns captured groups.
+
+## Utility Pipes
+
+General-purpose transformations.
+
+### join
+
+Join array into string.
+
+```
+{{names | join:, }}
+{{tags | join: | }}
+```
+
+Default separator: `,`
+
+### split
+
+Split string into array.
+
+```
+{{csv | split:,}}
+{{tags | split: }}
+```
+
+Default separator: `,`
+
+### as
+
+Store value in context for later use.
+
+```
+{{complex_calculation | as:cached_value}}
+```
+
+### default
+
+Provide fallback for null/missing values.
+
+```
+{{user.nickname | default:Anonymous}}
+{{page | default:1}}
+```
+
+## Math Pipes
+
+Perform arithmetic operations.
+
+### multiply
+
+Multiply by a number.
+
+```
+{{price | multiply:1.1}}
+{{quantity | multiply:2}}
+```
+
+### divide
+
+Divide by a number.
+
+```
+{{total | divide:100}}
+{{bytes | divide:1024}}
+```
+
+### add
+
+Add a number.
+
+```
+{{count | add:1}}
+{{score | add:10}}
+```
+
+### subtract
+
+Subtract a number.
+
+```
+{{stock | subtract:1}}
+{{balance | subtract:amount}}
+```
+
+### round
+
+Round to decimal places.
+
+```
+{{price | round:2}}
+{{percentage | round}}
+```
+
+| Argument | Description |
+|----------|-------------|
+| decimals | Decimal places (default: 0) |
+
+### abs
+
+Get absolute value.
+
+```
+{{difference | abs}}
+```
+
+## Pagination Pipes
+
+Handle paginated data.
+
+### paginate
+
+Apply pagination to array.
+
+```
+{{items | paginate:1:10}}
+{{items | paginate:request.query.page:20}}
+```
+
+| Argument | Description |
+|----------|-------------|
+| page | Page number (1-indexed) |
+| limit | Items per page (default: 10) |
+
+Returns:
+```json
+{
+  "items": [...],
+  "total": 100,
+  "page": 1,
+  "limit": 10,
+  "total_pages": 10,
+  "has_next": true,
+  "has_prev": false
+}
+```
+
+### cursor
+
+Apply cursor-based pagination.
+
+```
+{{items | cursor:id:last_id:20}}
+```
+
+| Argument | Description |
+|----------|-------------|
+| field | Cursor field (default: `id`) |
+| cursor | Current cursor value |
+| limit | Items per page (default: 10) |
+
+Returns:
+```json
+{
+  "items": [...],
+  "total": 100,
+  "limit": 20,
+  "next_cursor": "abc123",
+  "has_next": true
+}
+```
+
+## Date/Time Pipes
+
+Work with dates and timestamps.
+
+### now
+
+Get current timestamp.
+
+```
+{{now}}
+{{now | formatDate:YYYY-MM-DD}}
+```
+
+### formatDate
+
+Format a date value.
+
+```
+{{created_at | formatDate:YYYY-MM-DD}}
+{{timestamp | formatDate:MM/DD/YYYY HH:mm}}
+```
+
+Format tokens:
+| Token | Description |
+|-------|-------------|
+| YYYY | 4-digit year |
+| YY | 2-digit year |
+| MM | Month (01-12) |
+| DD | Day (01-31) |
+| HH | Hour 24h (00-23) |
+| hh | Hour 12h (01-12) |
+| mm | Minutes (00-59) |
+| ss | Seconds (00-59) |
+
+### parseDate
+
+Parse date string.
+
+```
+{{date_string | parseDate}}
+{{custom_format | parseDate:DD-MM-YYYY}}
+```
+
+### addDays
+
+Add days to a date.
+
+```
+{{date | addDays:7}}
+{{date | addDays:-30}}
+```
+
+### addHours
+
+Add hours to a date.
+
+```
+{{timestamp | addHours:24}}
+{{timestamp | addHours:-1}}
+```
+
+### diffDays
+
+Calculate difference in days.
+
+```
+{{start_date | diffDays:end_date}}
+{{created_at | diffDays}}
+```
+
+If second date omitted, compares to now.
+
+## Object Pipes
+
+Manipulate objects.
+
+### keys
+
+Get object keys as array.
+
+```
+{{object | keys}}
+```
+
+### values
+
+Get object values as array.
+
+```
+{{object | values}}
+```
+
+### pick
+
+Select specific fields.
+
+```
+{{user | pick:id:name:email}}
+```
+
+### omit
+
+Exclude specific fields.
+
+```
+{{user | omit:password:internal_id}}
+```
+
+### merge
+
+Merge with another object.
+
+```
+{{defaults | merge:overrides}}
+```
+
+## Chaining Pipes
+
+Combine multiple pipes:
+
+```
+{{users | filter:active=true | sort:name | slice:10}}
+{{orders | filter:status=completed | sum:amount | round:2}}
+{{items | map:category | unique | count}}
+```
+
+## Examples
+
+### Filtered and Paginated List
+
+```
+{{products | filter:in_stock=true | sort:price | paginate:request.query.page:20}}
+```
+
+### Computed Summary
+
+```json
+{
+  "output": {
+    "total_revenue": "{{orders | filter:status=completed | sum:amount}}",
+    "order_count": "{{orders | count}}",
+    "avg_order_value": "{{orders | avg:amount | round:2}}",
+    "top_customers": "{{orders | sort:amount:desc | slice:5 | map:customer_id | unique}}"
+  }
+}
+```
+
+### Safe Defaults
+
+```json
+{
+  "page": "{{request.query.page | default:1}}",
+  "limit": "{{request.query.limit | default:20}}",
+  "sort_by": "{{request.query.sort | default:created_at}}"
+}
+```
+
+### Date Formatting
+
+```json
+{
+  "created": "{{item.created_at | formatDate:YYYY-MM-DD}}",
+  "expires": "{{item.created_at | addDays:30 | formatDate:YYYY-MM-DD}}",
+  "age_days": "{{item.created_at | diffDays}}"
+}
+```
+
+## Related
+
+- [Template Expressions](/reference/templates) - Expression syntax
+- [Transform Node](/nodes/transform) - Data transformation
+- [Set Node](/nodes/set) - Store computed values

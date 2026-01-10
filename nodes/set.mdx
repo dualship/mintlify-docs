@@ -1,0 +1,271 @@
+---
+title: Set Node
+description: Store values in the execution context
+---
+
+The `set` node stores a value in the execution context. Use it to save computed values, store intermediate results, or create variables for use in subsequent nodes.
+
+## Configuration
+
+```json
+{
+  "id": "store_user",
+  "type": "set",
+  "config": {
+    "key": "current_user",
+    "value": "{{fetch_user.output.body}}"
+  }
+}
+```
+
+## Config Fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `key` | string | Yes | Context key to store the value (supports nested paths) |
+| `value` | any | Yes | Value to store (supports templates) |
+
+## Output
+
+```json
+{
+  "key": "current_user",
+  "value": { ... }
+}
+```
+
+The stored value is also accessible via the key path in subsequent nodes.
+
+## Key Paths
+
+### Simple Keys
+
+```json
+{
+  "key": "user_id",
+  "value": "{{request.body.id}}"
+}
+```
+
+Access: `{{user_id}}`
+
+### Nested Keys
+
+```json
+{
+  "key": "user.profile.name",
+  "value": "{{fetch_user.output.body.name}}"
+}
+```
+
+Access: `{{user.profile.name}}`
+
+### Array Index
+
+```json
+{
+  "key": "items[0]",
+  "value": "{{first_item}}"
+}
+```
+
+Access: `{{items[0]}}`
+
+## Value Types
+
+### String Values
+
+```json
+{
+  "key": "status",
+  "value": "active"
+}
+```
+
+### Template Values
+
+```json
+{
+  "key": "user_email",
+  "value": "{{fetch_user.output.body.email}}"
+}
+```
+
+### Object Values
+
+```json
+{
+  "key": "user_data",
+  "value": {
+    "id": "{{request.body.id}}",
+    "name": "{{request.body.name}}",
+    "created_at": "{{now}}"
+  }
+}
+```
+
+### Array Values
+
+```json
+{
+  "key": "selected_ids",
+  "value": ["{{id1}}", "{{id2}}", "{{id3}}"]
+}
+```
+
+### Computed Values with Pipes
+
+```json
+{
+  "key": "filtered_items",
+  "value": "{{items | filter:status=active | slice:10}}"
+}
+```
+
+## Examples
+
+### Store API Response
+
+```json
+{
+  "id": "save_user",
+  "type": "set",
+  "config": {
+    "key": "user",
+    "value": "{{fetch_user.output.body | pick:id:name:email}}"
+  }
+}
+```
+
+### Store Computed Value
+
+```json
+{
+  "id": "calculate_total",
+  "type": "set",
+  "config": {
+    "key": "order_total",
+    "value": "{{items | sum:price}}"
+  }
+}
+```
+
+### Store Timestamp
+
+```json
+{
+  "id": "set_timestamp",
+  "type": "set",
+  "config": {
+    "key": "processed_at",
+    "value": "{{now}}"
+  }
+}
+```
+
+### Store Complex Object
+
+```json
+{
+  "id": "build_context",
+  "type": "set",
+  "config": {
+    "key": "context",
+    "value": {
+      "user": "{{fetch_user.output.body}}",
+      "permissions": "{{fetch_permissions.output.body}}",
+      "settings": {
+        "theme": "{{request.query.theme | default:light}}",
+        "language": "{{request.headers.Accept-Language | default:en}}"
+      }
+    }
+  }
+}
+```
+
+### Store Conditional Value
+
+Use with a preceding condition node or pipes:
+
+```json
+{
+  "id": "set_tier",
+  "type": "set",
+  "config": {
+    "key": "user_tier",
+    "value": "{{user.subscription | default:free}}"
+  }
+}
+```
+
+### Store Loop Item
+
+Inside a loop, store the current item for later reference:
+
+```json
+{
+  "id": "store_current",
+  "type": "set",
+  "config": {
+    "key": "last_processed",
+    "value": {
+      "id": "{{item.id}}",
+      "index": "{{index}}"
+    }
+  }
+}
+```
+
+### Initialize State
+
+Set initial values at the start of a flow:
+
+```json
+[
+  {
+    "id": "init_counter",
+    "type": "set",
+    "config": { "key": "counter", "value": 0 }
+  },
+  {
+    "id": "init_items",
+    "type": "set",
+    "config": { "key": "collected_items", "value": [] }
+  }
+]
+```
+
+## Accessing Stored Values
+
+After setting a value, access it in subsequent nodes:
+
+**Set node config:**
+```json
+{
+  "key": "user_data",
+  "value": { "name": "John", "id": 123 }
+}
+```
+
+**Access in later nodes:**
+```
+{{user_data.name}}     -> "John"
+{{user_data.id}}       -> 123
+{{user_data}}          -> { "name": "John", "id": 123 }
+```
+
+## vs Transform Node
+
+| Set | Transform |
+|-----|-----------|
+| Stores a single value | Creates multiple output fields |
+| Simple key-value storage | Complex data reshaping |
+| `key` + `value` config | `output` object config |
+
+Use `set` for simple storage. Use `transform` when reshaping multiple values.
+
+## Related
+
+- [Transform Node](/nodes/transform) - Reshape multiple values
+- [Template Expressions](/reference/templates) - Reference stored values
+- [Pipes](/reference/pipes) - Transform values before storing

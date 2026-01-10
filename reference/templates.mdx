@@ -1,0 +1,289 @@
+---
+title: Template Expressions
+description: Dynamic value resolution with template syntax
+---
+
+Template expressions allow you to reference dynamic values in your flow configuration using the `{{path.to.value}}` syntax.
+
+## Basic Syntax
+
+```
+{{variable}}
+{{object.property}}
+{{array[0]}}
+{{object.nested.property}}
+```
+
+## Accessing Context Data
+
+### Request Data
+
+| Path | Description |
+|------|-------------|
+| `{{request.method}}` | HTTP method (GET, POST, etc.) |
+| `{{request.path}}` | Request path |
+| `{{request.body}}` | Request body (parsed JSON) |
+| `{{request.body.fieldName}}` | Specific body field |
+| `{{request.query}}` | Query parameters object |
+| `{{request.query.paramName}}` | Specific query parameter |
+| `{{request.headers}}` | Request headers |
+| `{{request.headers.Authorization}}` | Specific header |
+| `{{request.params}}` | Path parameters |
+| `{{request.params.id}}` | Specific path parameter |
+
+### Environment Variables
+
+```
+{{env.API_KEY}}
+{{env.DATABASE_URL}}
+{{env.WEBHOOK_SECRET}}
+```
+
+### Node Outputs
+
+Access output from previously executed nodes:
+
+```
+{{node_id.output}}
+{{node_id.output.fieldName}}
+{{node_id.output.nested.property}}
+```
+
+Examples:
+
+```
+{{fetch_user.output.body.id}}
+{{validate_input.output.data.email}}
+{{transform_data.output.total}}
+```
+
+### HTTP Node Output
+
+```
+{{http_node.output.status_code}}
+{{http_node.output.headers}}
+{{http_node.output.body}}
+{{http_node.output.latency_ms}}
+{{http_node.output.success}}
+```
+
+### Loop Context
+
+Inside loop nodes:
+
+| Path | Description |
+|------|-------------|
+| `{{item}}` | Current item (or custom name via `as`) |
+| `{{index}}` | Current iteration index (0-based, or custom via `index`) |
+
+### Error Context
+
+Inside try/catch blocks:
+
+| Path | Description |
+|------|-------------|
+| `{{error.message}}` | Error message |
+| `{{error.node}}` | ID of the node that failed |
+| `{{error.type}}` | Type of error |
+
+## Using Pipes
+
+Transform values inline using pipes:
+
+```
+{{value | pipeName}}
+{{value | pipeName:arg}}
+{{value | pipeName:arg1:arg2}}
+{{value | pipe1 | pipe2 | pipe3}}
+```
+
+Examples:
+
+```
+{{users | count}}
+{{items | filter:status=active}}
+{{orders | sum:amount}}
+{{name | upper}}
+{{data | default:fallback_value}}
+```
+
+See [Pipes Reference](/reference/pipes) for all available pipes.
+
+## Expressions in Configuration
+
+### In Strings
+
+```json
+{
+  "url": "https://api.example.com/users/{{user_id}}"
+}
+```
+
+### In Objects
+
+```json
+{
+  "body": {
+    "name": "{{request.body.name}}",
+    "email": "{{request.body.email}}",
+    "created_at": "{{now}}"
+  }
+}
+```
+
+### In Arrays
+
+```json
+{
+  "ids": ["{{id1}}", "{{id2}}", "{{id3}}"]
+}
+```
+
+### Whole Value Replacement
+
+When a template is the entire value, it preserves the original type:
+
+```json
+{
+  "data": "{{fetch_data.output.body}}"
+}
+```
+
+If `fetch_data.output.body` is an object, `data` will be that object.
+
+## Arithmetic Expressions
+
+In transform nodes, simple arithmetic is evaluated:
+
+```json
+{
+  "total": "{{subtotal}} + {{tax}}",
+  "discounted": "{{price}} * 0.9",
+  "per_item": "{{total}} / {{quantity}}",
+  "remaining": "{{budget}} - {{spent}}"
+}
+```
+
+Supported operators: `+`, `-`, `*`, `/`
+
+## Condition Expressions
+
+In condition and switch nodes:
+
+```
+{{value}} == "string"
+{{value}} == 123
+{{value}} != null
+{{value}} > 10
+{{value}} >= 10
+{{value}} < 100
+{{value}} <= 100
+{{value}} == true
+{{value}} == false
+```
+
+### Operators
+
+| Operator | Description |
+|----------|-------------|
+| `==` | Equal |
+| `!=` | Not equal |
+| `>` | Greater than |
+| `>=` | Greater than or equal |
+| `<` | Less than |
+| `<=` | Less than or equal |
+
+## Special Variables
+
+| Variable | Description |
+|----------|-------------|
+| `{{now}}` | Current timestamp (ISO 8601) |
+| `{{request_id}}` | Unique request identifier |
+
+## Nested Path Access
+
+Access deeply nested values:
+
+```
+{{user.profile.address.city}}
+{{orders[0].items[0].product.name}}
+{{response.data.results[0].id}}
+```
+
+## Default Values
+
+Use the `default` pipe for fallback values:
+
+```
+{{user.name | default:Anonymous}}
+{{settings.theme | default:light}}
+{{request.query.page | default:1}}
+```
+
+## Type Coercion
+
+Templates automatically handle type coercion when needed:
+
+- String templates return strings
+- Whole-value templates preserve original types
+- Comparison expressions return booleans
+- Arithmetic expressions return numbers
+
+## Examples
+
+### Building a URL
+
+```json
+{
+  "url": "https://{{env.API_HOST}}/v1/users/{{request.params.id}}/posts?limit={{request.query.limit | default:10}}"
+}
+```
+
+### Dynamic Headers
+
+```json
+{
+  "headers": {
+    "Authorization": "Bearer {{env.API_TOKEN}}",
+    "X-Request-ID": "{{request_id}}",
+    "X-User-ID": "{{auth.user_id}}"
+  }
+}
+```
+
+### Computed Response
+
+```json
+{
+  "body": {
+    "user": "{{fetch_user.output.body | pick:id:name:email}}",
+    "posts_count": "{{fetch_posts.output.body | count}}",
+    "recent_posts": "{{fetch_posts.output.body | slice:5}}",
+    "total_likes": "{{fetch_posts.output.body | sum:likes}}"
+  }
+}
+```
+
+### Conditional Logic Data
+
+```json
+{
+  "conditions": [
+    {
+      "if": "{{user.role}} == admin",
+      "then": ["admin_flow"]
+    },
+    {
+      "if": "{{user.subscription}} != null",
+      "then": ["premium_flow"]
+    }
+  ],
+  "else": ["basic_flow"]
+}
+```
+
+## Related
+
+- [Pipes Reference](/reference/pipes) - Transform data inline
+- [Transform Node](/nodes/transform) - Create computed values
+- [Set Node](/nodes/set) - Store values for later use
