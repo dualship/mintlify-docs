@@ -51,6 +51,16 @@ Conditions use template expressions that evaluate to boolean values.
 | `>=` | Greater or equal | `{{age}} >= 18` |
 | `<=` | Less or equal | `{{score}} <= 100` |
 
+### Comparison Type Detection
+
+The executor automatically detects value types for comparison:
+
+| Type | Detection | Example |
+|------|-----------|---------|
+| Numbers | Both values are numeric | `{{amount}} > 100` |
+| Dates | ISO 8601 format strings | `{{expires_at}} > {{now}}` |
+| Strings | All other values | `{{status}} == "active"` |
+
 ### Logical Operators
 
 | Operator | Description | Example |
@@ -66,6 +76,7 @@ Conditions use template expressions that evaluate to boolean values.
 "if": "{{amount}} > 100 && {{currency}} == USD"  # Combined conditions
 "if": "{{user.email}} != null"               # Null check
 "if": "{{user.verified}} == true"            # Boolean check
+"if": "{{subscription.expires_at}} > {{now}}"  # Date comparison
 ```
 
 ## Output

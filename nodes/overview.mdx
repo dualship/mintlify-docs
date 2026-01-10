@@ -13,6 +13,7 @@ Every node follows this structure:
 {
   "id": "unique_id",
   "type": "node_type",
+  "log": true,
   "config": { }
 }
 ```
@@ -21,7 +22,31 @@ Every node follows this structure:
 |-------|------|----------|-------------|
 | `id` | string | Yes | Unique identifier within the flow |
 | `type` | string | Yes | One of the 12 supported node types |
+| `log` | boolean | No | Enable runtime logging for this node (default: `true`) |
 | `config` | object | Yes | Configuration specific to the node type |
+
+## Runtime Logging
+
+Every node supports the `log` field to control runtime logging:
+
+```json
+{
+  "id": "sensitive_transform",
+  "type": "transform",
+  "log": false,
+  "config": { ... }
+}
+```
+
+When `log` is enabled (default), the system captures:
+- **Input**: Request data and trigger context before execution
+- **Output**: Node result after successful execution
+- **Errors**: User-friendly error messages (sensitive details are sanitized)
+
+Set `log: false` to disable runtime logging for a node. This is useful for:
+- Nodes processing sensitive data (passwords, tokens, PII)
+- High-frequency operations where logging overhead matters
+- Reducing log storage for verbose nodes
 
 ## Node Categories
 

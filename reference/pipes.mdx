@@ -186,6 +186,17 @@ Reverse array order.
 {{items | reverse}}
 ```
 
+### indexOf
+
+Find the index of a value in an array.
+
+```
+{{items | indexOf:target}}
+{{statuses | indexOf:active}}
+```
+
+Returns the index (0-based) if found, or `-1` if not found.
+
 ## String Pipes
 
 Transform string values.
@@ -357,6 +368,36 @@ Get absolute value.
 ```
 {{difference | abs}}
 ```
+
+## Formatting Pipes
+
+Format values for display.
+
+### currency
+
+Format a number as currency.
+
+```
+{{amount | currency:USD}}
+{{price | currency:EUR:0}}
+{{balance | currency:NGN:2}}
+```
+
+| Argument | Description |
+|----------|-------------|
+| code | Currency code (USD, EUR, GBP, NGN, etc.) |
+| precision | Decimal places (optional, defaults to currency standard) |
+
+**Examples:**
+
+```
+{{1234.56 | currency:USD}}     -> "$1,234.56"
+{{1234.56 | currency:EUR}}     -> "€1.234,56"
+{{1234.56 | currency:GBP:0}}   -> "£1,235"
+{{1234.5 | currency:JPY}}      -> "¥1,235" (JPY has no decimals)
+```
+
+Supports 180+ currencies including USD, EUR, GBP, NGN, JPY, CNY, INR, CAD, AUD, BRL, ZAR, GHS, KES, and more.
 
 ## Pagination Pipes
 
@@ -578,6 +619,18 @@ Combine multiple pipes:
   "created": "{{item.created_at | formatDate:YYYY-MM-DD}}",
   "expires": "{{item.created_at | addDays:30 | formatDate:YYYY-MM-DD}}",
   "age_days": "{{item.created_at | diffDays}}"
+}
+```
+
+### Currency Formatting
+
+```json
+{
+  "output": {
+    "subtotal": "{{order.subtotal | currency:USD}}",
+    "tax": "{{order.tax | currency:USD}}",
+    "total": "{{order.total | currency:USD}}"
+  }
 }
 ```
 
