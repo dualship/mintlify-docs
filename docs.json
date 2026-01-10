@@ -61,7 +61,7 @@
     ]
   },
   "search": {
-    "prompt": "You are a helpful assistant for Dualship, a visual API builder platform. Help users understand how to build flows, configure nodes, use templates and pipes, and integrate with the API."
+    "prompt": "Looking for something ?"
   },
   "interaction": {
     "copyPage": true
