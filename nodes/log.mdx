@@ -1,0 +1,269 @@
+---
+title: Log Node
+description: Write custom entries to runtime logs
+---
+
+The `log` node writes custom entries to runtime logs. Use it to track flow execution, debug issues, or record important events for monitoring.
+
+## Configuration
+
+```json
+{
+  "id": "log_order",
+  "type": "log",
+  "config": {
+    "level": "info",
+    "message": "Order processed successfully",
+    "data": {
+      "order_id": "{{request.body.order_id}}",
+      "total": "{{calculate_total.output.total}}",
+      "user_id": "{{request.body.user_id}}"
+    }
+  }
+}
+```
+
+## Config Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `level` | string | No | `"info"` | Log level: `debug`, `info`, `warn`, `error` |
+| `message` | string | Yes | - | Log message (supports templates) |
+| `data` | object | No | - | Additional data to include in the log entry |
+
+## Log Levels
+
+| Level | Use Case |
+|-------|----------|
+| `debug` | Detailed debugging information |
+| `info` | General informational messages |
+| `warn` | Warning conditions that should be reviewed |
+| `error` | Error conditions that need attention |
+
+## Output
+
+```json
+{
+  "logged": true,
+  "level": "info",
+  "message": "Order processed successfully"
+}
+```
+
+## Examples
+
+### Basic Log
+
+```json
+{
+  "id": "log_start",
+  "type": "log",
+  "config": {
+    "level": "info",
+    "message": "Flow execution started"
+  }
+}
+```
+
+### Log with Data
+
+```json
+{
+  "id": "log_user_action",
+  "type": "log",
+  "config": {
+    "level": "info",
+    "message": "User action recorded",
+    "data": {
+      "user_id": "{{request.body.user_id}}",
+      "action": "{{request.body.action}}",
+      "timestamp": "{{now}}"
+    }
+  }
+}
+```
+
+### Debug Logging
+
+```json
+{
+  "id": "debug_response",
+  "type": "log",
+  "config": {
+    "level": "debug",
+    "message": "API response received",
+    "data": {
+      "status": "{{fetch_data.output.status_code}}",
+      "body": "{{fetch_data.output.body}}"
+    }
+  }
+}
+```
+
+### Warning Log
+
+```json
+{
+  "id": "log_retry",
+  "type": "log",
+  "config": {
+    "level": "warn",
+    "message": "Retrying failed operation",
+    "data": {
+      "attempt": "{{trigger.message.retried}}",
+      "error": "{{error.message}}"
+    }
+  }
+}
+```
+
+### Error Log
+
+```json
+{
+  "id": "log_error",
+  "type": "log",
+  "config": {
+    "level": "error",
+    "message": "Payment processing failed",
+    "data": {
+      "order_id": "{{request.body.order_id}}",
+      "error_code": "{{payment.output.error.code}}",
+      "error_message": "{{payment.output.error.message}}"
+    }
+  }
+}
+```
+
+### Log in Try-Catch
+
+```json
+{
+  "nodes": [
+    {
+      "id": "try_block",
+      "type": "try",
+      "config": {
+        "try": ["process_order"],
+        "catch": ["log_failure", "send_alert"],
+        "finally": ["log_complete"]
+      }
+    },
+    {
+      "id": "log_failure",
+      "type": "log",
+      "config": {
+        "level": "error",
+        "message": "Order processing failed",
+        "data": {
+          "error": "{{error.message}}",
+          "failed_node": "{{error.node}}"
+        }
+      }
+    },
+    {
+      "id": "log_complete",
+      "type": "log",
+      "config": {
+        "level": "info",
+        "message": "Order flow completed"
+      }
+    }
+  ]
+}
+```
+
+### Log with Computed Values
+
+```json
+{
+  "id": "log_stats",
+  "type": "log",
+  "config": {
+    "level": "info",
+    "message": "Batch processing complete",
+    "data": {
+      "total_items": "{{items | count}}",
+      "successful": "{{results | filter:success=true | count}}",
+      "failed": "{{results | filter:success=false | count}}",
+      "duration_ms": "{{end_time | subtract:start_time}}"
+    }
+  }
+}
+```
+
+### Conditional Logging
+
+Use with condition nodes to log only in specific scenarios:
+
+```json
+{
+  "nodes": [
+    {
+      "id": "check_amount",
+      "type": "condition",
+      "config": {
+        "conditions": [
+          {
+            "if": "{{request.body.amount}} > 10000",
+            "then": ["log_large_order", "process_order"]
+          }
+        ],
+        "else": ["process_order"]
+      }
+    },
+    {
+      "id": "log_large_order",
+      "type": "log",
+      "config": {
+        "level": "info",
+        "message": "Large order detected",
+        "data": {
+          "amount": "{{request.body.amount}}",
+          "customer_id": "{{request.body.customer_id}}"
+        }
+      }
+    }
+  ]
+}
+```
+
+## Viewing Logs
+
+Log entries appear in the runtime logs section of the dashboard. You can:
+
+- Filter by log level (debug, info, warn, error)
+- Search by message content
+- View associated data fields
+- Filter by time range
+
+## Log Retention
+
+Log retention depends on your plan:
+
+| Plan | Retention |
+|------|-----------|
+| Free | 1 day |
+| Hobby | 30 days |
+| Pro | 90 days |
+
+## Sensitive Data
+
+Be careful not to log sensitive information. Use [log masking](/project-settings#log-masking) to automatically redact sensitive fields:
+
+```json
+// Configure in project settings
+{
+  "log_filters": {
+    "masked_keywords": ["password", "api_key", "secret", "token"]
+  }
+}
+```
+
+With masking enabled, sensitive fields are replaced with `********` in logs.
+
+## Related
+
+- [Project Settings](/project-settings) - Configure log masking
+- [Try Node](/nodes/try) - Use log nodes in error handling
+- [Template Expressions](/reference/templates) - Reference values in messages

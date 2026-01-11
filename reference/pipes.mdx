@@ -308,6 +308,79 @@ Provide fallback for null/missing values.
 {{page | default:1}}
 ```
 
+### random
+
+Generate random numbers.
+
+```
+{{random}}
+{{random:100}}
+{{random:1:100}}
+```
+
+| Syntax | Description |
+|--------|-------------|
+| `{{random}}` | Float between 0 and 1 (e.g., `0.7234`) |
+| `{{random:max}}` | Integer from 0 to max-1 (e.g., `{{random:100}}` returns 0-99) |
+| `{{random:min:max}}` | Integer from min to max inclusive (e.g., `{{random:1:100}}` returns 1-100) |
+
+**Examples:**
+
+```
+{{random}}           -> 0.7234
+{{random:100}}       -> 42
+{{random:1:100}}     -> 73
+{{random:1:6}}       -> 4  (dice roll)
+```
+
+### uuid
+
+Generate a UUID v4.
+
+```
+{{uuid}}
+```
+
+Returns a random UUID string.
+
+**Example:**
+
+```
+{{uuid}}  -> "550e8400-e29b-41d4-a716-446655440000"
+```
+
+### base64
+
+Base64 encode a value.
+
+```
+{{value | base64}}
+{{request.files.document.content | base64}}
+```
+
+Works with strings, objects (JSON-encoded then base64), and file content.
+
+**Examples:**
+
+```
+{{"hello" | base64}}                    -> "aGVsbG8="
+{{request.files.doc.content | base64}}  -> "JVBERi0xLjQK..."
+```
+
+### base64decode
+
+Decode a base64 string.
+
+```
+{{encoded | base64decode}}
+```
+
+**Example:**
+
+```
+{{"aGVsbG8=" | base64decode}}  -> "hello"
+```
+
 ## Math Pipes
 
 Perform arithmetic operations.

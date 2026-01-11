@@ -1,0 +1,287 @@
+---
+title: Cron Trigger
+description: Schedule flows to run on a recurring schedule
+---
+
+<Info>
+  **Paid Feature** - Cron triggers are available on the Hobby and Pro plans. [View pricing](/pricing)
+</Info>
+
+The `cron` trigger enables scheduled flow execution using cron expressions. Flows with cron triggers run automatically at the times you specify, powered by Upstash QStash schedules.
+
+## Configuration
+
+```json
+{
+  "trigger": {
+    "type": "cron",
+    "config": {
+      "schedule": "0 9 * * *",
+      "timezone": "America/New_York"
+    }
+  }
+}
+```
+
+## Config Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `schedule` | string | Yes | - | Cron expression (e.g., `0 9 * * *` for 9 AM daily) |
+| `timezone` | string | No | `"UTC"` | IANA timezone (e.g., `America/New_York`, `Europe/London`) |
+
+## Cron Expression Format
+
+Cron expressions define when your flow runs using five fields:
+
+```
+┌───────────── minute (0-59)
+│ ┌───────────── hour (0-23)
+│ │ ┌───────────── day of month (1-31)
+│ │ │ ┌───────────── month (1-12)
+│ │ │ │ ┌───────────── day of week (0-6, Sunday=0)
+│ │ │ │ │
+* * * * *
+```
+
+### Special Characters
+
+| Character | Description | Example |
+|-----------|-------------|---------|
+| `*` | Any value | `* * * * *` (every minute) |
+| `,` | List of values | `0,30 * * * *` (at minute 0 and 30) |
+| `-` | Range of values | `0-5 * * * *` (minutes 0 through 5) |
+| `/` | Step values | `*/15 * * * *` (every 15 minutes) |
+
+<Tip>
+  Use [crontab.guru](https://crontab.guru) to build and validate your cron expressions interactively.
+</Tip>
+
+## Common Schedule Examples
+
+| Expression | Description |
+|------------|-------------|
+| `0 9 * * *` | Every day at 9:00 AM |
+| `0 */2 * * *` | Every 2 hours |
+| `30 8 * * 1-5` | Weekdays at 8:30 AM |
+| `0 0 1 * *` | First day of each month at midnight |
+| `*/15 * * * *` | Every 15 minutes |
+| `0 0 * * 0` | Every Sunday at midnight |
+| `0 6,18 * * *` | At 6:00 AM and 6:00 PM |
+| `0 0 * * 1` | Every Monday at midnight |
+
+## Timezones
+
+By default, schedules run in UTC. Specify a timezone to run at local time:
+
+```json
+{
+  "trigger": {
+    "type": "cron",
+    "config": {
+      "schedule": "0 9 * * *",
+      "timezone": "America/New_York"
+    }
+  }
+}
+```
+
+### Common Timezones
+
+| Timezone | Region |
+|----------|--------|
+| `UTC` | Coordinated Universal Time |
+| `America/New_York` | US Eastern |
+| `America/Los_Angeles` | US Pacific |
+| `America/Chicago` | US Central |
+| `Europe/London` | UK |
+| `Europe/Paris` | Central Europe |
+| `Asia/Tokyo` | Japan |
+| `Asia/Shanghai` | China |
+| `Australia/Sydney` | Australia Eastern |
+| `Africa/Lagos` | West Africa |
+
+Use [IANA timezone names](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for accurate scheduling.
+
+## Runtime Context
+
+When your scheduled flow executes, the context includes schedule information:
+
+```json
+{
+  "trigger": {
+    "type": "cron",
+    "flow_id": "flow-uuid",
+    "schedule": "0 9 * * *",
+    "timezone": "America/New_York"
+  }
+}
+```
+
+### Context References
+
+| Reference | Description |
+|-----------|-------------|
+| `{{trigger.type}}` | Trigger type (`"cron"`) |
+| `{{trigger.flow_id}}` | Flow ID |
+| `{{trigger.schedule}}` | Cron expression |
+| `{{trigger.timezone}}` | Configured timezone |
+
+### Example: Log Cron Execution
+
+Use a log node to track cron job executions:
+
+```json
+{
+  "id": "log_execution",
+  "type": "log",
+  "config": {
+    "level": "info",
+    "message": "Cron job executed successfully",
+    "data": {
+      "timestamp": "{{now:YYYY-MM-DDTHH:mm:ssZ}}",
+      "random_number": "{{random:1:1000}}",
+      "job_id": "{{uuid}}",
+      "environment": "production"
+    }
+  }
+}
+```
+
+## Schedule Management
+
+| Action | Effect |
+|--------|--------|
+| Deploy flow | Creates or updates the schedule |
+| Disable flow | Pauses the schedule |
+| Enable flow | Resumes the schedule |
+| Delete flow | Removes the schedule |
+
+## Complete Example
+
+A daily report generator that runs every weekday at 9 AM Eastern:
+
+```json
+{
+  "name": "Daily Stats Report",
+  "trigger": {
+    "type": "cron",
+    "config": {
+      "schedule": "0 9 * * 1-5",
+      "timezone": "America/New_York"
+    }
+  },
+  "nodes": [
+    {
+      "id": "fetch_stats",
+      "type": "http",
+      "config": {
+        "method": "GET",
+        "url": "https://api.example.com/daily-stats",
+        "headers": {
+          "Authorization": "Bearer {{env.API_KEY}}"
+        }
+      }
+    },
+    {
+      "id": "format_report",
+      "type": "transform",
+      "config": {
+        "output": {
+          "subject": "Daily Stats Report",
+          "content": "Today's metrics:\n- Users: {{fetch_stats.output.body.users}}\n- Revenue: {{fetch_stats.output.body.revenue | currency:USD}}\n- Orders: {{fetch_stats.output.body.orders}}"
+        }
+      }
+    },
+    {
+      "id": "send_email",
+      "type": "http",
+      "config": {
+        "method": "POST",
+        "url": "https://api.sendgrid.com/v3/mail/send",
+        "headers": {
+          "Authorization": "Bearer {{env.SENDGRID_KEY}}",
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "personalizations": [{ "to": [{ "email": "team@example.com" }] }],
+          "from": { "email": "reports@example.com" },
+          "subject": "{{format_report.output.subject}}",
+          "content": [{ "type": "text/plain", "value": "{{format_report.output.content}}" }]
+        }
+      }
+    },
+    {
+      "id": "respond",
+      "type": "response",
+      "config": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "sent_to": "team@example.com"
+        }
+      }
+    }
+  ]
+}
+```
+
+## Use Cases
+
+### Daily Reports
+
+Generate and send reports at a specific time each day:
+
+- Sales summaries
+- User activity reports
+- System health dashboards
+
+### Data Synchronization
+
+Periodically sync data between services:
+
+- Import data from external APIs
+- Update cached aggregations
+- Sync inventory levels
+
+### Cleanup Jobs
+
+Remove stale data on a schedule:
+
+- Delete expired sessions
+- Archive old records
+- Clear temporary files
+
+### Health Checks
+
+Monitor external services at regular intervals:
+
+- Check API availability
+- Validate SSL certificates
+- Test database connections
+
+### Billing Cycles
+
+Process recurring operations:
+
+- Generate invoices
+- Process subscription renewals
+- Send payment reminders
+
+### Notifications
+
+Send scheduled notifications:
+
+- Weekly newsletters
+- Reminder emails
+- Digest summaries
+
+## Plan Availability
+
+Cron triggers are available on **Hobby** and **Pro** plans.
+
+## Related
+
+- [HTTP Trigger](/triggers/http) - Create REST endpoints
+- [Queue Trigger](/triggers/queue) - Process messages asynchronously
+- [Flow Structure](/flow-structure) - Understanding flow definitions

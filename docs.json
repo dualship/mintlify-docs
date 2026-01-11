@@ -30,7 +30,8 @@
             "group": "Triggers",
             "pages": [
               "triggers/http",
-              "triggers/queue"
+              "triggers/queue",
+              "triggers/cron"
             ]
           },
           {
@@ -49,7 +50,8 @@
               "nodes/try",
               "nodes/response",
               "nodes/abort",
-              "nodes/delay"
+              "nodes/delay",
+              "nodes/log"
             ]
           },
           {

@@ -26,7 +26,7 @@ The `request` node validates incoming request data against a schema. Use it at t
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `source` | string | Yes | Context path to validate (e.g., `request.body`, `request.query`) |
+| `source` | string | Yes | Context path to validate (e.g., `request.body`, `request.query`, `request.files`) |
 | `schema` | object | Yes | Field-to-rules mapping |
 | `on_error` | object | No | Custom error handling |
 
@@ -136,6 +136,18 @@ Rules are separated by `|` (pipe). Some rules accept parameters after `:` (colon
 | `before_or_equal:date` | Must be before or equal to date |
 | `after_or_equal:date` | Must be after or equal to date |
 
+### File Rules
+
+| Rule | Description |
+|------|-------------|
+| `file` | Must be an uploaded file |
+| `image` | Must be an image (jpeg, png, gif, bmp, webp) |
+| `mimes:type1,type2` | Must be one of the specified MIME types |
+| `extensions:ext1,ext2` | Must have one of the specified extensions |
+| `dimensions:constraints` | Image dimension constraints |
+
+**Dimension Constraints:** `min_width`, `max_width`, `min_height`, `max_height`, `width`, `height`, `ratio`
+
 ### Comparison Rules
 
 | Rule | Description |
@@ -238,6 +250,69 @@ Use `.*` wildcard to validate array items:
 }
 ```
 
+### File Upload Validation
+
+Validate uploaded files using `request.files` as the source:
+
+```json
+{
+  "id": "validate_avatar",
+  "type": "request",
+  "config": {
+    "source": "request.files",
+    "schema": {
+      "avatar": "required|image|dimensions:min_width=200,min_height=200,ratio=1/1"
+    }
+  }
+}
+```
+
+### Document Upload with Constraints
+
+```json
+{
+  "id": "validate_document",
+  "type": "request",
+  "config": {
+    "source": "request.files",
+    "schema": {
+      "document": "required|file|extensions:pdf,doc,docx|mimes:application/pdf,application/msword",
+      "thumbnail": "sometimes|image|dimensions:max_width=400,max_height=400"
+    }
+  }
+}
+```
+
+### Combined Body and File Validation
+
+Validate both form fields and files in separate nodes:
+
+```json
+[
+  {
+    "id": "validate_body",
+    "type": "request",
+    "config": {
+      "source": "request.body",
+      "schema": {
+        "title": "required|string|max:200",
+        "description": "nullable|string|max:1000"
+      }
+    }
+  },
+  {
+    "id": "validate_files",
+    "type": "request",
+    "config": {
+      "source": "request.files",
+      "schema": {
+        "image": "required|image|dimensions:min_width=800"
+      }
+    }
+  }
+]
+```
+
 ### Custom Error Response
 
 ```json
@@ -333,5 +408,6 @@ Without custom `on_error.body`:
 ## Related
 
 - [Validation Rules Reference](/reference/validation-rules) - Complete rules documentation
+- [HTTP Trigger](/triggers/http) - File uploads via multipart/form-data
 - [Transform Node](/nodes/transform) - Transform validated data
 - [Condition Node](/nodes/condition) - Branch based on validation

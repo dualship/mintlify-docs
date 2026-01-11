@@ -31,6 +31,8 @@ The `http` node makes HTTP requests to external APIs. It supports all standard H
 | `headers` | object | No | - | Request headers |
 | `query` | object | No | - | Query string parameters |
 | `body` | any | No | - | Request body |
+| `body_type` | string | No | `"json"` | Body format: `"json"`, `"form"`, or `"multipart"` |
+| `files` | array | No | - | Files to upload (auto-sets body_type to multipart) |
 | `timeout` | number | No | `30000` | Timeout in milliseconds (max 60000) |
 | `content_type` | string | No | auto | Content-Type header |
 | `on_error` | string | No | `"abort"` | Error handling: `"abort"` or `"continue"` |
@@ -258,6 +260,82 @@ Objects are automatically serialized as JSON:
 }
 ```
 
+### Form URL Encoded
+
+Use `body_type: "form"` to send `application/x-www-form-urlencoded` data. Common for OAuth token requests:
+
+```json
+{
+  "id": "oauth_token",
+  "type": "http",
+  "config": {
+    "method": "POST",
+    "url": "https://oauth.example.com/token",
+    "body_type": "form",
+    "body": {
+      "grant_type": "client_credentials",
+      "client_id": "{{env.CLIENT_ID}}",
+      "client_secret": "{{env.CLIENT_SECRET}}"
+    }
+  }
+}
+```
+
+The body is encoded as: `grant_type=client_credentials&client_id=xxx&client_secret=yyy`
+
+### Multipart File Upload
+
+Use `body_type: "multipart"` or add a `files` array to upload files:
+
+```json
+{
+  "id": "upload_file",
+  "type": "http",
+  "config": {
+    "method": "POST",
+    "url": "https://api.example.com/upload",
+    "body": {
+      "description": "Monthly report",
+      "category": "reports"
+    },
+    "files": [
+      {
+        "field": "document",
+        "filename": "report.pdf",
+        "content": "base64:JVBERi0xLjQK..."
+      }
+    ]
+  }
+}
+```
+
+**File Config:**
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `field` | string | Yes | Form field name for the file |
+| `filename` | string | Yes | Filename to send |
+| `content` | string | Yes | File content (prefix with `base64:` for binary) |
+
+**Multiple Files:**
+
+```json
+{
+  "files": [
+    {
+      "field": "document",
+      "filename": "report.pdf",
+      "content": "base64:JVBERi0xLjQK..."
+    },
+    {
+      "field": "thumbnail",
+      "filename": "preview.png",
+      "content": "base64:iVBORw0KGgo..."
+    }
+  ]
+}
+```
+
 ### String Body
 
 Strings are sent as-is:
@@ -312,6 +390,41 @@ The URL supports template expressions:
 }
 ```
 
+### OAuth Token Exchange
+
+```json
+{
+  "id": "get_token",
+  "type": "http",
+  "config": {
+    "method": "POST",
+    "url": "https://oauth.example.com/token",
+    "body_type": "form",
+    "body": {
+      "grant_type": "client_credentials",
+      "client_id": "{{env.CLIENT_ID}}",
+      "client_secret": "{{env.CLIENT_SECRET}}",
+      "scope": "read write"
+    }
+  }
+}
+```
+
+Then use the token in subsequent requests:
+
+```json
+{
+  "id": "api_call",
+  "type": "http",
+  "config": {
+    "url": "https://api.example.com/data",
+    "headers": {
+      "Authorization": "Bearer {{get_token.output.body.access_token}}"
+    }
+  }
+}
+```
+
 ### Pagination
 
 ```json
@@ -344,6 +457,33 @@ The URL supports template expressions:
       "event": "order.created",
       "data": "{{order}}"
     }
+  }
+}
+```
+
+### File Upload
+
+```json
+{
+  "id": "upload_document",
+  "type": "http",
+  "config": {
+    "method": "POST",
+    "url": "https://api.example.com/documents",
+    "headers": {
+      "Authorization": "Bearer {{env.API_KEY}}"
+    },
+    "body": {
+      "title": "{{request.body.title}}",
+      "folder_id": "{{request.body.folder_id}}"
+    },
+    "files": [
+      {
+        "field": "file",
+        "filename": "{{request.body.filename}}",
+        "content": "{{request.body.file_content}}"
+      }
+    ]
   }
 }
 ```

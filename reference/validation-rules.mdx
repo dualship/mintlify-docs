@@ -388,6 +388,86 @@ Date must be after or equal to specified date.
 }
 ```
 
+## File Rules
+
+Validate uploaded files. These rules work with files uploaded via `multipart/form-data` requests.
+
+### file
+
+Must be an uploaded file.
+
+```json
+{
+  "document": "required|file"
+}
+```
+
+### image
+
+Must be an image file (jpeg, png, gif, bmp, webp).
+
+```json
+{
+  "avatar": "required|image"
+}
+```
+
+### mimes
+
+Must be one of the specified MIME types.
+
+```json
+{
+  "document": "required|file|mimes:application/pdf,application/msword",
+  "photo": "required|file|mimes:image/jpeg,image/png"
+}
+```
+
+### extensions
+
+Must have one of the specified file extensions.
+
+```json
+{
+  "document": "required|file|extensions:pdf,doc,docx",
+  "image": "required|file|extensions:jpg,jpeg,png,gif"
+}
+```
+
+### dimensions
+
+Image dimension constraints. Only applies to image files.
+
+```json
+{
+  "avatar": "required|image|dimensions:min_width=100,min_height=100",
+  "banner": "required|image|dimensions:width=1200,height=630",
+  "photo": "required|image|dimensions:ratio=16/9"
+}
+```
+
+**Dimension Constraints:**
+
+| Constraint | Description |
+|------------|-------------|
+| `min_width` | Minimum width in pixels |
+| `max_width` | Maximum width in pixels |
+| `min_height` | Minimum height in pixels |
+| `max_height` | Maximum height in pixels |
+| `width` | Exact width in pixels |
+| `height` | Exact height in pixels |
+| `ratio` | Aspect ratio (e.g., `16/9`, `1/1`, `4/3`) |
+
+**Examples:**
+
+```json
+{
+  "thumbnail": "required|image|dimensions:max_width=200,max_height=200",
+  "profile_photo": "required|image|dimensions:min_width=200,min_height=200,ratio=1/1",
+  "og_image": "required|image|dimensions:width=1200,height=630"
+}
+```
+
 ## Comparison Rules
 
 Compare fields to each other.
@@ -617,6 +697,44 @@ Validate nested array items using `.*` wildcard.
     "notification_preferences": "sometimes|object",
     "notification_preferences.email": "boolean",
     "notification_preferences.push": "boolean"
+  }
+}
+```
+
+### File Upload
+
+```json
+{
+  "source": "request.files",
+  "schema": {
+    "avatar": "required|image|dimensions:min_width=200,min_height=200,ratio=1/1",
+    "resume": "required|file|extensions:pdf,doc,docx|mimes:application/pdf,application/msword",
+    "portfolio": "sometimes|file|extensions:pdf"
+  }
+}
+```
+
+### Document Upload with Metadata
+
+```json
+{
+  "source": "request.body",
+  "schema": {
+    "title": "required|string|max:200",
+    "description": "nullable|string|max:1000",
+    "category": "required|in:report,invoice,contract,other"
+  }
+}
+```
+
+Combined with file validation:
+
+```json
+{
+  "source": "request.files",
+  "schema": {
+    "document": "required|file|extensions:pdf,doc,docx",
+    "thumbnail": "sometimes|image|dimensions:max_width=400,max_height=400"
   }
 }
 ```

@@ -76,6 +76,15 @@ For example:
 - Path: `/payments`
 - Full URL: `https://acme-api.dualship.run/payments`
 
+## Content Types
+
+HTTP triggers support these content types:
+
+| Content-Type | Description |
+|--------------|-------------|
+| `application/json` | JSON request body (default) |
+| `multipart/form-data` | File uploads with form fields |
+
 ## Runtime Context
 
 When an HTTP request triggers your flow, the context includes:
@@ -119,6 +128,8 @@ When an HTTP request triggers your flow, the context includes:
 | `{{request.query.limit}}` | Query string parameter |
 | `{{request.body}}` | Full request body |
 | `{{request.body.amount}}` | Body field |
+| `{{request.files}}` | Uploaded files (multipart only) |
+| `{{request.files.avatar}}` | Specific uploaded file |
 
 ## Examples
 
@@ -406,6 +417,161 @@ Use the [request node](/nodes/request) to validate incoming data:
 }
 ```
 
+## File Uploads
+
+Accept file uploads via `multipart/form-data` requests. Uploaded files are available in `request.files`.
+
+### File Object Structure
+
+Each uploaded file contains:
+
+```json
+{
+  "request": {
+    "files": {
+      "avatar": {
+        "name": "profile.jpg",
+        "size": 245678,
+        "content_type": "image/jpeg",
+        "content": "<base64-encoded-content>"
+      }
+    }
+  }
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `name` | string | Original filename |
+| `size` | number | File size in bytes |
+| `content_type` | string | MIME type (e.g., `image/jpeg`, `application/pdf`) |
+| `content` | string | Base64-encoded file content |
+
+### File References
+
+| Reference | Description |
+|-----------|-------------|
+| `{{request.files.avatar}}` | Full file object |
+| `{{request.files.avatar.name}}` | Original filename |
+| `{{request.files.avatar.size}}` | File size in bytes |
+| `{{request.files.avatar.content_type}}` | MIME type |
+| `{{request.files.avatar.content}}` | Base64 content |
+
+### File Upload Example
+
+Accept and validate a file upload:
+
+```json
+{
+  "name": "Upload Avatar",
+  "trigger": {
+    "type": "http",
+    "config": {
+      "method": "POST",
+      "path": "/users/:id/avatar"
+    }
+  },
+  "nodes": [
+    {
+      "id": "validate",
+      "type": "request",
+      "config": {
+        "source": "request.files",
+        "schema": {
+          "avatar": "required|image|dimensions:min_width=200,min_height=200"
+        }
+      }
+    },
+    {
+      "id": "upload",
+      "type": "http",
+      "config": {
+        "method": "POST",
+        "url": "https://storage.example.com/upload",
+        "headers": {
+          "Authorization": "Bearer {{env.STORAGE_KEY}}"
+        },
+        "files": [
+          {
+            "field": "file",
+            "filename": "{{request.files.avatar.name}}",
+            "content": "{{request.files.avatar.content}}"
+          }
+        ],
+        "body": {
+          "user_id": "{{request.params.id}}"
+        }
+      }
+    },
+    {
+      "id": "respond",
+      "type": "response",
+      "config": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "url": "{{upload.output.body.url}}"
+        }
+      }
+    }
+  ]
+}
+```
+
+### Multiple Files with Form Data
+
+Handle multiple files along with form fields:
+
+```json
+{
+  "name": "Submit Document",
+  "trigger": {
+    "type": "http",
+    "config": {
+      "method": "POST",
+      "path": "/documents"
+    }
+  },
+  "nodes": [
+    {
+      "id": "validate_body",
+      "type": "request",
+      "config": {
+        "source": "request.body",
+        "schema": {
+          "title": "required|string|max:200",
+          "category": "required|in:report,invoice,contract"
+        }
+      }
+    },
+    {
+      "id": "validate_files",
+      "type": "request",
+      "config": {
+        "source": "request.files",
+        "schema": {
+          "document": "required|file|extensions:pdf,doc,docx",
+          "thumbnail": "sometimes|image|dimensions:max_width=400"
+        }
+      }
+    },
+    {
+      "id": "process",
+      "type": "transform",
+      "config": {
+        "output": {
+          "title": "{{request.body.title}}",
+          "category": "{{request.body.category}}",
+          "document_name": "{{request.files.document.name}}",
+          "document_size": "{{request.files.document.size}}",
+          "has_thumbnail": "{{request.files.thumbnail | default:false}}"
+        }
+      }
+    }
+  ]
+}
+```
+
 ## CORS
 
 Configure CORS in your [project settings](/project-settings) to allow cross-origin requests:
@@ -507,6 +673,7 @@ HTTP triggers are available on all plans including **Free**.
 ## Related
 
 - [Request Node](/nodes/request) - Validate incoming data
+- [Validation Rules](/reference/validation-rules) - Complete validation rule reference
 - [Response Node](/nodes/response) - Send HTTP responses
 - [Abort Node](/nodes/abort) - Return error responses
 - [Project Settings](/project-settings) - Configure CORS and rate limiting
