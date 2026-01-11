@@ -5,13 +5,6 @@ description: Configure logging, rate limiting, CORS, and log filtering for your 
 
 Each project can be configured with settings that control logging behavior, rate limiting, CORS headers, and sensitive data masking.
 
-## API Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/v1/projects/{id}/settings` | Get project settings |
-| PUT | `/api/v1/projects/{id}/settings` | Update project settings (partial updates supported) |
-
 ## Settings Structure
 
 ```json
@@ -241,5 +234,6 @@ Project settings are cached in Redis with a 5-minute TTL. When you update settin
 
 ## Related
 
+- [Secrets](/secrets) - Store API keys and credentials securely
 - [Nodes Overview](/nodes/overview) - Node-level logging control
-- [Pricing](/pricing) - Log retention by plan
+- [Pricing](/pricing) - Plan limits and features

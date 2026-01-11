@@ -31,13 +31,23 @@ Template expressions allow you to reference dynamic values in your flow configur
 | `{{request.params}}` | Path parameters |
 | `{{request.params.id}}` | Specific path parameter |
 
-### Environment Variables
+### Secrets and Environment Variables
+
+Access secrets stored in your project using the `env` namespace. These are sensitive values like API keys, tokens, and credentials that you've added via the Secrets API.
 
 ```
 {{env.API_KEY}}
 {{env.DATABASE_URL}}
 {{env.WEBHOOK_SECRET}}
+{{env.STRIPE_API_KEY}}
 ```
+
+Secrets are:
+- Encrypted at rest
+- Never logged in execution history
+- Isolated per project
+
+See [Secrets](/secrets) for how to create and manage secrets.
 
 ### Node Outputs
 
@@ -284,6 +294,7 @@ Templates automatically handle type coercion when needed:
 
 ## Related
 
+- [Secrets](/secrets) - Store and use API keys and credentials
 - [Pipes Reference](/reference/pipes) - Transform data inline
 - [Transform Node](/nodes/transform) - Create computed values
 - [Set Node](/nodes/set) - Store values for later use
