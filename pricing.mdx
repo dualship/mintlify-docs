@@ -23,7 +23,20 @@ Dualship offers three pricing tiers designed to scale with your needs.
 | Included seats | 1 | 1 | 5 |
 | Additional seats | - | - | $15/month each |
 | Log retention | 1 day | 30 days | 90 days |
-| Triggers | HTTP, Manual | All | All |
+
+## Triggers by Plan
+
+| Trigger | Free | Hobby | Pro |
+|---------|:----:|:-----:|:---:|
+| [HTTP](/triggers/http) | Yes | Yes | Yes |
+| Manual | Yes | Yes | Yes |
+| Cron | - | Yes | Yes |
+| Event | - | Yes | Yes |
+| [Queue](/triggers/queue) | - | Yes | Yes |
+
+<Note>
+  **Queue triggers** enable asynchronous message processing with automatic retries and backoff. Perfect for background jobs, webhook processing, and batch operations. Available on Hobby and Pro plans.
+</Note>
 
 ## Plan Features
 
@@ -87,15 +100,7 @@ Yes. You can upgrade or downgrade your plan at any time. When upgrading, changes
 
 ### What are triggers?
 
-Triggers define how a flow is invoked:
-
-- **HTTP** - Incoming HTTP request to a custom endpoint
-- **Cron** - Scheduled execution using cron expressions
-- **Event** - Internal events from other flows
-- **Queue** - Messages from a message queue
-- **Manual** - Triggered via dashboard or API
-
-The Free plan is limited to HTTP and manual triggers. Paid plans include all trigger types.
+Triggers define how a flow is invoked. See the [Triggers by Plan](#triggers-by-plan) section above for availability. The Free plan includes HTTP and manual triggers. Upgrade to Hobby or Pro for advanced triggers like cron scheduling and [queue processing](/triggers/queue).
 
 ### How do team seats work?
 

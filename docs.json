@@ -27,11 +27,19 @@
             "pages": ["introduction", "quickstart", "flow-structure", "pricing", "project-settings", "secrets"]
           },
           {
+            "group": "Triggers",
+            "pages": [
+              "triggers/http",
+              "triggers/queue"
+            ]
+          },
+          {
             "group": "Nodes",
             "pages": [
               "nodes/overview",
               "nodes/request",
               "nodes/http",
+              "nodes/enqueue",
               "nodes/set",
               "nodes/transform",
               "nodes/condition",

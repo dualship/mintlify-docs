@@ -1,0 +1,366 @@
+---
+title: Queue Trigger
+description: Process messages asynchronously with retries and backoff
+---
+
+<Info>
+  **Paid Feature** - Queue triggers are available on the Hobby and Pro plans. [View pricing](/pricing)
+</Info>
+
+The `queue` trigger enables asynchronous message processing. Flows with queue triggers act as message handlers that process work from a queue with automatic retries and backoff policies.
+
+## Configuration
+
+```json
+{
+  "trigger": {
+    "type": "queue",
+    "config": {
+      "name": "order-processing",
+      "parallelism": 1,
+      "retries": 5,
+      "timeout": "30s",
+      "backoff": {
+        "strategy": "exponential",
+        "initial": "1s",
+        "max": "1h"
+      }
+    }
+  }
+}
+```
+
+## Config Fields
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `name` | string | Yes | - | Queue name (unique per project) |
+| `parallelism` | number | No | `1` | Number of concurrent consumers (1 = strict FIFO) |
+| `retries` | number | No | `0` | Maximum retry attempts on failure (0 = no retries) |
+| `timeout` | string | No | `"30s"` | Handler execution timeout |
+| `backoff` | object | No | - | Retry backoff strategy (only used when retries > 0) |
+
+## Queue Names
+
+Queue names must be unique within your project. Choose descriptive names that reflect the purpose:
+
+```
+order-processing
+email-notifications
+payment-webhooks
+data-sync
+```
+
+## Parallelism
+
+Controls how many messages can be processed concurrently.
+
+| Setting | Behavior |
+|---------|----------|
+| `parallelism: 1` | Strict FIFO ordering - one message at a time |
+| `parallelism: 5` | Up to 5 messages processed concurrently |
+
+Use `parallelism: 1` when order matters. Use higher values for independent operations like sending notifications.
+
+## Retries
+
+By default, retries are disabled. Set `retries` to enable automatic retry on failure.
+
+```json
+// No retries - fail immediately on error
+{ "retries": 0 }
+
+// Retry up to 5 times
+{ "retries": 5 }
+
+// Retry up to 10 times with backoff
+{ "retries": 10, "backoff": { "strategy": "exponential", "initial": "2s", "max": "30m" } }
+```
+
+## Backoff Strategies
+
+Only applicable when `retries > 0`. Configure how long to wait between retry attempts.
+
+### Exponential Backoff
+
+Delays grow exponentially: 1s, 2s, 4s, 8s, 16s... capped at max.
+
+```json
+{
+  "backoff": {
+    "strategy": "exponential",
+    "initial": "1s",
+    "max": "1h"
+  }
+}
+```
+
+### Linear Backoff
+
+Delays grow linearly: 5s, 10s, 15s, 20s... capped at max.
+
+```json
+{
+  "backoff": {
+    "strategy": "linear",
+    "initial": "5s",
+    "max": "5m"
+  }
+}
+```
+
+### Fixed Backoff
+
+Constant delay between retries. Useful for rate-limited APIs.
+
+```json
+{
+  "backoff": {
+    "strategy": "fixed",
+    "delay": "60s"
+  }
+}
+```
+
+## Duration Format
+
+Durations can be specified as strings or milliseconds:
+
+**String format:**
+
+| Format | Example | Description |
+|--------|---------|-------------|
+| `Xs` | `"30s"` | Seconds |
+| `Xm` | `"5m"` | Minutes |
+| `Xh` | `"1h"` | Hours |
+
+**Milliseconds:**
+
+| Example | Equivalent |
+|---------|------------|
+| `2000` | 2 seconds |
+| `60000` | 1 minute |
+| `3600000` | 1 hour |
+
+Both formats are valid:
+
+```json
+// String format
+{ "timeout": "30s", "backoff": { "initial": "2s", "max": "1h" } }
+
+// Milliseconds
+{ "timeout": 30000, "backoff": { "initial": 2000, "max": 3600000 } }
+
+// Mixed
+{ "timeout": "30s", "backoff": { "initial": 2000, "max": "1h" } }
+```
+
+## Runtime Context
+
+When your handler flow executes, the context includes message information:
+
+```json
+{
+  "trigger": {
+    "type": "queue",
+    "config": {
+      "name": "order-processing",
+      "parallelism": 1,
+      "retries": 5,
+      "timeout": "30s",
+      "backoff": { ... }
+    },
+    "message": {
+      "id": "msg_xxx",
+      "retried": 0
+    },
+    "body": {
+      "order_id": "123",
+      "action": "process"
+    }
+  }
+}
+```
+
+### Context References
+
+| Reference | Description |
+|-----------|-------------|
+| `{{trigger.config.name}}` | Queue name |
+| `{{trigger.message.id}}` | Unique message ID |
+| `{{trigger.message.retried}}` | Number of retry attempts (0 on first try) |
+| `{{trigger.body}}` | Message payload |
+| `{{trigger.body.order_id}}` | Access message fields directly |
+
+### Example: Check Retry Count
+
+```json
+{
+  "id": "check_retry",
+  "type": "condition",
+  "config": {
+    "conditions": [
+      {
+        "if": "{{trigger.message.retried}} >= 3",
+        "then": ["send_alert"]
+      }
+    ],
+    "else": ["process_normally"]
+  }
+}
+```
+
+## Failure Handling
+
+| Scenario | Behavior |
+|----------|----------|
+| `retries = 0` | Message fails immediately and moves to Dead Letter Queue (DLQ) |
+| `retries > 0` | Message is retried with configured backoff until success or retries exhausted |
+| Retries exhausted | Message moves to Dead Letter Queue (DLQ) |
+
+Failed messages in the DLQ can be viewed, retried, or deleted via the API.
+
+## Complete Example
+
+A queue handler that processes orders:
+
+```json
+{
+  "name": "Order Processing Handler",
+  "trigger": {
+    "type": "queue",
+    "config": {
+      "name": "order-processing",
+      "parallelism": 1,
+      "retries": 5,
+      "timeout": "30s",
+      "backoff": {
+        "strategy": "exponential",
+        "initial": "2s",
+        "max": "10m"
+      }
+    }
+  },
+  "nodes": [
+    {
+      "id": "log_start",
+      "type": "set",
+      "config": {
+        "key": "order_id",
+        "value": "{{trigger.body.order_id}}"
+      }
+    },
+    {
+      "id": "fetch_order",
+      "type": "http",
+      "config": {
+        "method": "GET",
+        "url": "https://api.example.com/orders/{{order_id}}"
+      }
+    },
+    {
+      "id": "process_payment",
+      "type": "http",
+      "config": {
+        "method": "POST",
+        "url": "https://api.stripe.com/v1/charges",
+        "headers": {
+          "Authorization": "Bearer {{env.STRIPE_KEY}}"
+        },
+        "body": {
+          "amount": "{{fetch_order.output.body.total}}",
+          "currency": "usd"
+        }
+      }
+    },
+    {
+      "id": "update_status",
+      "type": "http",
+      "config": {
+        "method": "PATCH",
+        "url": "https://api.example.com/orders/{{order_id}}",
+        "body": {
+          "status": "paid",
+          "charge_id": "{{process_payment.output.body.id}}"
+        }
+      }
+    },
+    {
+      "id": "respond",
+      "type": "response",
+      "config": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "order_id": "{{order_id}}"
+        }
+      }
+    }
+  ]
+}
+```
+
+## Sending Messages to Queues
+
+Use the [enqueue node](/nodes/enqueue) to send messages to queue handlers:
+
+```json
+{
+  "id": "queue_order",
+  "type": "enqueue",
+  "config": {
+    "handler": "order-processing-handler",
+    "message": {
+      "order_id": "{{request.body.order_id}}"
+    }
+  }
+}
+```
+
+## Use Cases
+
+### Order Processing
+
+Process orders asynchronously to return fast API responses:
+
+1. HTTP endpoint receives order
+2. Validates and accepts order immediately (returns 202)
+3. Enqueues order for background processing
+4. Queue handler processes payment, updates inventory, sends confirmation
+
+### Webhook Processing
+
+Handle incoming webhooks reliably:
+
+1. Webhook arrives at HTTP endpoint
+2. Enqueue webhook payload for processing
+3. Return 200 immediately
+4. Queue handler processes webhook with retries
+
+### Batch Operations
+
+Process large datasets item by item:
+
+1. Upload triggers batch job
+2. Each item is enqueued separately
+3. Queue handler processes items with parallelism
+4. Failed items retry automatically
+
+### Email Notifications
+
+Send emails without blocking API responses:
+
+1. User action triggers notification
+2. Email data is enqueued
+3. Queue handler sends email via email service
+4. Retries handle temporary failures
+
+## Plan Availability
+
+Queue triggers are available on **Hobby** and **Pro** plans.
+
+## Related
+
+- [Enqueue Node](/nodes/enqueue) - Send messages to queue handlers
+- [HTTP Trigger](/flow-structure#http-trigger) - Create REST endpoints
+- [Cron Trigger](/flow-structure#cron-trigger) - Schedule flows

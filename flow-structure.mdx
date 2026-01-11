@@ -69,6 +69,39 @@ Schedule flows to run at specific times.
 | `schedule` | string | Yes | Cron expression |
 | `timezone` | string | No | IANA timezone (default: UTC) |
 
+### Queue Trigger
+
+Process messages asynchronously with automatic retries.
+
+```json
+{
+  "trigger": {
+    "type": "queue",
+    "config": {
+      "name": "order-processing",
+      "parallelism": 1,
+      "retries": 5,
+      "timeout": "30s",
+      "backoff": {
+        "strategy": "exponential",
+        "initial": "1s",
+        "max": "1h"
+      }
+    }
+  }
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `name` | string | Yes | Queue name (unique per project) |
+| `parallelism` | number | No | Concurrent consumers (1 = strict FIFO) |
+| `retries` | number | No | Max retry attempts (0 = no retries) |
+| `timeout` | string | No | Handler execution timeout |
+| `backoff` | object | No | Retry backoff strategy |
+
+See [Queue Trigger](/triggers/queue) for full documentation.
+
 ## Node Structure
 
 Every node has the same base structure:

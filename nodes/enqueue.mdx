@@ -1,0 +1,365 @@
+---
+title: Enqueue Node
+description: Send messages to queue handlers for asynchronous processing
+---
+
+<Info>
+  **Paid Feature** - The enqueue node is available on the Hobby and Pro plans. [View pricing](/pricing)
+</Info>
+
+The `enqueue` node sends messages to [queue handlers](/triggers/queue) for asynchronous processing. This enables non-blocking workflows where your API can respond immediately while background work happens in a separate flow.
+
+## Configuration
+
+```json
+{
+  "id": "queue_order",
+  "type": "enqueue",
+  "config": {
+    "handler": "order-processing-handler",
+    "message": {
+      "order_id": "{{request.body.order_id}}",
+      "customer_email": "{{request.body.email}}",
+      "items": "{{request.body.items}}"
+    }
+  }
+}
+```
+
+## Config Fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `handler` | string | Yes | Flow ID or slug of the queue handler |
+| `message` | object | Yes | Message payload to send to the handler |
+
+## How It Works
+
+1. The enqueue node resolves the `handler` to find the target flow
+2. Target flow must have a [queue trigger](/triggers/queue)
+3. Message is sent to the queue asynchronously
+4. Node returns immediately (non-blocking)
+5. The queue handler receives and processes the message in the background
+
+## Output
+
+```json
+{
+  "message_id": "msg_abc123",
+  "queued": true,
+  "handler": "order-processing-handler"
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `message_id` | string | Unique identifier for the queued message |
+| `queued` | boolean | `true` if message was successfully queued |
+| `handler` | string | Name of the target handler flow |
+
+## Examples
+
+### Basic Enqueue
+
+```json
+{
+  "id": "queue_task",
+  "type": "enqueue",
+  "config": {
+    "handler": "task-processor",
+    "message": {
+      "task_id": "{{request.body.task_id}}",
+      "action": "process"
+    }
+  }
+}
+```
+
+### With Dynamic Data
+
+```json
+{
+  "id": "queue_notification",
+  "type": "enqueue",
+  "config": {
+    "handler": "email-sender",
+    "message": {
+      "to": "{{user.output.email}}",
+      "subject": "Order Confirmation",
+      "template": "order_confirmation",
+      "data": {
+        "order_id": "{{order.output.id}}",
+        "total": "{{order.output.total | currency:USD}}",
+        "items": "{{request.body.items}}"
+      }
+    }
+  }
+}
+```
+
+### Using Handler ID
+
+You can reference handlers by either slug or UUID:
+
+```json
+// By slug
+{ "handler": "order-processing-handler" }
+
+// By UUID
+{ "handler": "550e8400-e29b-41d4-a716-446655440000" }
+```
+
+## Complete Example: Accept and Process
+
+A common pattern is to accept a request immediately and process it in the background.
+
+**HTTP Flow (accepts order):**
+
+```json
+{
+  "name": "Accept Order",
+  "trigger": {
+    "type": "http",
+    "config": {
+      "method": "POST",
+      "path": "/orders"
+    }
+  },
+  "nodes": [
+    {
+      "id": "validate",
+      "type": "request",
+      "config": {
+        "source": "request.body",
+        "schema": {
+          "customer_id": "required|string",
+          "items": "required|array",
+          "items.*.product_id": "required|string",
+          "items.*.quantity": "required|integer|min:1"
+        }
+      }
+    },
+    {
+      "id": "create_order",
+      "type": "http",
+      "config": {
+        "method": "POST",
+        "url": "https://api.example.com/orders",
+        "body": {
+          "customer_id": "{{request.body.customer_id}}",
+          "items": "{{request.body.items}}",
+          "status": "pending"
+        }
+      }
+    },
+    {
+      "id": "enqueue_processing",
+      "type": "enqueue",
+      "config": {
+        "handler": "order-processor",
+        "message": {
+          "order_id": "{{create_order.output.body.id}}",
+          "customer_id": "{{request.body.customer_id}}",
+          "created_at": "{{now}}"
+        }
+      }
+    },
+    {
+      "id": "respond",
+      "type": "response",
+      "config": {
+        "status": 202,
+        "body": {
+          "accepted": true,
+          "order_id": "{{create_order.output.body.id}}",
+          "message_id": "{{enqueue_processing.output.message_id}}"
+        }
+      }
+    }
+  ]
+}
+```
+
+**Queue Handler (processes order):**
+
+```json
+{
+  "name": "Order Processor",
+  "trigger": {
+    "type": "queue",
+    "config": {
+      "name": "order-processor",
+      "retries": 5,
+      "backoff": {
+        "strategy": "exponential",
+        "initial": "2s",
+        "max": "10m"
+      }
+    }
+  },
+  "nodes": [
+    {
+      "id": "process_payment",
+      "type": "http",
+      "config": {
+        "method": "POST",
+        "url": "https://api.stripe.com/v1/charges",
+        "headers": {
+          "Authorization": "Bearer {{env.STRIPE_KEY}}"
+        },
+        "body": {
+          "customer": "{{trigger.body.customer_id}}",
+          "amount": 1000
+        }
+      }
+    },
+    {
+      "id": "update_order",
+      "type": "http",
+      "config": {
+        "method": "PATCH",
+        "url": "https://api.example.com/orders/{{trigger.body.order_id}}",
+        "body": {
+          "status": "paid",
+          "charge_id": "{{process_payment.output.body.id}}"
+        }
+      }
+    },
+    {
+      "id": "respond",
+      "type": "response",
+      "config": {
+        "status": 200,
+        "body": { "processed": true }
+      }
+    }
+  ]
+}
+```
+
+## Checking Enqueue Result
+
+You can check if the message was queued successfully:
+
+```json
+{
+  "id": "check_queued",
+  "type": "condition",
+  "config": {
+    "conditions": [
+      {
+        "if": "{{enqueue_task.output.queued}} == true",
+        "then": ["success_response"]
+      }
+    ],
+    "else": ["error_response"]
+  }
+}
+```
+
+## Use Cases
+
+### Webhook Processing
+
+Accept webhooks immediately and process them reliably in the background:
+
+```json
+{
+  "id": "queue_webhook",
+  "type": "enqueue",
+  "config": {
+    "handler": "webhook-processor",
+    "message": {
+      "event": "{{request.body.event}}",
+      "payload": "{{request.body}}",
+      "received_at": "{{now}}"
+    }
+  }
+}
+```
+
+### Email Notifications
+
+Queue emails without blocking the API response:
+
+```json
+{
+  "id": "queue_email",
+  "type": "enqueue",
+  "config": {
+    "handler": "email-sender",
+    "message": {
+      "to": "{{user.email}}",
+      "template": "welcome",
+      "data": {
+        "name": "{{user.name}}"
+      }
+    }
+  }
+}
+```
+
+### Batch Processing
+
+Queue items for batch processing:
+
+```json
+{
+  "id": "queue_batch",
+  "type": "loop",
+  "config": {
+    "items": "{{request.body.records}}",
+    "as": "record",
+    "do": ["queue_item"]
+  }
+}
+```
+
+```json
+{
+  "id": "queue_item",
+  "type": "enqueue",
+  "config": {
+    "handler": "record-processor",
+    "message": {
+      "record": "{{record}}",
+      "batch_id": "{{request.body.batch_id}}"
+    }
+  }
+}
+```
+
+## Error Handling
+
+If the handler flow doesn't exist or isn't a queue handler, the enqueue node will fail:
+
+```json
+{
+  "queued": false,
+  "error": "handler not found: invalid-handler"
+}
+```
+
+Use a [try node](/nodes/try) to handle enqueue failures gracefully:
+
+```json
+{
+  "id": "safe_enqueue",
+  "type": "try",
+  "config": {
+    "try": ["queue_task"],
+    "catch": ["log_failure", "fallback_response"]
+  }
+}
+```
+
+## Plan Availability
+
+The enqueue node is available on **Hobby** and **Pro** plans.
+
+## Related
+
+- [Queue Trigger](/triggers/queue) - Create queue handlers
+- [Loop Node](/nodes/loop) - Queue multiple items
+- [Try Node](/nodes/try) - Handle enqueue failures
+- [Response Node](/nodes/response) - Return 202 Accepted

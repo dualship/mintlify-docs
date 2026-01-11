@@ -1,0 +1,512 @@
+---
+title: HTTP Trigger
+description: Create REST API endpoints that execute your flows
+---
+
+The `http` trigger is the most common trigger type. It creates a REST endpoint that executes your flow when called.
+
+## Configuration
+
+```json
+{
+  "trigger": {
+    "type": "http",
+    "config": {
+      "method": "POST",
+      "path": "/payments"
+    }
+  }
+}
+```
+
+## Config Fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `method` | string | Yes | HTTP method: GET, POST, PUT, DELETE, PATCH |
+| `path` | string | Yes | URL path for the endpoint |
+
+## HTTP Methods
+
+| Method | Typical Use |
+|--------|-------------|
+| `GET` | Retrieve data |
+| `POST` | Create resources |
+| `PUT` | Replace resources |
+| `PATCH` | Partial updates |
+| `DELETE` | Remove resources |
+
+## Path Patterns
+
+Paths must start with `/` and can include path parameters:
+
+```json
+// Simple path
+{ "path": "/users" }
+
+// With parameters
+{ "path": "/users/:id" }
+
+// Nested resources
+{ "path": "/users/:user_id/orders/:order_id" }
+```
+
+### Path Parameters
+
+Path parameters are accessible in the request context:
+
+```json
+// Path: /users/:id
+// Request: GET /users/123
+
+// Access in nodes:
+"{{request.params.id}}"  // "123"
+```
+
+## Endpoint URL
+
+Your flow's endpoint URL is constructed from your project's subdomain and the path:
+
+```
+https://{project-slug}.dualship.run{path}
+```
+
+For example:
+- Project slug: `acme-api`
+- Path: `/payments`
+- Full URL: `https://acme-api.dualship.run/payments`
+
+## Runtime Context
+
+When an HTTP request triggers your flow, the context includes:
+
+```json
+{
+  "request": {
+    "method": "POST",
+    "path": "/payments",
+    "params": {
+      "id": "123"
+    },
+    "headers": {
+      "authorization": "Bearer xxx",
+      "content-type": "application/json",
+      "user-agent": "Mozilla/5.0..."
+    },
+    "query": {
+      "debug": "true",
+      "limit": "10"
+    },
+    "body": {
+      "amount": 1000,
+      "currency": "usd"
+    }
+  },
+  "env": {
+    "environment": "production"
+  }
+}
+```
+
+### Context References
+
+| Reference | Description |
+|-----------|-------------|
+| `{{request.method}}` | HTTP method (GET, POST, etc.) |
+| `{{request.path}}` | Request path |
+| `{{request.params.id}}` | Path parameter |
+| `{{request.headers.authorization}}` | Request header |
+| `{{request.query.limit}}` | Query string parameter |
+| `{{request.body}}` | Full request body |
+| `{{request.body.amount}}` | Body field |
+
+## Examples
+
+### GET Endpoint
+
+Retrieve a user by ID:
+
+```json
+{
+  "name": "Get User",
+  "trigger": {
+    "type": "http",
+    "config": {
+      "method": "GET",
+      "path": "/users/:id"
+    }
+  },
+  "nodes": [
+    {
+      "id": "fetch_user",
+      "type": "http",
+      "config": {
+        "method": "GET",
+        "url": "https://api.example.com/users/{{request.params.id}}"
+      }
+    },
+    {
+      "id": "respond",
+      "type": "response",
+      "config": {
+        "status": 200,
+        "body": "{{fetch_user.output.body}}"
+      }
+    }
+  ]
+}
+```
+
+### POST Endpoint
+
+Create a new resource:
+
+```json
+{
+  "name": "Create Order",
+  "trigger": {
+    "type": "http",
+    "config": {
+      "method": "POST",
+      "path": "/orders"
+    }
+  },
+  "nodes": [
+    {
+      "id": "validate",
+      "type": "request",
+      "config": {
+        "source": "request.body",
+        "schema": {
+          "customer_id": "required|string",
+          "items": "required|array|min:1"
+        }
+      }
+    },
+    {
+      "id": "create_order",
+      "type": "http",
+      "config": {
+        "method": "POST",
+        "url": "https://api.example.com/orders",
+        "body": {
+          "customer_id": "{{request.body.customer_id}}",
+          "items": "{{request.body.items}}",
+          "created_at": "{{now}}"
+        }
+      }
+    },
+    {
+      "id": "respond",
+      "type": "response",
+      "config": {
+        "status": 201,
+        "body": {
+          "id": "{{create_order.output.body.id}}",
+          "status": "created"
+        }
+      }
+    }
+  ]
+}
+```
+
+### PUT Endpoint
+
+Replace a resource:
+
+```json
+{
+  "name": "Update User",
+  "trigger": {
+    "type": "http",
+    "config": {
+      "method": "PUT",
+      "path": "/users/:id"
+    }
+  },
+  "nodes": [
+    {
+      "id": "update_user",
+      "type": "http",
+      "config": {
+        "method": "PUT",
+        "url": "https://api.example.com/users/{{request.params.id}}",
+        "body": "{{request.body}}"
+      }
+    },
+    {
+      "id": "respond",
+      "type": "response",
+      "config": {
+        "status": 200,
+        "body": "{{update_user.output.body}}"
+      }
+    }
+  ]
+}
+```
+
+### DELETE Endpoint
+
+Remove a resource:
+
+```json
+{
+  "name": "Delete User",
+  "trigger": {
+    "type": "http",
+    "config": {
+      "method": "DELETE",
+      "path": "/users/:id"
+    }
+  },
+  "nodes": [
+    {
+      "id": "delete_user",
+      "type": "http",
+      "config": {
+        "method": "DELETE",
+        "url": "https://api.example.com/users/{{request.params.id}}"
+      }
+    },
+    {
+      "id": "respond",
+      "type": "response",
+      "config": {
+        "status": 204
+      }
+    }
+  ]
+}
+```
+
+### With Query Parameters
+
+List resources with filtering:
+
+```json
+{
+  "name": "List Orders",
+  "trigger": {
+    "type": "http",
+    "config": {
+      "method": "GET",
+      "path": "/orders"
+    }
+  },
+  "nodes": [
+    {
+      "id": "fetch_orders",
+      "type": "http",
+      "config": {
+        "method": "GET",
+        "url": "https://api.example.com/orders",
+        "query": {
+          "status": "{{request.query.status | default:all}}",
+          "limit": "{{request.query.limit | default:20}}",
+          "offset": "{{request.query.offset | default:0}}"
+        }
+      }
+    },
+    {
+      "id": "respond",
+      "type": "response",
+      "config": {
+        "status": 200,
+        "body": {
+          "data": "{{fetch_orders.output.body.data}}",
+          "total": "{{fetch_orders.output.body.total}}"
+        }
+      }
+    }
+  ]
+}
+```
+
+### With Authentication
+
+Validate authorization header:
+
+```json
+{
+  "name": "Protected Endpoint",
+  "trigger": {
+    "type": "http",
+    "config": {
+      "method": "GET",
+      "path": "/protected"
+    }
+  },
+  "nodes": [
+    {
+      "id": "check_auth",
+      "type": "condition",
+      "config": {
+        "conditions": [
+          {
+            "if": "{{request.headers.authorization}} == Bearer {{env.API_KEY}}",
+            "then": ["fetch_data"]
+          }
+        ],
+        "else": ["unauthorized"]
+      }
+    },
+    {
+      "id": "unauthorized",
+      "type": "abort",
+      "config": {
+        "status": 401,
+        "body": { "error": "Unauthorized" }
+      }
+    },
+    {
+      "id": "fetch_data",
+      "type": "http",
+      "config": {
+        "url": "https://api.example.com/data"
+      }
+    },
+    {
+      "id": "respond",
+      "type": "response",
+      "config": {
+        "status": 200,
+        "body": "{{fetch_data.output.body}}"
+      }
+    }
+  ]
+}
+```
+
+## Request Validation
+
+Use the [request node](/nodes/request) to validate incoming data:
+
+```json
+{
+  "id": "validate",
+  "type": "request",
+  "config": {
+    "source": "request.body",
+    "schema": {
+      "email": "required|email",
+      "amount": "required|integer|min:1",
+      "currency": "required|in:usd,eur,gbp"
+    },
+    "on_error": {
+      "action": "abort",
+      "status": 400,
+      "body": {
+        "error": "Validation failed",
+        "details": "{{validation_errors}}"
+      }
+    }
+  }
+}
+```
+
+## CORS
+
+Configure CORS in your [project settings](/project-settings) to allow cross-origin requests:
+
+```json
+{
+  "cors": {
+    "enabled": true,
+    "allowed_origins": ["https://example.com"],
+    "allowed_methods": ["GET", "POST", "PUT", "DELETE"],
+    "allow_credentials": true
+  }
+}
+```
+
+## Rate Limiting
+
+Enable rate limiting in [project settings](/project-settings) to protect your endpoints:
+
+```json
+{
+  "rate_limit": {
+    "enabled": true,
+    "requests_per_min": 100,
+    "burst_size": 20
+  }
+}
+```
+
+## Common Patterns
+
+### REST API
+
+Create a full REST API for a resource:
+
+| Endpoint | Method | Path | Description |
+|----------|--------|------|-------------|
+| List | GET | `/users` | Get all users |
+| Get | GET | `/users/:id` | Get one user |
+| Create | POST | `/users` | Create user |
+| Update | PUT | `/users/:id` | Update user |
+| Delete | DELETE | `/users/:id` | Delete user |
+
+### Webhook Receiver
+
+Accept webhooks from external services:
+
+```json
+{
+  "name": "Stripe Webhook",
+  "trigger": {
+    "type": "http",
+    "config": {
+      "method": "POST",
+      "path": "/webhooks/stripe"
+    }
+  },
+  "nodes": [
+    {
+      "id": "process",
+      "type": "switch",
+      "config": {
+        "expression": "{{request.body.type}}",
+        "cases": [
+          { "value": "payment_intent.succeeded", "then": ["handle_payment"] },
+          { "value": "customer.created", "then": ["handle_customer"] }
+        ],
+        "default": ["acknowledge"]
+      }
+    }
+  ]
+}
+```
+
+### API Gateway
+
+Proxy requests to backend services:
+
+```json
+{
+  "id": "proxy",
+  "type": "http",
+  "config": {
+    "method": "{{request.method}}",
+    "url": "https://backend.example.com{{request.path}}",
+    "headers": {
+      "Authorization": "Bearer {{env.BACKEND_TOKEN}}",
+      "X-Forwarded-For": "{{request.headers.x-forwarded-for}}"
+    },
+    "body": "{{request.body}}"
+  }
+}
+```
+
+## Plan Availability
+
+HTTP triggers are available on all plans including **Free**.
+
+## Related
+
+- [Request Node](/nodes/request) - Validate incoming data
+- [Response Node](/nodes/response) - Send HTTP responses
+- [Abort Node](/nodes/abort) - Return error responses
+- [Project Settings](/project-settings) - Configure CORS and rate limiting
