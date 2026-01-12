@@ -66,9 +66,22 @@
       },
       {
         "tab": "API Reference",
-        "openapi": "openapi.json"
+        "auth": "required",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": ["api-reference/overview"]
+          },
+          {
+            "group": "Endpoints",
+            "openapi": "/swagger.json"
+          }
+        ]
       }
     ]
+  },
+  "sso": {
+    "enabled": true
   },
   "search": {
     "prompt": "Looking for something ?"
